@@ -1,0 +1,8 @@
+{
+    "profiles": {
+        "ApAgent": {
+            "commandName": "Project",
+            "commandLineArgs": "--use \"D:\\1WorkSecurity\\ApAgent\\ApAgent.json\""
+        }
+    }
+}

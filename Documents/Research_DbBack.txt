@@ -1,0 +1,13 @@
+    public EDatabaseSet DatabaseSet { get; set; } //ბაზების სიმრავლე, რომლისთვისაც უნდა გაეშვას ეს პროცესი.
+    public List<string> DatabaseNames { get; set; } = new();
+    public string? FileStorageName { get; set; } //ფაილსაცავის სახელი, რომელიც საშუალებას იძლევა ხელმისაწვდომი გახდეს ახლადგაკეთებული ბექაპი
+    
+DatabaseBackupParameters
+    public string? BackupNamePrefix { get; set; }
+    public string? BackupNameMiddlePart { get; set; }
+    public string? DateMask { get; set; }
+    public string? DbServerSideBackupPath { get; set; }
+
+
+            ArchiverData? archiver = _archivers.GetArchiverDataByKey(_databaseBackupStep.ArchiverName);
+    public string? BackupFileExtension { get; set; }
