@@ -16,7 +16,7 @@ public sealed class ArchiverFieldEditor : FieldEditor<string>
 
     public override void UpdateField(string? recordName, object recordForUpdate)
     {
-        ArchiverCruder archiverCruder = new(_parametersManager);
+        var archiverCruder = new ArchiverCruder(_parametersManager);
         var keys = archiverCruder.GetKeys();
         var def = keys.Count > 1 ? null : archiverCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,

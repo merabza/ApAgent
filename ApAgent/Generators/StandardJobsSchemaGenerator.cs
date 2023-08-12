@@ -60,19 +60,18 @@ internal class StandardJobsSchemaGenerator
         //და თუ არ არსებობს, დაემატოს.
         var scheduleHourlyName = CreateJobScheduleHourly(parameters);
 
-        var standardSmartSchemas = StandardSmartSchemas.Generate(_parametersManager);
+        StandardSmartSchemas.Generate(_parametersManager);
 
         //თუ არ არსებობს დაემატოს ჭკვიანი სქემები: DailyStandard, Reduce, Hourly
-        var smartSchemaDailyStandardName = standardSmartSchemas.SmartSchemaDailyStandardName; //DailyStandard
-        var smartSchemaReduceName = standardSmartSchemas.SmartSchemaReduceName; //Reduce
-        var smartSchemaHourlyName = standardSmartSchemas.SmartSchemaHourlyName; //Hourly
+        //var smartSchemaDailyStandardName = standardSmartSchemas.SmartSchemaDailyStandardName; //DailyStandard
+        //var smartSchemaReduceName = standardSmartSchemas.SmartSchemaReduceName; //Reduce
+        //var smartSchemaHourlyName = standardSmartSchemas.SmartSchemaHourlyName; //Hourly
 
 
-        StandardArchiversGenerator standardArchiversGenerator = new(_useConsole, _parametersManager);
-        standardArchiversGenerator.Generate();
+        StandardArchiversGenerator.Generate(_useConsole, _parametersManager);
 
         //თუ არ არსებობს შეიქმნას zipClass არქივატორი
-        var archiverZipClassName = standardArchiversGenerator.ArchiverZipClassName; //ZipClass
+        //var archiverZipClassName = standardArchiversGenerator.ArchiverZipClassName; //ZipClass
         //string archiverZipName = standardArchiversGenerator.ArchiverZipName; //Zip
         //string archiverRarName = standardArchiversGenerator.ArchiverRarName; //Rar
 
@@ -91,7 +90,7 @@ internal class StandardJobsSchemaGenerator
             return;
         }
 
-        //დასაშვებია თუ არა სერვერის მხარეს ბეკაპირებისას კომპრესია
+        //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
         var isServerAllowsCompression = dbServerInfo.AllowsCompression;
 
         FileStorageCruderNameCounter uploadFileStorageCruderNameCounter =
@@ -117,9 +116,9 @@ internal class StandardJobsSchemaGenerator
 
         //ბაზების სრული ბექაპი
         CreateBackupStep(EBackupType.Full, isServerAllowsCompression, true, stepNamePrefix, dateMask,
-            smartSchemaDailyStandardName, smartSchemaReduceName, isServerLocal ? fullBuFileStorageName : null,
-            databaseFullBackupsLocalPath, isServerAllowsCompression ? null : archiverZipClassName,
-            uploadFileStorageName,
+            StandardSmartSchemas.DailyStandardSmartSchemaName, StandardSmartSchemas.ReduceSmartSchemaName,
+            isServerLocal ? fullBuFileStorageName : null, databaseFullBackupsLocalPath,
+            isServerAllowsCompression ? null : EArchiveType.ZipClass.ToString(), uploadFileStorageName,
             scheduleDailyName, scheduleAtStartName, parameters);
 
         //დავიანგარიშოთ ლოკალურად სად უნდა იყოს ტრანზაქშენ ლოგების ბექაპების ფაილები
@@ -132,11 +131,11 @@ internal class StandardJobsSchemaGenerator
         var databaseTrLogBackupsLocalPath =
             parameters.CountLocalPath(null, _parametersFileName, $"Database{EBackupType.TrLog}Backups");
 
-        //ტრანზაქშენ ლოგების ბექაპი, საათობრივად, მხოლოდ იმ ბაზებისათვის, რომლეთათვისაც დასაშვებია ტრანზაქშენ ლოგებით ბექაპი
-        CreateBackupStep(EBackupType.TrLog, false, false, stepNamePrefix, dateMask, smartSchemaHourlyName,
-            smartSchemaHourlyName, isServerLocal ? trLogBuFileStorageName : null, databaseTrLogBackupsLocalPath,
-            null,
-            uploadFileStorageName, scheduleHourlyName, scheduleAtStartName, parameters);
+        //ტრანზაქშენ ლოგების ბექაპი, საათობრივად, მხოლოდ იმ ბაზებისათვის, რომელთათვისაც დასაშვებია ტრანზაქშენ ლოგებით ბექაპი
+        CreateBackupStep(EBackupType.TrLog, false, false, stepNamePrefix, dateMask,
+            StandardSmartSchemas.HourlySmartSchemaName, StandardSmartSchemas.HourlySmartSchemaName,
+            isServerLocal ? trLogBuFileStorageName : null, databaseTrLogBackupsLocalPath, null, uploadFileStorageName,
+            scheduleHourlyName, scheduleAtStartName, parameters);
 
         //8.1. პროცედურების გადაკომპილირება, 
         CreateMaintenanceStep(EMultiDatabaseActionType.RecompileProcedures, stepNamePrefix, scheduleDailyName,

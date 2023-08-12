@@ -51,7 +51,7 @@ public sealed class UnZipOnPlaceStepCruder : StepCruder
         parameters.UnZipOnPlaceSteps[recordName] = newUnZipOnPlaceStep;
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new UnZipOnPlaceStep();
     }

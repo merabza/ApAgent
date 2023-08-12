@@ -74,7 +74,7 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder
         multiDatabaseProcessSteps.Remove(recordKey);
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new MultiDatabaseProcessStep();
     }

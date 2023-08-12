@@ -71,7 +71,7 @@ public sealed class FileBackupFolderCruder : ParCruder
         }
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new FolderPathMaskItemData();
     }
@@ -83,7 +83,7 @@ public sealed class FileBackupFolderCruder : ParCruder
 
     public override string? GetStatusFor(string name)
     {
-        return _currentValuesDict.ContainsKey(name) ? _currentValuesDict[name] : null;
+        return _currentValuesDict.TryGetValue(name, out var value) ? value : null;
     }
 
     public override void Save(string message)

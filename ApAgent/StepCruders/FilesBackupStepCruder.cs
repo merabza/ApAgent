@@ -76,7 +76,7 @@ public sealed class FilesBackupStepCruder : StepCruder
         parameters.FilesBackupSteps[recordName] = newFilesBackupStep;
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new FilesBackupStep();
     }

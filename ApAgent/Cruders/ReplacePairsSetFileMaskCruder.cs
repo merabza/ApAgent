@@ -36,7 +36,7 @@ public sealed class ReplacePairsSetFileMaskCruder : ParCruder
             v => (ItemData)new TextPairItemData { Text1 = v.Key, Text2 = v.Value });
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new TextPairItemData();
     }

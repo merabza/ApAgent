@@ -97,7 +97,7 @@ public sealed class JobScheduleCruder : ParCruder
         EnableFieldByName(nameof(JobSchedule.ActiveEndDayTime), enableDailyOccursManyTimes);
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new JobSchedule();
     }

@@ -29,7 +29,7 @@ public sealed class FolderPathsSetCruder : ParCruder
         return _currentValuesList.ToDictionary(p => p, p => (ItemData)new FolderPathItemData { Path = p });
     }
 
-    protected override ItemData CreateNewItem(string recordName, ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(ItemData? defaultItemData)
     {
         return new FolderPathItemData();
     }
