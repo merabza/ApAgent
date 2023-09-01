@@ -5,7 +5,7 @@ using System.Linq;
 using ApAgent.Counters;
 using CliParametersEdit.Counters;
 using CliParametersEdit.Generators;
-using DatabaseApiClients;
+using DatabasesManagement;
 using DbTools;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
@@ -39,7 +39,8 @@ internal class StandardJobsSchemaGenerator
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections));
+            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
+            null);
 
         if (dac == null || !dac.TestConnection(null).Result)
         {

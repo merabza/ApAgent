@@ -1,4 +1,4 @@
-﻿using DatabaseApiClients;
+﻿using DatabasesManagement;
 using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
@@ -25,7 +25,8 @@ public sealed class StepNamePrefixCounter
             (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
         var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections));
+            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
+            null);
 
         var dbServerInfo = dac?.GetDatabaseServerInfo().Result;
         return dbServerInfo?.ServerName ?? string.Empty;

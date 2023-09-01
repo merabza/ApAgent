@@ -5,7 +5,6 @@ using CliParametersApiClientsEdit.FieldEditors;
 using CliParametersDataEdit.FieldEditors;
 using CliParametersEdit.FieldEditors;
 using CliParametersExcludeSetsEdit.FieldEditors;
-using Installer.AgentClients;
 using LibApAgentData.Models;
 using LibParameters;
 using Microsoft.Extensions.Logging;
@@ -17,8 +16,6 @@ public sealed class ApAgentParametersEditor : ParametersEditor
     public ApAgentParametersEditor(IParameters parameters, ParametersManager parametersManager,
         ILogger logger) : base("InsuranceReport Parameters Editor", parameters, parametersManager)
     {
-        WebAgentClientFabric webAgentClientFabric = new();
-
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.LogFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.WorkFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.ProcLogFilesFolder)));
@@ -36,8 +33,7 @@ public sealed class ApAgentParametersEditor : ParametersEditor
         FieldEditors.Add(
             new DatabaseServerConnectionsFieldEditor(nameof(ApAgentParameters.DatabaseServerConnections),
                 parametersManager, logger));
-        FieldEditors.Add(new ApiClientsFieldEditor(logger, nameof(ApAgentParameters.ApiClients), parametersManager,
-            webAgentClientFabric));
+        FieldEditors.Add(new ApiClientsFieldEditor(logger, nameof(ApAgentParameters.ApiClients), parametersManager));
         FieldEditors.Add(new FileStoragesFieldEditor(logger, nameof(ApAgentParameters.FileStorages),
             parametersManager));
         FieldEditors.Add(new ExcludeSetsFieldEditor(nameof(ApAgentParameters.ExcludeSets), parametersManager));

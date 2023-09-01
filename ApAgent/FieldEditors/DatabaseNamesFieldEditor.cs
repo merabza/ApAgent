@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CliParameters.FieldEditors;
-using DatabaseApiClients;
+using DatabasesManagement;
 using DbTools;
 using DbTools.Models;
 using LibApAgentData;
@@ -68,9 +68,9 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true,
-            _logger, databaseWebAgentName, new ApiClients(parameters.ApiClients), databaseServerConnectionName,
-            new DatabaseServerConnections(parameters.DatabaseServerConnections));
+        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, databaseWebAgentName,
+            new ApiClients(parameters.ApiClients), databaseServerConnectionName,
+            new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null);
 
         if (agentClient is null)
         {

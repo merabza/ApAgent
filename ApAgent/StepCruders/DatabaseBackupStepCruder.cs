@@ -5,7 +5,6 @@ using CliParameters.FieldEditors;
 using CliParametersApiClientsEdit.FieldEditors;
 using CliParametersDataEdit.FieldEditors;
 using CliParametersEdit.FieldEditors;
-using Installer.AgentClients;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
 using LibParameters;
@@ -20,7 +19,6 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         logger, processes, parametersManager, "Database Backup Step", "Database Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
-        WebAgentClientFabric webAgentClientFabric = new();
 
         List<FieldEditor> tempFieldEditors = new();
         tempFieldEditors.AddRange(FieldEditors);
@@ -30,7 +28,7 @@ public sealed class DatabaseBackupStepCruder : StepCruder
             nameof(DatabaseBackupStep.DatabaseServerConnectionName), ParametersManager, true));
 
         FieldEditors.Add(new ApiClientNameFieldEditor(logger, nameof(DatabaseBackupStep.DatabaseWebAgentName),
-            ParametersManager, webAgentClientFabric, true));
+            ParametersManager, true));
 
         //FieldEditors.Add(new ApiClientDbServerNameFieldEditor(logger, nameof(DatabaseBackupStep.DatabaseServerName),
         //    ParametersManager, webAgentClientFabric, nameof(DatabaseBackupStep.DatabaseWebAgentName)));

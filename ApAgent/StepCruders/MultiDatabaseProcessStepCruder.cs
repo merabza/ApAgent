@@ -4,7 +4,6 @@ using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
 using CliParametersApiClientsEdit.FieldEditors;
 using CliParametersDataEdit.FieldEditors;
-using Installer.AgentClients;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
 using LibParameters;
@@ -23,8 +22,6 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder
         tempFieldEditors.AddRange(FieldEditors);
         FieldEditors.Clear();
 
-        WebAgentClientFabric webAgentClientFabric = new();
-
         FieldEditors.Add(new EnumFieldEditor<EMultiDatabaseActionType>(nameof(MultiDatabaseProcessStep.ActionType),
             EMultiDatabaseActionType.CheckRepairDataBase));
 
@@ -33,7 +30,7 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder
             nameof(MultiDatabaseProcessStep.DatabaseServerConnectionName), ParametersManager, true));
         //public string DatabaseWebAgentName { get; set; }
         FieldEditors.Add(new ApiClientNameFieldEditor(logger, nameof(MultiDatabaseProcessStep.DatabaseWebAgentName),
-            ParametersManager, webAgentClientFabric, true));
+            ParametersManager, true));
 
         FieldEditors.Add(
             new EnumFieldEditor<EDatabaseSet>(nameof(MultiDatabaseProcessStep.DatabaseSet),

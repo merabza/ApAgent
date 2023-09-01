@@ -1,5 +1,5 @@
 ﻿using System;
-using DatabaseApiClients;
+using DatabasesManagement;
 using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
@@ -33,7 +33,8 @@ public sealed class ProcLineCounter : SCounter
             return false;
 
         var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections));
+            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), null,
+            null);
 
         return dac?.IsServerLocal() ?? false;
     }

@@ -2,7 +2,7 @@
 using System.Linq;
 using CliMenu;
 using CliParameters.FieldEditors;
-using DatabaseApiClients;
+using DatabasesManagement;
 using DbTools;
 using DbTools.Models;
 using LibApAgentData;
@@ -47,7 +47,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
                 ? null
                 : DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, databaseWebAgentName,
                     new ApiClients(parameters.ApiClients), databaseServerConnectionName,
-                    new DatabaseServerConnections(parameters.DatabaseServerConnections));
+                    new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null);
 
         List<DatabaseInfoModel> dbList;
 
