@@ -13,7 +13,7 @@ public sealed class BackupFolderPathsFieldEditor : FieldEditor<Dictionary<string
     private readonly IParametersManager _parametersManager;
 
     public BackupFolderPathsFieldEditor(string propertyName, IParametersManager parametersManager) : base(propertyName,
-        null, true)
+        false, null, true)
     {
         _parametersManager = parametersManager;
     }

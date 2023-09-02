@@ -13,7 +13,7 @@ public sealed class ReplacePairsSetFieldEditor : FieldEditor<Dictionary<string, 
     private readonly ParametersManager _parametersManager;
 
     public ReplacePairsSetFieldEditor(string propertyName, ParametersManager parametersManager) : base(propertyName,
-        null, true)
+        false, null, true)
     {
         _parametersManager = parametersManager;
     }

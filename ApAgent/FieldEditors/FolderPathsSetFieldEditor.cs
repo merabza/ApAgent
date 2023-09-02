@@ -13,7 +13,7 @@ public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
     private readonly IParametersManager _parametersManager;
 
     public FolderPathsSetFieldEditor(string propertyName, IParametersManager parametersManager) : base(propertyName,
-        null, true)
+        false, null, true)
     {
         _parametersManager = parametersManager;
     }
