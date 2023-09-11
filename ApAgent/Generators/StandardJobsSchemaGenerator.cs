@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using ApAgent.Counters;
 using CliParametersEdit.Counters;
 using CliParametersEdit.Generators;
@@ -42,7 +43,7 @@ internal class StandardJobsSchemaGenerator
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
             null);
 
-        if (dac == null || !dac.TestConnection(null).Result)
+        if (dac == null || !dac.TestConnection(null, CancellationToken.None).Result)
         {
             StShared.WriteErrorLine("Can not connect to server. Generation process stopped", true, _logger);
             return;
@@ -83,7 +84,7 @@ internal class StandardJobsSchemaGenerator
         var trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
 
-        var dbServerInfo = dac.GetDatabaseServerInfo().Result;
+        var dbServerInfo = dac.GetDatabaseServerInfo(CancellationToken.None).Result;
 
         if (dbServerInfo is null)
         {
@@ -290,8 +291,11 @@ internal class StandardJobsSchemaGenerator
     {
         {
             var jsdKvp = parameters.JobSchedules.Where(w =>
-                w.Value.Enabled && w.Value.ScheduleType == EScheduleType.Daily &&
-                w.Value.DailyFrequencyType == EDailyFrequency.OccursManyTimes).ToList();
+                w.Value is
+                {
+                    Enabled: true, ScheduleType: EScheduleType.Daily,
+                    DailyFrequencyType: EDailyFrequency.OccursManyTimes
+                }).ToList();
 
             if (jsdKvp.Any())
                 return jsdKvp[0].Key;
@@ -321,8 +325,10 @@ internal class StandardJobsSchemaGenerator
     {
         {
             var jsdKvp = parameters.JobSchedules.Where(w =>
-                w.Value.Enabled && w.Value.ScheduleType == EScheduleType.Daily &&
-                w.Value.DailyFrequencyType == EDailyFrequency.OccursOnce).ToList();
+                w.Value is
+                {
+                    Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
+                }).ToList();
 
             if (jsdKvp.Any())
                 return jsdKvp[0].Key;

@@ -1,4 +1,5 @@
-﻿using DatabasesManagement;
+﻿using System.Threading;
+using DatabasesManagement;
 using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ public sealed class StepNamePrefixCounter
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
             null);
 
-        var dbServerInfo = dac?.GetDatabaseServerInfo().Result;
+        var dbServerInfo = dac?.GetDatabaseServerInfo(CancellationToken.None).Result;
         return dbServerInfo?.ServerName ?? string.Empty;
     }
 }
