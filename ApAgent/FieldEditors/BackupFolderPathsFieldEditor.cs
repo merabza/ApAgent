@@ -12,8 +12,8 @@ public sealed class BackupFolderPathsFieldEditor : FieldEditor<Dictionary<string
 {
     private readonly IParametersManager _parametersManager;
 
-    public BackupFolderPathsFieldEditor(string propertyName, IParametersManager parametersManager) : base(propertyName,
-        false, null, true)
+    public BackupFolderPathsFieldEditor(string propertyName, IParametersManager parametersManager,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
     {
         _parametersManager = parametersManager;
     }

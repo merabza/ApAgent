@@ -16,7 +16,8 @@ public sealed class DbServerSideBackupPathFieldEditor : FieldEditor<string>
     private readonly ParametersManager _parametersManager;
 
     public DbServerSideBackupPathFieldEditor(string propertyName, ParametersManager parametersManager,
-        string databaseWebAgentNamePropertyName, string databaseBackupParametersPropertyName) : base(propertyName)
+        string databaseWebAgentNamePropertyName, string databaseBackupParametersPropertyName,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _parametersManager = parametersManager;
         _databaseWebAgentNamePropertyName = databaseWebAgentNamePropertyName;

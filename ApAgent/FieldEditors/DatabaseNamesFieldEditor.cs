@@ -22,7 +22,6 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
     private readonly string _databaseServerConnectionNamePropertyName;
 
-    //private readonly string _databaseServerNamePropertyName;
     private readonly string _databaseSetPropertyName;
     private readonly string _databaseWebAgentNamePropertyName;
     private readonly ILogger _logger;
@@ -30,13 +29,13 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
     public DatabaseNamesFieldEditor(ILogger logger, string propertyName, IParametersManager parametersManager,
         string databaseServerConnectionNamePropertyName, string databaseWebAgentNamePropertyName,
-        string databaseSetPropertyName, string? databaseBackupParametersPropertyName = null) : base(propertyName)
+        string databaseSetPropertyName, string? databaseBackupParametersPropertyName = null,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _logger = logger;
         _parametersManager = parametersManager;
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
         _databaseWebAgentNamePropertyName = databaseWebAgentNamePropertyName;
-        //_databaseServerNamePropertyName = databaseServerNamePropertyName;
         _databaseSetPropertyName = databaseSetPropertyName;
         _databaseBackupParametersPropertyName = databaseBackupParametersPropertyName;
     }

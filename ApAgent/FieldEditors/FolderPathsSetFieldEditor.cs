@@ -12,8 +12,8 @@ public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
 {
     private readonly IParametersManager _parametersManager;
 
-    public FolderPathsSetFieldEditor(string propertyName, IParametersManager parametersManager) : base(propertyName,
-        false, null, true)
+    public FolderPathsSetFieldEditor(string propertyName, IParametersManager parametersManager,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
     {
         _parametersManager = parametersManager;
     }

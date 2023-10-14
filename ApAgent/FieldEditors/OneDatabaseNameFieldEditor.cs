@@ -20,27 +20,25 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
 {
     private readonly string _databaseServerConnectionNamePropertyName;
 
-    //private readonly string _databaseServerNamePropertyName;
     private readonly string _databaseWebAgentNamePropertyName;
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
 
     public OneDatabaseNameFieldEditor(ILogger logger, string propertyName, IParametersManager parametersManager,
-        string databaseServerConnectionNamePropertyName, string databaseWebAgentNamePropertyName) : base(propertyName)
+        string databaseServerConnectionNamePropertyName, string databaseWebAgentNamePropertyName,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _logger = logger;
         _parametersManager = parametersManager;
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
         _databaseWebAgentNamePropertyName = databaseWebAgentNamePropertyName;
-        //_databaseServerNamePropertyName = databaseServerNamePropertyName;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
+    public override void UpdateField(string? recordName, object recordForUpdate)
     {
         var databaseServerConnectionName =
             GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
         var databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
-        //var databaseServerName = GetValue<string>(recordForUpdate, _databaseServerNamePropertyName);
 
         var agentClient =
             _parametersManager.Parameters is not IParametersWithDatabaseServerConnectionsAndApiClients parameters

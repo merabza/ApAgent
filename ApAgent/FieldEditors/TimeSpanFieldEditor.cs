@@ -9,7 +9,8 @@ public sealed class TimeSpanFieldEditor : FieldEditor<TimeSpan>
 {
     private readonly TimeSpan _defaultValue;
 
-    public TimeSpanFieldEditor(string propertyName, TimeSpan defaultValue) : base(propertyName)
+    public TimeSpanFieldEditor(string propertyName, TimeSpan defaultValue, bool enterFieldDataOnCreate = false) : base(
+        propertyName, enterFieldDataOnCreate)
     {
         _defaultValue = defaultValue;
     }

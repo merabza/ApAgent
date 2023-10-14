@@ -9,8 +9,8 @@ public sealed class ArchiverProcLineIdFieldEditor : FieldEditor<int>
     private readonly string _archiverNamePropertyName;
     private readonly int _defaultValue;
 
-    public ArchiverProcLineIdFieldEditor(string propertyName, int defaultValue, string archiverNamePropertyName) :
-        base(propertyName)
+    public ArchiverProcLineIdFieldEditor(string propertyName, int defaultValue, string archiverNamePropertyName,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _defaultValue = defaultValue;
         _archiverNamePropertyName = archiverNamePropertyName;

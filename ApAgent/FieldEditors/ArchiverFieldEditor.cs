@@ -9,7 +9,8 @@ public sealed class ArchiverFieldEditor : FieldEditor<string>
 {
     private readonly IParametersManager _parametersManager;
 
-    public ArchiverFieldEditor(string propertyName, IParametersManager parametersManager) : base(propertyName)
+    public ArchiverFieldEditor(string propertyName, IParametersManager parametersManager,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _parametersManager = parametersManager;
     }

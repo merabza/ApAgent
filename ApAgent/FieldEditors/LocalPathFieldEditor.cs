@@ -13,7 +13,8 @@ public sealed class LocalPathFieldEditor : FieldEditor<string>
     private readonly IParametersManager _parametersManager;
 
     public LocalPathFieldEditor(string propertyName, IParametersManager parametersManager,
-        string? databaseBackupParametersPropertyName, string? parametersFileName) : base(propertyName)
+        string? databaseBackupParametersPropertyName, string? parametersFileName, bool enterFieldDataOnCreate = false) :
+        base(propertyName, enterFieldDataOnCreate)
     {
         _parametersManager = parametersManager;
         _databaseBackupParametersPropertyName = databaseBackupParametersPropertyName;

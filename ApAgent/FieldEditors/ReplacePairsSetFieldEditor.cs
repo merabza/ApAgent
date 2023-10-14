@@ -12,8 +12,8 @@ public sealed class ReplacePairsSetFieldEditor : FieldEditor<Dictionary<string, 
 {
     private readonly ParametersManager _parametersManager;
 
-    public ReplacePairsSetFieldEditor(string propertyName, ParametersManager parametersManager) : base(propertyName,
-        false, null, true)
+    public ReplacePairsSetFieldEditor(string propertyName, ParametersManager parametersManager,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
     {
         _parametersManager = parametersManager;
     }

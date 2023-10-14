@@ -10,7 +10,8 @@ public sealed class DateFieldEditor : FieldEditor<DateTime>
 {
     private readonly DateTime _defaultValue;
 
-    public DateFieldEditor(string propertyName, DateTime defaultValue) : base(propertyName)
+    public DateFieldEditor(string propertyName, DateTime defaultValue, bool enterFieldDataOnCreate = false) : base(
+        propertyName, enterFieldDataOnCreate)
     {
         _defaultValue = defaultValue;
     }

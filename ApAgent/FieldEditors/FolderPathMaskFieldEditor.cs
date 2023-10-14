@@ -14,7 +14,8 @@ public sealed class FolderPathMaskFieldEditor : FieldEditor<string>
 
 
     public FolderPathMaskFieldEditor(FileBackupFolderCruder fileBackupFolderCruder, string propertyName,
-        string? defaultValue = default) : base(propertyName)
+        string? defaultValue = default, bool enterFieldDataOnCreate = false) : base(propertyName,
+        enterFieldDataOnCreate)
     {
         _fileBackupFolderCruder = fileBackupFolderCruder;
         _defaultValue = defaultValue;

@@ -9,8 +9,8 @@ public sealed class ReplacePairsSetNameFieldEditor : FieldEditor<string>
     private readonly IParametersManager _parametersManager;
     private readonly bool _useNone;
 
-    public ReplacePairsSetNameFieldEditor(string propertyName, IParametersManager parametersManager, bool useNone) :
-        base(propertyName)
+    public ReplacePairsSetNameFieldEditor(string propertyName, IParametersManager parametersManager, bool useNone,
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _parametersManager = parametersManager;
         _useNone = useNone;
