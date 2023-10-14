@@ -15,7 +15,7 @@ public sealed class ReplacePairsSetCruder : ParCruder
     {
     }
 
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    protected override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
 

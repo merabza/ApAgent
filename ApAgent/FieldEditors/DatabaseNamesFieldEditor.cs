@@ -45,7 +45,6 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         var databaseServerConnectionName =
             GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
         var databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
-        //var databaseServerName = GetValue<string>(recordForUpdate, _databaseServerNamePropertyName);
 
         var databaseSet = GetValue<EDatabaseSet>(recordForUpdate, _databaseSetPropertyName);
 

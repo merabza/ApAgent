@@ -30,9 +30,6 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         FieldEditors.Add(new ApiClientNameFieldEditor(logger, nameof(DatabaseBackupStep.DatabaseWebAgentName),
             ParametersManager, true));
 
-        //FieldEditors.Add(new ApiClientDbServerNameFieldEditor(logger, nameof(DatabaseBackupStep.DatabaseServerName),
-        //    ParametersManager, webAgentClientFabric, nameof(DatabaseBackupStep.DatabaseWebAgentName)));
-
         FieldEditors.Add(new DatabaseBackupParametersFieldEditor(
             nameof(DatabaseBackupStep.DatabaseBackupParameters),
             ParametersManager));

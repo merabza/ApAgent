@@ -38,7 +38,7 @@ public /*open*/ class StepCruder : ParCruder
         FieldEditors.Add(new BoolFieldEditor(nameof(JobStep.Enabled), true));
     }
 
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    protected override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
         RunThisStepNowCommand runThisStepNowCommand =

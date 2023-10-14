@@ -15,7 +15,7 @@ public sealed class TimeSpanFieldEditor : FieldEditor<TimeSpan>
         _defaultValue = defaultValue;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
+    public override void UpdateField(string? recordName, object recordForUpdate)
     {
         SetValue(recordForUpdate, Inputer.InputTimeSpan(FieldName, GetValue(recordForUpdate, _defaultValue)));
     }

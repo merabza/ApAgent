@@ -16,7 +16,7 @@ public sealed class ReplacePairsSetNameFieldEditor : FieldEditor<string>
         _useNone = useNone;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
+    public override void UpdateField(string? recordName, object recordForUpdate)
     {
         ReplacePairsSetCruder replacePairsSetCruderCruder = new(_parametersManager);
         SetValue(recordForUpdate,
