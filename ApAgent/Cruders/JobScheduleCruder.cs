@@ -102,7 +102,8 @@ public sealed class JobScheduleCruder : ParCruder
         return new JobSchedule();
     }
 
-    protected override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    //public საჭიროა ApAgent პროექტისათვის
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
 

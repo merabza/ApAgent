@@ -38,7 +38,8 @@ public /*open*/ class StepCruder : ParCruder
         FieldEditors.Add(new BoolFieldEditor(nameof(JobStep.Enabled), true));
     }
 
-    protected override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    //public საჭიროა ApAgent პროექტისათვის
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
         RunThisStepNowCommand runThisStepNowCommand =
