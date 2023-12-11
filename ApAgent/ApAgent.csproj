@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\ApAgentData\LibApAgentData\LibApAgentData.csproj" />
     <ProjectReference Include="..\..\AppCliTools\CliParametersApiClientsEdit\CliParametersApiClientsEdit.csproj" />
     <ProjectReference Include="..\..\AppCliTools\CliParametersDataEdit\CliParametersDataEdit.csproj" />
