@@ -61,7 +61,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         else
         {
             DatabasesListCreator databasesListCreator = new(EDatabaseSet.AllDatabases, agentClient, EBackupType.Full);
-            dbList = databasesListCreator.LoadDatabaseNames();
+            dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
         }
 
         var currentDatabaseName = GetValue(recordForUpdate);

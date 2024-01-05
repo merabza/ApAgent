@@ -82,7 +82,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         else
         {
             DatabasesListCreator databasesListCreator = new(databaseSet, agentClient, backupType);
-            dbList = databasesListCreator.LoadDatabaseNames();
+            dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
         }
 
         if (databaseSet != EDatabaseSet.DatabasesBySelection)
