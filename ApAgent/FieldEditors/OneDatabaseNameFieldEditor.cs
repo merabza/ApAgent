@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using CliMenu;
 using CliParameters.FieldEditors;
 using DatabasesManagement;
@@ -24,6 +25,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public OneDatabaseNameFieldEditor(ILogger logger, string propertyName, IParametersManager parametersManager,
         string databaseServerConnectionNamePropertyName, string databaseWebAgentNamePropertyName,
         bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
@@ -45,7 +47,8 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
                 ? null
                 : DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, databaseWebAgentName,
                     new ApiClients(parameters.ApiClients), databaseServerConnectionName,
-                    new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null);
+                    new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null,
+                    CancellationToken.None).Result;
 
         List<DatabaseInfoModel> dbList;
 
@@ -53,7 +56,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         {
             StShared.WriteErrorLine($"DatabaseManagementClient does not created for webAgent {databaseWebAgentName}",
                 true, _logger);
-            dbList = new List<DatabaseInfoModel>();
+            dbList = [];
         }
         else
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using DatabasesManagement;
 using LibDatabaseParameters;
 using LibParameters;
@@ -14,6 +15,7 @@ public sealed class ProcLineCounter : SCounter
     private readonly IParametersManager _parametersManager;
     private readonly string? _uploadFileStorageName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ProcLineCounter(ILogger logger, IParametersManager parametersManager, string databaseServerConnectionName,
         string? downloadFileStorageName, string? uploadFileStorageName) : base(
         parametersManager)
@@ -33,22 +35,27 @@ public sealed class ProcLineCounter : SCounter
             return false;
 
         var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), null,
-            null);
+            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections),
+            null, null, CancellationToken.None).Result;
 
-        return dac?.IsServerLocal() ?? false;
+        var isServerLocalResult = dac?.IsServerLocal(CancellationToken.None).Result;
+        if (isServerLocalResult is not null && isServerLocalResult.Value.IsT0)
+            return isServerLocalResult.Value.AsT0;
+        return false;
     }
 
     public int Count(EProcLineCase procLineCase)
     {
+        var isServerLocal = IsServerLocal();
+
         return procLineCase switch
         {
             EProcLineCase.Backup => 1,
-            EProcLineCase.Download => IsServerLocal() || _downloadFileStorageName is null ||
+            EProcLineCase.Download => isServerLocal || _downloadFileStorageName is null ||
                                       IsFileStorageLocal(_downloadFileStorageName)
                 ? 1
                 : 2,
-            EProcLineCase.Archive => IsServerLocal() || _downloadFileStorageName is null ||
+            EProcLineCase.Archive => isServerLocal || _downloadFileStorageName is null ||
                                      IsFileStorageLocal(_downloadFileStorageName)
                 ? 1
                 : 3,

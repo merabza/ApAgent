@@ -25,6 +25,7 @@ internal class StandardJobsSchemaGenerator
     private readonly IParametersManager _parametersManager;
     private readonly bool _useConsole;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public StandardJobsSchemaGenerator(bool useConsole, ILogger logger, IParametersManager parametersManager,
         string databaseServerConnectionName, string? parametersFileName)
     {
@@ -41,9 +42,12 @@ internal class StandardJobsSchemaGenerator
 
         var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
-            null);
+            null, CancellationToken.None).Result;
 
-        if (dac == null || !dac.TestConnection(null, CancellationToken.None).Result)
+
+        var testConnectionResult = dac?.TestConnection(null, CancellationToken.None).Result;
+
+        if (dac is null || testConnectionResult is null || testConnectionResult.Value.IsSome)
         {
             StShared.WriteErrorLine("Can not connect to server. Generation process stopped", true, _logger);
             return;
@@ -77,20 +81,23 @@ internal class StandardJobsSchemaGenerator
         //string archiverZipName = standardArchiversGenerator.ArchiverZipName; //Zip
         //string archiverRarName = standardArchiversGenerator.ArchiverRarName; //Rar
 
-        ////1. დადგინდეს SQL სერვერი ლოკალურია თუ მოშორებული.
-        var isServerLocal = dac.IsServerLocal();
+        //1. დადგინდეს SQL სერვერი ლოკალურია თუ მოშორებული.
+        var isServerLocalResult = dac.IsServerLocal(CancellationToken.None).Result;
+        var isServerLocal = false;
+        if (isServerLocalResult.IsT0)
+            isServerLocal = isServerLocalResult.AsT0;
 
         var fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
         var trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
-
-        var dbServerInfo = dac.GetDatabaseServerInfo(CancellationToken.None).Result;
-
-        if (dbServerInfo is null)
+        var getDatabaseServerInfoResult = dac.GetDatabaseServerInfo(CancellationToken.None).Result;
+        if ( getDatabaseServerInfoResult.IsT1)
         {
+            Err.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
             StShared.WriteErrorLine("dbServerInfo does not created. Generation process stopped", true, _logger);
             return;
         }
+        var dbServerInfo = getDatabaseServerInfoResult.AsT0;
 
         //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
         var isServerAllowsCompression = dbServerInfo.AllowsCompression;
@@ -316,7 +323,7 @@ internal class StandardJobsSchemaGenerator
             ActiveEndDayTime = new TimeSpan(23, 59, 59)
         };
 
-        var name = CreateNewName(new[] { "Hourly" }, parameters.JobSchedules.Keys.ToList());
+        var name = CreateNewName(["Hourly"], parameters.JobSchedules.Keys.ToList());
         parameters.JobSchedules.Add(name, jobScheduleHourly);
         return name;
     }
@@ -346,7 +353,7 @@ internal class StandardJobsSchemaGenerator
             ActiveStartDayTime = new TimeSpan(4, 0, 0)
         };
 
-        var name = CreateNewName(new[] { "Daily", "DailyAt4" }, parameters.JobSchedules.Keys.ToList());
+        var name = CreateNewName(["Daily", "DailyAt4"], [.. parameters.JobSchedules.Keys]);
         parameters.JobSchedules.Add(name, jobScheduleDaily);
 
         return name;
@@ -359,7 +366,7 @@ internal class StandardJobsSchemaGenerator
             var jsdKvp = parameters.JobSchedules
                 .Where(w => w.Value.Enabled && w.Value.ScheduleType == EScheduleType.AtStart).ToList();
 
-            if (jsdKvp.Any())
+            if (jsdKvp.Count != 0)
                 return jsdKvp[0].Key;
         }
 
@@ -373,7 +380,7 @@ internal class StandardJobsSchemaGenerator
             //JobStepNames = new List<string>()
         };
 
-        parameters.JobSchedules.Add(CreateNewName(new[] { atStartName }, parameters.JobSchedules.Keys.ToList()),
+        parameters.JobSchedules.Add(CreateNewName([atStartName], [.. parameters.JobSchedules.Keys]),
             jobScheduleAtStart);
 
         return atStartName;

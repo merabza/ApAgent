@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using CliParameters.FieldEditors;
 using DatabasesManagement;
 using DbTools;
@@ -27,6 +28,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public DatabaseNamesFieldEditor(ILogger logger, string propertyName, IParametersManager parametersManager,
         string databaseServerConnectionNamePropertyName, string databaseWebAgentNamePropertyName,
         string databaseSetPropertyName, string? databaseBackupParametersPropertyName = null,
@@ -67,14 +69,15 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         List<DatabaseInfoModel> dbList;
 
         var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, databaseWebAgentName,
-            new ApiClients(parameters.ApiClients), databaseServerConnectionName,
-            new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null);
+                new ApiClients(parameters.ApiClients), databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
+            .Result;
 
         if (agentClient is null)
         {
             StShared.WriteErrorLine($"DatabaseManagementClient does not created for webAgent {databaseWebAgentName}",
                 true, _logger);
-            dbList = new List<DatabaseInfoModel>();
+            dbList = [];
         }
         else
         {
@@ -95,7 +98,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         }
         else
         {
-            var oldDatabaseNames = GetValue(recordForUpdate, new List<string>()) ?? new List<string>();
+            var oldDatabaseNames = GetValue(recordForUpdate, []) ?? [];
             var oldDatabaseChecks = dbList.ToDictionary(
                 databaseInfoModel => databaseInfoModel.Name,
                 databaseInfoModel => oldDatabaseNames.Contains(databaseInfoModel.Name));

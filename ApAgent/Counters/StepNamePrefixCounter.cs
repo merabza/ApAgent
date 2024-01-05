@@ -12,8 +12,8 @@ public sealed class StepNamePrefixCounter
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
 
-    public StepNamePrefixCounter(ILogger logger, IParametersManager parametersManager,
-        string databaseServerConnectionName)
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public StepNamePrefixCounter(ILogger logger, IParametersManager parametersManager, string databaseServerConnectionName)
     {
         _logger = logger;
         _parametersManager = parametersManager;
@@ -27,9 +27,11 @@ public sealed class StepNamePrefixCounter
 
         var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
-            null);
+            null, CancellationToken.None).Result;
 
-        var dbServerInfo = dac?.GetDatabaseServerInfo(CancellationToken.None).Result;
-        return dbServerInfo?.ServerName ?? string.Empty;
+        var getDatabaseServerInfoResult = dac?.GetDatabaseServerInfo(CancellationToken.None).Result;
+        if (getDatabaseServerInfoResult is not null && getDatabaseServerInfoResult.Value.IsT0)
+            return getDatabaseServerInfoResult.Value.AsT0?.ServerName ?? string.Empty;
+        return string.Empty;
     }
 }
