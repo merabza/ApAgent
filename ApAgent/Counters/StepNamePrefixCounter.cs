@@ -13,7 +13,8 @@ public sealed class StepNamePrefixCounter
     private readonly IParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public StepNamePrefixCounter(ILogger logger, IParametersManager parametersManager, string databaseServerConnectionName)
+    public StepNamePrefixCounter(ILogger logger, IParametersManager parametersManager,
+        string databaseServerConnectionName)
     {
         _logger = logger;
         _parametersManager = parametersManager;

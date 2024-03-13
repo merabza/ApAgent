@@ -91,12 +91,13 @@ internal class StandardJobsSchemaGenerator
         var trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
         var getDatabaseServerInfoResult = dac.GetDatabaseServerInfo(CancellationToken.None).Result;
-        if ( getDatabaseServerInfoResult.IsT1)
+        if (getDatabaseServerInfoResult.IsT1)
         {
             Err.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
             StShared.WriteErrorLine("dbServerInfo does not created. Generation process stopped", true, _logger);
             return;
         }
+
         var dbServerInfo = getDatabaseServerInfoResult.AsT0;
 
         //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
