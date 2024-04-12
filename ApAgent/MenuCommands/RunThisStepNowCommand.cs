@@ -19,6 +19,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
     private readonly StepCruder _stepCruder;
     private readonly string _stepName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public RunThisStepNowCommand(ILogger logger, Processes processes, IParametersManager parametersManager,
         StepCruder stepCruder, string stepName, string? parametersFileName)
     {
@@ -51,7 +52,8 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
             return;
         }
 
-        var processManager = _processes.GetNewProcessManager();
+        // ReSharper disable once using
+        using var processManager = _processes.GetNewProcessManager();
         try
         {
             var stepToolAction =
