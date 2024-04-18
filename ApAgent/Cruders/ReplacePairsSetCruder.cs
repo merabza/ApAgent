@@ -2,7 +2,7 @@
 using System.Linq;
 using CliMenu;
 using CliParameters;
-using CliParameters.MenuCommands;
+using CliParameters.CliMenuCommands;
 using LibApAgentData.Models;
 using LibParameters;
 
@@ -10,6 +10,7 @@ namespace ApAgent.Cruders;
 
 public sealed class ReplacePairsSetCruder : ParCruder
 {
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ReplacePairsSetCruder(IParametersManager parametersManager) : base(parametersManager, "Replace Pairs Set",
         "Replace Pairs Sets", true)
     {
@@ -25,11 +26,11 @@ public sealed class ReplacePairsSetCruder : ParCruder
         var replacePairsSet = replacePairsSets[recordName];
 
         ReplacePairsSetFileMaskCruder detailsCruder = new(ParametersManager, recordName);
-        NewItemCommand newItemCommand = new(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
+        NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
         foreach (var detailListCommand in replacePairsSet.PairsDict.Select(mask =>
-                     new ItemSubMenuCommand(detailsCruder, mask.Key, recordName, true)))
+                     new ItemSubMenuCliMenuCommand(detailsCruder, mask.Key, recordName, true)))
             itemSubMenuSet.AddMenuItem(detailListCommand);
     }
 

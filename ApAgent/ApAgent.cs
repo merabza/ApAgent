@@ -3,9 +3,9 @@ using ApAgent.Cruders;
 using ApAgent.MenuCommands;
 using ApAgent.StepCruders;
 using CliMenu;
-using CliParameters.MenuCommands;
+using CliParameters.CliMenuCommands;
 using CliTools;
-using CliTools.Commands;
+using CliTools.CliMenuCommands;
 using LibApAgentData.Models;
 using LibDataInput;
 using LibParameters;
@@ -20,6 +20,7 @@ public sealed class ApAgent : CliAppLoop
     private readonly ParametersManager _parametersManager;
     private readonly Processes _processes;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ApAgent(ILogger logger, ParametersManager parametersManager, Processes processes) : base(null, processes)
     {
         _logger = logger;
@@ -43,7 +44,7 @@ public sealed class ApAgent : CliAppLoop
 
         //ძირითადი პარამეტრების რედაქტირება
         ApAgentParametersEditor apAgentParametersEditor = new(parameters, _parametersManager, _logger);
-        mainMenuSet.AddMenuItem(new ParametersEditorListCommand(apAgentParametersEditor),
+        mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(apAgentParametersEditor),
             "ApAgent Parameters Editor");
 
         //მთლიანი ფაილის გასუფთავება
@@ -51,44 +52,47 @@ public sealed class ApAgent : CliAppLoop
         mainMenuSet.AddMenuItem(saveApAgentParametersCommand);
 
         //სამუშაოების დროის დაგეგმვების სია
-        CruderListCommand jobSchedulesCommand = new(new JobScheduleCruder(_logger, _parametersManager, _processes));
+        CruderListCliMenuCommand jobSchedulesCommand =
+            new(new JobScheduleCruder(_logger, _parametersManager, _processes));
         mainMenuSet.AddMenuItem(jobSchedulesCommand);
 
         //მონაცემთა ბაზების ბექაპირების ნაბიჯების სია
-        CruderListCommand databaseBackupStepCommand =
+        CruderListCliMenuCommand databaseBackupStepCommand =
             new(new DatabaseBackupStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(databaseBackupStepCommand);
 
         //რამდენიმე ბაზის დამუშავების ბრძანებების სია
-        CruderListCommand multiDatabaseProcessStepCommand =
+        CruderListCliMenuCommand multiDatabaseProcessStepCommand =
             new(new MultiDatabaseProcessStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(multiDatabaseProcessStepCommand);
 
         //პროგრამის გაშვების ნაბიჯების სია
-        CruderListCommand runProgramStepCommand =
+        CruderListCliMenuCommand runProgramStepCommand =
             new(new RunProgramStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(runProgramStepCommand);
 
         //მონაცემთა ბაზების მხარეს გასაშვები ბრძანებების ნაბიჯების სია
-        CruderListCommand executeSqlCommandStepCommand =
+        CruderListCliMenuCommand executeSqlCommandStepCommand =
             new(new ExecuteSqlCommandStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(executeSqlCommandStepCommand);
 
         //ფაილების დაბეკაპების ნაბიჯების სია
-        CruderListCommand filesBackupStepCommand =
+        CruderListCliMenuCommand filesBackupStepCommand =
             new(new FilesBackupStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(filesBackupStepCommand);
 
         //ფაილების დასინქრონიზების ნაბიჯების სია
-        CruderListCommand filesSyncStepCommand = new(new FilesSyncStepCruder(_logger, _processes, _parametersManager));
+        CruderListCliMenuCommand filesSyncStepCommand =
+            new(new FilesSyncStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(filesSyncStepCommand);
 
         //ფაილების გადაადგილების ნაბიჯების სია
-        CruderListCommand filesMoveStepCommand = new(new FilesMoveStepCruder(_logger, _processes, _parametersManager));
+        CruderListCliMenuCommand filesMoveStepCommand =
+            new(new FilesMoveStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(filesMoveStepCommand);
 
         //ფაილების გადაადგილების ნაბიჯების სია
-        CruderListCommand unZipOnPlaceStepCommand =
+        CruderListCliMenuCommand unZipOnPlaceStepCommand =
             new(new UnZipOnPlaceStepCruder(_logger, _processes, _parametersManager));
         mainMenuSet.AddMenuItem(unZipOnPlaceStepCommand);
 
@@ -106,7 +110,7 @@ public sealed class ApAgent : CliAppLoop
 
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
-        mainMenuSet.AddMenuItem(key, "Exit", new ExitCommand(), key.Length);
+        mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
 
         return true;
     }
