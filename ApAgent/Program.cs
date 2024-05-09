@@ -38,7 +38,7 @@ try
 
     var parametersFileName = argParser.ParametersFileName;
     ServicesCreator servicesCreator = new(par.LogFolder, null, "ApAgent");
-    
+
     // ReSharper disable once using
     using var serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Information);
 
