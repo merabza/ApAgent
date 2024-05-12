@@ -28,7 +28,7 @@ public sealed class ApAgent : CliAppLoop
         _processes = processes;
     }
 
-    protected override bool BuildMainMenu()
+    protected override void BuildMainMenu()
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -40,7 +40,7 @@ public sealed class ApAgent : CliAppLoop
 
         CliMenuSet mainMenuSet = new("Main Menu");
         if (!AddChangeMenu(mainMenuSet))
-            return false;
+            return;
 
         //ძირითადი პარამეტრების რედაქტირება
         ApAgentParametersEditor apAgentParametersEditor = new(parameters, _parametersManager, _logger);
@@ -111,7 +111,5 @@ public sealed class ApAgent : CliAppLoop
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
         mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
-
-        return true;
     }
 }

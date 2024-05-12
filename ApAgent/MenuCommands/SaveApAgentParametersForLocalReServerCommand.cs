@@ -44,7 +44,7 @@ public sealed class SaveApAgentParametersForLocalReServerCommand : CliMenuComman
                     return;
 
             //შევინახოთ პარამეტრების ფაილი
-            _parametersManager.Save(parameters, "Parameters for ReServer Saved", false,
+            _parametersManager.Save(parameters, "Parameters for ReServer Saved",
                 parameters.ApAgentParametersFileNameForLocalReServer);
         }
         catch (DataInputEscapeException)
