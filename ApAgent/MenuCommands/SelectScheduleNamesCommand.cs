@@ -12,6 +12,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
     private readonly bool _selected;
     private readonly string _stepName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public SelectScheduleNamesCommand(IParametersManager parametersManager, string stepName, string scheduleName,
         bool selected) : base(null, null, false, EStatusView.Table, true)
     {

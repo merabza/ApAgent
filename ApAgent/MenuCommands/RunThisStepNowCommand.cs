@@ -1,5 +1,4 @@
-﻿using System;
-using ApAgent.StepCruders;
+﻿using ApAgent.StepCruders;
 using CliMenu;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
@@ -54,26 +53,16 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
 
         // ReSharper disable once using
         using var processManager = _processes.GetNewProcessManager();
-        try
-        {
-            var stepToolAction =
-                jobStep.GetToolAction(_logger, true, processManager, parameters, procLogFilesFolder);
 
-            if (stepToolAction is null)
-            {
-                StShared.WriteErrorLine("stepToolAction does not found. step does not started", true, _logger);
-                return;
-            }
+        var stepToolAction =
+            jobStep.GetToolAction(_logger, true, processManager, parameters, procLogFilesFolder);
 
-            processManager.Run(stepToolAction);
-        }
-        catch (OperationCanceledException e)
+        if (stepToolAction is null)
         {
-            _logger.LogError(e, null);
+            StShared.WriteErrorLine("stepToolAction does not found. step does not started", true, _logger);
+            return;
         }
-        catch (Exception e)
-        {
-            _logger.LogError(e, null);
-        }
+
+        processManager.Run(stepToolAction);
     }
 }

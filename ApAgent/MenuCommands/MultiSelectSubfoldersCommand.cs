@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ApAgent.Cruders;
 using CliMenu;
-using LibDataInput;
 using LibMenuInput;
 using SystemToolsShared;
 
@@ -15,6 +13,7 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
     private readonly FolderPathsSetCruder _folderPathsSetCruder;
     private readonly List<string> _masksAndFolders;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public MultiSelectSubfoldersCommand(List<string> masksAndFolders,
         FolderPathsSetCruder folderPathsSetCruder)
     {
@@ -24,57 +23,41 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
 
     protected override void RunAction()
     {
-        try
+        var folderName =
+            MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
+        if (string.IsNullOrWhiteSpace(folderName))
+            return;
+
+        var dir = CheckFolder(folderName);
+        if (dir == null)
+            return;
+
+        //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
+        var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
+            .ToDictionary(k => k.Name, v => _masksAndFolders.Contains(v.FullName));
+        //გამოვიდეს სიიდან ამრჩევი
+        MenuInputer.MultipleInputFromList($"Select subfolders from {folderName}", foldersChecks);
+        //DictMaskCounter dictMaskCounter = new DictMaskCounter(_masksAndFolders);
+
+        foreach (var kvp in foldersChecks)
         {
-            var folderName =
-                MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
-            if (string.IsNullOrWhiteSpace(folderName))
-                return;
-
-            var dir = CheckFolder(folderName);
-            if (dir == null)
-                return;
-
-            //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
-            var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
-                .ToDictionary(k => k.Name, v => _masksAndFolders.Contains(v.FullName));
-            //გამოვიდეს სიიდან ამრჩევი
-            MenuInputer.MultipleInputFromList($"Select subfolders from {folderName}", foldersChecks);
-            //DictMaskCounter dictMaskCounter = new DictMaskCounter(_masksAndFolders);
-
-            foreach (var kvp in foldersChecks)
+            var path = Path.Combine(folderName, kvp.Key);
+            if (kvp.Value)
             {
-                var path = Path.Combine(folderName, kvp.Key);
-                if (kvp.Value)
-                {
-                    //ჩართული ჩავამატოთ თუ არ არსებობს
-                    if (!_masksAndFolders.Contains(path))
-                        _masksAndFolders.Add(path);
-                }
-                else
-                {
-                    //გამორთული ამოვაკლოთ თუ არსებობს
-                    if (_masksAndFolders.Contains(path))
-                        _masksAndFolders.Remove(path);
-                }
+                //ჩართული ჩავამატოთ თუ არ არსებობს
+                if (!_masksAndFolders.Contains(path))
+                    _masksAndFolders.Add(path);
             }
-
-            _folderPathsSetCruder.Save("Changes saved");
-            MenuAction = EMenuAction.Reload;
-        }
-        catch (DataInputEscapeException)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Escape... ");
-            MenuAction = EMenuAction.Reload;
-            StShared.Pause();
+            else
+            {
+                //გამორთული ამოვაკლოთ თუ არსებობს
+                if (_masksAndFolders.Contains(path))
+                    _masksAndFolders.Remove(path);
+            }
         }
 
-        catch (Exception e)
-        {
-            StShared.WriteException(e, true);
-            throw;
-        }
+        _folderPathsSetCruder.Save("Changes saved");
+        MenuAction = EMenuAction.Reload;
     }
 
     private DirectoryInfo? CheckFolder(string folderName)

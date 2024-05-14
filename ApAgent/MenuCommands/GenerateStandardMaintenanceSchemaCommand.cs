@@ -1,5 +1,4 @@
-﻿using System;
-using ApAgent.Generators;
+﻿using ApAgent.Generators;
 using CliMenu;
 using LibApAgentData.Models;
 using LibDataInput;
@@ -16,6 +15,7 @@ public sealed class GenerateStandardMaintenanceSchemaCommand : CliMenuCommand
     private readonly IParametersManager _parametersManager;
     private readonly string _recordName;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public GenerateStandardMaintenanceSchemaCommand(ILogger logger, IParametersManager parametersManager,
         string recordName, string? parametersFileName)
     {
@@ -42,28 +42,15 @@ public sealed class GenerateStandardMaintenanceSchemaCommand : CliMenuCommand
         if (!Inputer.InputBool("This process will change jobs, are you sure?", false, false))
             return;
 
-        try
-        {
-            //აქ ხდება პირდაპირ მონაცემთა ბაზისთვის სტანდარტული მომსახურების გენერირება.
-            //ამიტომ ვებაგენტის სახელი და სერვერის სახელი საჭირო არ არის.
-            //თანაც ApAgent-ში ვებაგენტის გამოყენება საერთოდ არ ხდება
-            StandardJobsSchemaGenerator standardJobsSchemaGenerator =
-                new(true, _logger, _parametersManager, _recordName, _parametersFileName);
-            standardJobsSchemaGenerator.Generate();
+        //აქ ხდება პირდაპირ მონაცემთა ბაზისთვის სტანდარტული მომსახურების გენერირება.
+        //ამიტომ ვებაგენტის სახელი და სერვერის სახელი საჭირო არ არის.
+        //თანაც ApAgent-ში ვებაგენტის გამოყენება საერთოდ არ ხდება
+        StandardJobsSchemaGenerator standardJobsSchemaGenerator =
+            new(true, _logger, _parametersManager, _recordName, _parametersFileName);
+        standardJobsSchemaGenerator.Generate();
 
 
-            //შენახვა
-            _parametersManager.Save(parameters, "Maintain schema generated success");
-        }
-        catch (DataInputEscapeException)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Escape... ");
-            StShared.Pause();
-        }
-        catch (Exception e)
-        {
-            StShared.WriteException(e, true, _logger);
-        }
+        //შენახვა
+        _parametersManager.Save(parameters, "Maintain schema generated success");
     }
 }
