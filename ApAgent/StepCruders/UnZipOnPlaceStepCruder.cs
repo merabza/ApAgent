@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using CliParameters.FieldEditors;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
@@ -11,8 +12,9 @@ namespace ApAgent.StepCruders;
 
 public sealed class UnZipOnPlaceStepCruder : StepCruder
 {
-    public UnZipOnPlaceStepCruder(ILogger logger, Processes processes, ParametersManager parametersManager) : base(
-        logger, processes, parametersManager, "Unzip On Place Step", "Unzip On Place Steps")
+    public UnZipOnPlaceStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
+        "Unzip On Place Step", "Unzip On Place Steps")
     {
         List<FieldEditor> tempFieldEditors = new();
         tempFieldEditors.AddRange(FieldEditors);

@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using ApAgent;
 using CliParameters;
 using LibApAgentData.Models;
@@ -37,10 +38,10 @@ try
     }
 
     var parametersFileName = argParser.ParametersFileName;
-    ServicesCreator servicesCreator = new(par.LogFolder, null, "ApAgent");
+    var apAgentServicesCreator = new ApAgentServicesCreator(par);
 
     // ReSharper disable once using
-    using var serviceProvider = servicesCreator.CreateServiceProvider(LogEventLevel.Information);
+    using var serviceProvider = apAgentServicesCreator.CreateServiceProvider(LogEventLevel.Information);
 
     if (serviceProvider == null)
     {
@@ -62,9 +63,15 @@ try
         return 3;
     }
 
+    var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
+    if (httpClientFactory is null)
+    {
+        StShared.WriteErrorLine("httpClientFactory is null", true);
+        return 6;
+    }
     var processes = new Processes(processesLogger);
 
-    ApAgent.ApAgent apAgent = new(logger, new ParametersManager(parametersFileName, par, key), processes);
+    ApAgent.ApAgent apAgent = new(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key), processes);
     return apAgent.Run() ? 0 : 1;
 }
 catch (Exception e)

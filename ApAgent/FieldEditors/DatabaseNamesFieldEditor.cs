@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using CliParameters.FieldEditors;
 using DatabasesManagement;
@@ -26,15 +27,18 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
     private readonly string _databaseSetPropertyName;
     private readonly string _databaseWebAgentNamePropertyName;
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public DatabaseNamesFieldEditor(ILogger logger, string propertyName, IParametersManager parametersManager,
-        string databaseServerConnectionNamePropertyName, string databaseWebAgentNamePropertyName,
-        string databaseSetPropertyName, string? databaseBackupParametersPropertyName = null,
-        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
+    public DatabaseNamesFieldEditor(ILogger logger, IHttpClientFactory httpClientFactory, string propertyName,
+        IParametersManager parametersManager, string databaseServerConnectionNamePropertyName,
+        string databaseWebAgentNamePropertyName, string databaseSetPropertyName,
+        string? databaseBackupParametersPropertyName = null, bool enterFieldDataOnCreate = false) : base(propertyName,
+        enterFieldDataOnCreate)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
         _databaseWebAgentNamePropertyName = databaseWebAgentNamePropertyName;
@@ -68,8 +72,8 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, databaseWebAgentName,
-                new ApiClients(parameters.ApiClients), databaseServerConnectionName,
+        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, _httpClientFactory,
+                databaseWebAgentName, new ApiClients(parameters.ApiClients), databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
             .Result;
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
 using CliParametersApiClientsEdit.FieldEditors;
@@ -15,8 +16,9 @@ namespace ApAgent.StepCruders;
 
 public sealed class DatabaseBackupStepCruder : StepCruder
 {
-    public DatabaseBackupStepCruder(ILogger logger, Processes processes, ParametersManager parametersManager) : base(
-        logger, processes, parametersManager, "Database Backup Step", "Database Backup Steps")
+    public DatabaseBackupStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
+        "Database Backup Step", "Database Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
 
@@ -27,8 +29,8 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger,
             nameof(DatabaseBackupStep.DatabaseServerConnectionName), ParametersManager, true));
 
-        FieldEditors.Add(new ApiClientNameFieldEditor(logger, nameof(DatabaseBackupStep.DatabaseWebAgentName),
-            ParametersManager, true));
+        FieldEditors.Add(new ApiClientNameFieldEditor(logger, httpClientFactory,
+            nameof(DatabaseBackupStep.DatabaseWebAgentName), ParametersManager, true));
 
         FieldEditors.Add(new DatabaseBackupParametersFieldEditor(
             nameof(DatabaseBackupStep.DatabaseBackupParameters),
@@ -36,10 +38,10 @@ public sealed class DatabaseBackupStepCruder : StepCruder
 
         FieldEditors.Add(
             new EnumFieldEditor<EDatabaseSet>(nameof(DatabaseBackupStep.DatabaseSet), EDatabaseSet.AllDatabases));
-        FieldEditors.Add(new DatabaseNamesFieldEditor(logger, nameof(DatabaseBackupStep.DatabaseNames),
-            ParametersManager, nameof(DatabaseBackupStep.DatabaseServerConnectionName),
-            nameof(DatabaseBackupStep.DatabaseWebAgentName), nameof(DatabaseBackupStep.DatabaseSet),
-            nameof(DatabaseBackupStep.DatabaseBackupParameters)));
+        FieldEditors.Add(new DatabaseNamesFieldEditor(logger, httpClientFactory,
+            nameof(DatabaseBackupStep.DatabaseNames), ParametersManager,
+            nameof(DatabaseBackupStep.DatabaseServerConnectionName), nameof(DatabaseBackupStep.DatabaseWebAgentName),
+            nameof(DatabaseBackupStep.DatabaseSet), nameof(DatabaseBackupStep.DatabaseBackupParameters)));
 
         FieldEditors.Add(new DbServerSideBackupPathFieldEditor(nameof(DatabaseBackupStep.DbServerSideBackupPath),
             parametersManager, nameof(DatabaseBackupStep.DatabaseWebAgentName),

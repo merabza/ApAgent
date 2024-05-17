@@ -5,6 +5,7 @@ using LibApAgentData.Steps;
 using LibParameters;
 using LibToolActions.BackgroundTasks;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 using SystemToolsShared;
 
 namespace ApAgent.MenuCommands;
@@ -12,6 +13,7 @@ namespace ApAgent.MenuCommands;
 public sealed class RunThisStepNowCommand : CliMenuCommand
 {
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string? _parametersFileName;
     private readonly IParametersManager _parametersManager;
     private readonly Processes _processes;
@@ -19,10 +21,11 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
     private readonly string _stepName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public RunThisStepNowCommand(ILogger logger, Processes processes, IParametersManager parametersManager,
-        StepCruder stepCruder, string stepName, string? parametersFileName)
+    public RunThisStepNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        IParametersManager parametersManager, StepCruder stepCruder, string stepName, string? parametersFileName)
     {
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _processes = processes;
         _parametersManager = parametersManager;
         _stepCruder = stepCruder;
@@ -54,8 +57,8 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         // ReSharper disable once using
         using var processManager = _processes.GetNewProcessManager();
 
-        var stepToolAction =
-            jobStep.GetToolAction(_logger, true, processManager, parameters, procLogFilesFolder);
+        var stepToolAction = jobStep.GetToolAction(_logger, _httpClientFactory, true, processManager, parameters,
+            procLogFilesFolder);
 
         if (stepToolAction is null)
         {

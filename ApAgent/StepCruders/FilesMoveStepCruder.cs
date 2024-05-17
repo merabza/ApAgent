@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
 using CliParametersEdit.FieldEditors;
@@ -14,11 +15,11 @@ namespace ApAgent.StepCruders;
 
 public sealed class FilesMoveStepCruder : StepCruder
 {
-    public FilesMoveStepCruder(ILogger logger, Processes processes, ParametersManager parametersManager) : base(
-        logger, processes, parametersManager, "Files Move Step", "Files Move Steps")
+    public FilesMoveStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
+        "Files Move Step", "Files Move Steps")
     {
-        List<FieldEditor> tempFieldEditors = new();
-        tempFieldEditors.AddRange(FieldEditors);
+        List<FieldEditor> tempFieldEditors = [.. FieldEditors];
         FieldEditors.Clear();
 
         FieldEditors.Add(new FileStorageNameFieldEditor(logger, nameof(FilesMoveStep.SourceFileStorageName),

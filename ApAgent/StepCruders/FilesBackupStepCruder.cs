@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using ApAgent.Counters;
 using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
@@ -17,8 +18,9 @@ namespace ApAgent.StepCruders;
 
 public sealed class FilesBackupStepCruder : StepCruder
 {
-    public FilesBackupStepCruder(ILogger logger, Processes processes, ParametersManager parametersManager) : base(
-        logger, processes, parametersManager, "Files Backup Step", "Files Backup Steps")
+    public FilesBackupStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
+        "Files Backup Step", "Files Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
         DateMaskCounter dateMaskCounter = new();

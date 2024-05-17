@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
 using CliParametersApiClientsEdit.FieldEditors;
@@ -14,23 +15,24 @@ namespace ApAgent.StepCruders;
 
 public sealed class ExecuteSqlCommandStepCruder : StepCruder
 {
-    public ExecuteSqlCommandStepCruder(ILogger logger, Processes processes, ParametersManager parametersManager) :
-        base(
-            logger, processes, parametersManager, "Execute SQL Command Step", "Execute SQL Command Steps")
+    public ExecuteSqlCommandStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
+        "Execute SQL Command Step", "Execute SQL Command Steps")
     {
-        List<FieldEditor> tempFieldEditors = new();
-        tempFieldEditors.AddRange(FieldEditors);
+        List<FieldEditor> tempFieldEditors = [..FieldEditors];
+
         FieldEditors.Clear();
 
         //public string DatabaseServerConnectionName { get; set; }
         FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger,
             nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName), ParametersManager, true));
         //public string DatabaseWebAgentName { get; set; }
-        FieldEditors.Add(new ApiClientNameFieldEditor(logger, nameof(ExecuteSqlCommandStep.DatabaseWebAgentName),
-            ParametersManager, true));
+        FieldEditors.Add(new ApiClientNameFieldEditor(logger, httpClientFactory,
+            nameof(ExecuteSqlCommandStep.DatabaseWebAgentName), ParametersManager, true));
 
-        FieldEditors.Add(new OneDatabaseNameFieldEditor(logger, nameof(ExecuteSqlCommandStep.DatabaseName),
-            ParametersManager, nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName),
+        FieldEditors.Add(new OneDatabaseNameFieldEditor(logger, httpClientFactory,
+            nameof(ExecuteSqlCommandStep.DatabaseName), ParametersManager,
+            nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName),
             nameof(MultiDatabaseProcessStep.DatabaseWebAgentName)));
 
         FieldEditors.Add(new TextFieldEditor(nameof(ExecuteSqlCommandStep.ExecuteQueryCommand)));

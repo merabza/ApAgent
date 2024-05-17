@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using CliParameters.FieldEditors;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
@@ -11,12 +12,11 @@ namespace ApAgent.StepCruders;
 
 public sealed class RunProgramStepCruder : StepCruder
 {
-    public RunProgramStepCruder(ILogger logger, Processes processes, ParametersManager parametersManager) : base(
-        logger,
-        processes, parametersManager, "Run Program Step", "Run Program Steps")
+    public RunProgramStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
+        "Run Program Step", "Run Program Steps")
     {
-        List<FieldEditor> tempFieldEditors = new();
-        tempFieldEditors.AddRange(FieldEditors);
+        List<FieldEditor> tempFieldEditors = [.. FieldEditors];
         FieldEditors.Clear();
 
         FieldEditors.Add(new TextFieldEditor(nameof(RunProgramStep.Program)));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using ApAgent.FieldEditors;
 using ApAgent.MenuCommands;
 using CliMenu;
@@ -17,14 +18,17 @@ namespace ApAgent.StepCruders;
 public /*open*/ class StepCruder : ParCruder
 {
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string? _parametersFileName;
     private readonly Processes _processes;
 
-    protected StepCruder(ILogger logger, Processes processes, ParametersManager parametersManager, string crudName,
-        string crudNamePlural) : base(parametersManager, crudName, crudNamePlural)
+    protected StepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
+        ParametersManager parametersManager, string crudName, string crudNamePlural) : base(parametersManager, crudName,
+        crudNamePlural)
     {
         _parametersFileName = parametersManager.ParametersFileName;
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _processes = processes;
         //რიგითი ნომერი უნდა დგინდება არსებულ ნომრებში მაქსიმუმს 1-ით მეტი, ან არსებული ნაბიჯების რაოდენობაზე 1-ით მეტი. (მაქსიმუმი ამ 2 რიცხვს შორის)
         FieldEditors.Add(new IntFieldEditor(nameof(JobStep.ProcLineId), 1));
@@ -42,8 +46,8 @@ public /*open*/ class StepCruder : ParCruder
     public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
-        RunThisStepNowCommand runThisStepNowCommand =
-            new(_logger, _processes, ParametersManager, this, recordName, _parametersFileName);
+        RunThisStepNowCommand runThisStepNowCommand = new(_logger, _httpClientFactory, _processes, ParametersManager,
+            this, recordName, _parametersFileName);
         itemSubMenuSet.AddMenuItem(runThisStepNowCommand, "Run this step now...");
 
         var parameters = (ApAgentParameters)ParametersManager.Parameters;

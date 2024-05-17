@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using ApAgent.FieldEditors;
 using ApAgent.MenuCommands;
 using CliMenu;
@@ -16,14 +17,16 @@ namespace ApAgent.Cruders;
 public sealed class JobScheduleCruder : ParCruder
 {
     private readonly ILogger _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string? _parametersFileName;
     private readonly Processes _processes;
 
-    public JobScheduleCruder(ILogger logger, ParametersManager parametersManager, Processes processes) : base(
-        parametersManager, "Job Schedule", "Job Schedules")
+    public JobScheduleCruder(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
+        Processes processes) : base(parametersManager, "Job Schedule", "Job Schedules")
     {
         _parametersFileName = parametersManager.ParametersFileName;
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
         _processes = processes;
 
         FieldEditors.Add(new EnumFieldEditor<EScheduleType>(nameof(JobSchedule.ScheduleType), EScheduleType.Daily));
@@ -108,8 +111,8 @@ public sealed class JobScheduleCruder : ParCruder
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
 
 
-        RunAllStepsNowCommand runAllStepsNowCommand =
-            new(_logger, _processes, ParametersManager, recordName, _parametersFileName);
+        RunAllStepsNowCommand runAllStepsNowCommand = new(_logger, _httpClientFactory, _processes, ParametersManager,
+            recordName, _parametersFileName);
         itemSubMenuSet.AddMenuItem(runAllStepsNowCommand, "Run All steps from this schedule now...");
     }
 }

@@ -8,13 +8,14 @@ using CliParametersExcludeSetsEdit.FieldEditors;
 using LibApAgentData.Models;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace ApAgent;
 
 public sealed class ApAgentParametersEditor : ParametersEditor
 {
-    public ApAgentParametersEditor(IParameters parameters, ParametersManager parametersManager,
-        ILogger logger) : base("InsuranceReport Parameters Editor", parameters, parametersManager)
+    public ApAgentParametersEditor(ILogger logger, IHttpClientFactory httpClientFactory, IParameters parameters,
+        ParametersManager parametersManager) : base("InsuranceReport Parameters Editor", parameters, parametersManager)
     {
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.LogFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.WorkFolder)));
@@ -33,7 +34,8 @@ public sealed class ApAgentParametersEditor : ParametersEditor
         FieldEditors.Add(
             new DatabaseServerConnectionsFieldEditor(nameof(ApAgentParameters.DatabaseServerConnections),
                 parametersManager, logger));
-        FieldEditors.Add(new ApiClientsFieldEditor(logger, nameof(ApAgentParameters.ApiClients), parametersManager));
+        FieldEditors.Add(new ApiClientsFieldEditor(logger, httpClientFactory, nameof(ApAgentParameters.ApiClients),
+            parametersManager));
         FieldEditors.Add(new FileStoragesFieldEditor(logger, nameof(ApAgentParameters.FileStorages),
             parametersManager));
         FieldEditors.Add(new ExcludeSetsFieldEditor(nameof(ApAgentParameters.ExcludeSets), parametersManager));
