@@ -13,8 +13,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
     private readonly string _stepName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public SelectScheduleNamesCommand(IParametersManager parametersManager, string stepName, string scheduleName,
-        bool selected) : base(null, null, false, EStatusView.Table, true)
+    public SelectScheduleNamesCommand(IParametersManager parametersManager, string stepName, string scheduleName, bool selected) : base(null, EMenuAction.Reload, EMenuAction.Reload, null, false, EStatusView.Table, true)
     {
         _parametersManager = parametersManager;
         _stepName = stepName;
@@ -22,9 +21,8 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
         _selected = selected;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         if (_selected)
@@ -53,6 +51,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
 
         ReNumSequences();
         _parametersManager.Save(parameters, "Schedule Updated");
+        return true;
     }
 
     private void ReNumSequences()

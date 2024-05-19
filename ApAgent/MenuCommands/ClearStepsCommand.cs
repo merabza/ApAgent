@@ -10,21 +10,20 @@ public sealed class ClearStepsCommand : CliMenuCommand
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public ClearStepsCommand(ParametersManager parametersManager) : base("Clear Steps")
+    public ClearStepsCommand(ParametersManager parametersManager) : base("Clear Steps", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
     }
 
-
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
         if (!Inputer.InputBool("Clear Steps, are you sure?", false, false))
-            return;
+            return false;
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         parameters.ClearSteps();
         _parametersManager.Save(parameters, "Steps cleared success");
+        return true;
     }
 }

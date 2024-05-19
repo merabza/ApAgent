@@ -22,7 +22,8 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public RunThisStepNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        IParametersManager parametersManager, StepCruder stepCruder, string stepName, string? parametersFileName)
+        IParametersManager parametersManager, StepCruder stepCruder, string stepName,
+        string? parametersFileName) : base(null, EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -33,7 +34,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         _parametersFileName = parametersFileName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -43,7 +44,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (string.IsNullOrWhiteSpace(procLogFilesFolder))
         {
             StShared.WriteErrorLine("procLogFilesFolder does not counted. step does not started", true, _logger);
-            return;
+            return false;
         }
 
         var jobStep = (JobStep?)_stepCruder.GetItemByName(_stepName);
@@ -51,7 +52,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (jobStep is null)
         {
             StShared.WriteErrorLine("jobStep does not found. step does not started", true, _logger);
-            return;
+            return false;
         }
 
         // ReSharper disable once using
@@ -63,9 +64,10 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (stepToolAction is null)
         {
             StShared.WriteErrorLine("stepToolAction does not found. step does not started", true, _logger);
-            return;
+            return false;
         }
 
         processManager.Run(stepToolAction);
+        return true;
     }
 }

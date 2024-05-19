@@ -15,17 +15,15 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public GenerateStandardDatabaseStepsCommand(ILogger logger, ParametersManager parametersManager) : base(
-        "Generate Standard Database Jobs...")
+        "Generate Standard Database Jobs...", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
         _logger = logger;
     }
 
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
-
         DatabaseServerConnectionCruder databaseServerConnectionCruder = new(_parametersManager, _logger);
 
         var databaseConnectionName =
@@ -35,7 +33,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
         if (string.IsNullOrWhiteSpace(databaseConnectionName))
         {
             StShared.WriteErrorLine("databaseConnectionName does not specified", true);
-            return;
+            return false;
         }
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
@@ -44,8 +42,8 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
             new(true, _logger, _parametersManager, databaseConnectionName, _parametersManager.ParametersFileName);
         standardJobsSchemaGenerator.Generate();
 
-
         //შენახვა
         _parametersManager.Save(parameters, "Maintain schema generated success");
+        return true;
     }
 }

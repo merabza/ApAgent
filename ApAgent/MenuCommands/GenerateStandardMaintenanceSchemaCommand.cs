@@ -17,7 +17,7 @@ public sealed class GenerateStandardMaintenanceSchemaCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public GenerateStandardMaintenanceSchemaCommand(ILogger logger, IParametersManager parametersManager,
-        string recordName, string? parametersFileName)
+        string recordName, string? parametersFileName) : base(null, EMenuAction.Reload)
     {
         _logger = logger;
         _parametersManager = parametersManager;
@@ -25,10 +25,8 @@ public sealed class GenerateStandardMaintenanceSchemaCommand : CliMenuCommand
         _parametersFileName = parametersFileName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
-
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
         var databaseServerConnections =
             parameters.DatabaseServerConnections;
@@ -36,11 +34,11 @@ public sealed class GenerateStandardMaintenanceSchemaCommand : CliMenuCommand
         if (!databaseServerConnections.ContainsKey(_recordName))
         {
             StShared.WriteErrorLine($"Database connection with name {_recordName} does not exists. ", true, _logger);
-            return;
+            return false;
         }
 
         if (!Inputer.InputBool("This process will change jobs, are you sure?", false, false))
-            return;
+            return false;
 
         //აქ ხდება პირდაპირ მონაცემთა ბაზისთვის სტანდარტული მომსახურების გენერირება.
         //ამიტომ ვებაგენტის სახელი და სერვერის სახელი საჭირო არ არის.
@@ -49,8 +47,8 @@ public sealed class GenerateStandardMaintenanceSchemaCommand : CliMenuCommand
             new(true, _logger, _parametersManager, _recordName, _parametersFileName);
         standardJobsSchemaGenerator.Generate();
 
-
         //შენახვა
         _parametersManager.Save(parameters, "Maintain schema generated success");
+        return true;
     }
 }

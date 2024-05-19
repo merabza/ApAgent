@@ -20,7 +20,8 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public RunAllStepsNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        IParametersManager parametersManager, string jobScheduleName, string? parametersFileName)
+        IParametersManager parametersManager, string jobScheduleName, string? parametersFileName) : base(null,
+        EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -30,7 +31,7 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
         _parametersFileName = parametersFileName;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -40,9 +41,10 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
         if (string.IsNullOrWhiteSpace(procLogFilesFolder))
         {
             StShared.WriteErrorLine("procLogFilesFolder does not counted. cannot run steps", true, _logger);
-            return;
+            return false;
         }
 
-        parameters.RunAllSteps(_logger, _httpClientFactory, true, _jobScheduleName, _processes, procLogFilesFolder);
+        return parameters.RunAllSteps(_logger, _httpClientFactory, true, _jobScheduleName, _processes,
+            procLogFilesFolder);
     }
 }

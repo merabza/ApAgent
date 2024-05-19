@@ -16,23 +16,23 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public MultiSelectSubfoldersWithMasksCommand(Dictionary<string, string> masksAndFolders,
-        FileBackupFolderCruder fileBackupFolderCruder)
+        FileBackupFolderCruder fileBackupFolderCruder) : base(null, EMenuAction.Reload)
     {
         _masksAndFolders = masksAndFolders;
         _fileBackupFolderCruder = fileBackupFolderCruder;
     }
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
         var folderName =
             MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
 
         if (string.IsNullOrWhiteSpace(folderName))
-            return;
+            return false;
 
         var dir = CheckFolder(folderName);
         if (dir == null)
-            return;
+            return false;
 
         //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
         var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
@@ -59,7 +59,7 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
         }
 
         _fileBackupFolderCruder.Save("Changes saved");
-        MenuAction = EMenuAction.Reload;
+        return true;
     }
 
     private DirectoryInfo? CheckFolder(string folderName)

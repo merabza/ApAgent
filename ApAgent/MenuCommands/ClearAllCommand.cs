@@ -10,21 +10,21 @@ public sealed class ClearAllCommand : CliMenuCommand
     private readonly ParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public ClearAllCommand(ParametersManager parametersManager) : base("Clear All")
+    public ClearAllCommand(ParametersManager parametersManager) : base("Clear All", EMenuAction.Reload)
     {
         _parametersManager = parametersManager;
     }
 
 
-    protected override void RunAction()
+    protected override bool RunBody()
     {
-        MenuAction = EMenuAction.Reload;
         if (!Inputer.InputBool("Clear All, are you sure?", false, false))
-            return;
+            return false;
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         parameters.ClearAll();
         _parametersManager.Save(parameters, "Data cleared success");
+        return true;
     }
 }
