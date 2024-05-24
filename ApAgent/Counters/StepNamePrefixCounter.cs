@@ -26,9 +26,9 @@ public sealed class StepNamePrefixCounter
         var parameters =
             (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
-            null, CancellationToken.None).Result;
+        var dac = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
+            .Result;
 
         var getDatabaseServerInfoResult = dac?.GetDatabaseServerInfo(CancellationToken.None).Result;
         if (getDatabaseServerInfoResult is not null && getDatabaseServerInfoResult.Value.IsT0)

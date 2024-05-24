@@ -49,7 +49,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         var agentClient =
             _parametersManager.Parameters is not IParametersWithDatabaseServerConnectionsAndApiClients parameters
                 ? null
-                : DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, _httpClientFactory,
+                : DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _httpClientFactory,
                     databaseWebAgentName, new ApiClients(parameters.ApiClients), databaseServerConnectionName,
                     new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null,
                     CancellationToken.None).Result;

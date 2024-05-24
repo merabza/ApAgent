@@ -40,10 +40,9 @@ internal class StandardJobsSchemaGenerator
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections), null,
-            null, CancellationToken.None).Result;
-
+        var dac = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
+            .Result;
 
         var testConnectionResult = dac?.TestConnection(null, CancellationToken.None).Result;
 

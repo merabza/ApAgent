@@ -34,9 +34,10 @@ public sealed class ProcLineCounter : SCounter
         if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnections parametersDsc)
             return false;
 
-        var dac = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger,
-            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections),
-            null, null, CancellationToken.None).Result;
+        var dac = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _databaseServerConnectionName,
+                new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), null, null,
+                CancellationToken.None)
+            .Result;
 
         var isServerLocalResult = dac?.IsServerLocal(CancellationToken.None).Result;
         if (isServerLocalResult is not null && isServerLocalResult.Value.IsT0)

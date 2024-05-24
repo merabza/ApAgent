@@ -72,7 +72,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManagementClient(true, _logger, _httpClientFactory,
+        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _httpClientFactory,
                 databaseWebAgentName, new ApiClients(parameters.ApiClients), databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
             .Result;
