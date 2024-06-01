@@ -69,9 +69,11 @@ try
         StShared.WriteErrorLine("httpClientFactory is null", true);
         return 6;
     }
+
     var processes = new Processes(processesLogger);
 
-    ApAgent.ApAgent apAgent = new(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key), processes);
+    ApAgent.ApAgent apAgent = new(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key),
+        processes);
     return apAgent.Run() ? 0 : 1;
 }
 catch (Exception e)

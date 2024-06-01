@@ -1,18 +1,18 @@
-﻿using CliMenu;
+﻿using System.Net.Http;
+using CliMenu;
 using LibApAgentData.Models;
 using LibParameters;
 using LibToolActions.BackgroundTasks;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
 using SystemToolsShared;
 
 namespace ApAgent.MenuCommands;
 
 public sealed class RunAllStepsNowCommand : CliMenuCommand
 {
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _jobScheduleName;
     private readonly ILogger _logger;
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly string? _parametersFileName;
     private readonly IParametersManager _parametersManager;
     private readonly Processes _processes;

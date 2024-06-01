@@ -9,7 +9,6 @@ public sealed class ApAgentServicesCreator : ServicesCreator
     // ReSharper disable once ConvertToPrimaryConstructor
     public ApAgentServicesCreator(ApAgentParameters par) : base(par.LogFolder, null, "ApAgent")
     {
-
     }
 
     protected override void ConfigureServices(IServiceCollection services)

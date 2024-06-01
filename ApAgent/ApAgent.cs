@@ -17,8 +17,8 @@ namespace ApAgent;
 
 public sealed class ApAgent : CliAppLoop
 {
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly ParametersManager _parametersManager;
     private readonly Processes _processes;
 

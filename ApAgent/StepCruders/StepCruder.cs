@@ -17,8 +17,8 @@ namespace ApAgent.StepCruders;
 
 public /*open*/ class StepCruder : ParCruder
 {
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly string? _parametersFileName;
     private readonly Processes _processes;
 

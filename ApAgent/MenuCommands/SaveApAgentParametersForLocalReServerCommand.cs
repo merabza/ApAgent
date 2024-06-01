@@ -1,8 +1,8 @@
-﻿using CliMenu;
+﻿using System.IO;
+using CliMenu;
 using LibApAgentData.Models;
 using LibDataInput;
 using LibParameters;
-using System.IO;
 using SystemToolsShared;
 
 namespace ApAgent.MenuCommands;
@@ -20,7 +20,6 @@ public sealed class SaveApAgentParametersForLocalReServerCommand : CliMenuComman
 
     protected override bool RunBody()
     {
-
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         //შევამოწმოთ პარამეტრებში გვაქვს თუ არა შევსებული პარამეტრების ფაილის სახელი რესერვერისათვის ApAgentParametersFileNameForLocalReServer

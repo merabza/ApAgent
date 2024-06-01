@@ -26,8 +26,8 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
     private readonly string _databaseSetPropertyName;
     private readonly string _databaseWebAgentNamePropertyName;
-    private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
 
     // ReSharper disable once ConvertToPrimaryConstructor
