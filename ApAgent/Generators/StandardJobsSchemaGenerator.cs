@@ -14,6 +14,7 @@ using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
 using SystemToolsShared;
+using SystemToolsShared.Errors;
 
 namespace ApAgent.Generators;
 
