@@ -67,7 +67,7 @@ public sealed class FilesMoveStepCruder : StepCruder
         parameters.FilesMoveSteps[recordName] = newFilesMoveStep;
     }
 
-    protected override ItemData CreateNewItem(ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
         return new FilesMoveStep();
     }

@@ -71,19 +71,19 @@ public sealed class FileBackupFolderCruder : ParCruder
         }
     }
 
-    protected override ItemData CreateNewItem(ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
         return new FolderPathMaskItemData();
     }
 
     public override List<string> GetKeys()
     {
-        return _currentValuesDict.Keys.ToList();
+        return [.. _currentValuesDict.Keys];
     }
 
     public override string? GetStatusFor(string name)
     {
-        return _currentValuesDict.TryGetValue(name, out var value) ? value : null;
+        return _currentValuesDict.GetValueOrDefault(name);
     }
 
     public override void Save(string message)

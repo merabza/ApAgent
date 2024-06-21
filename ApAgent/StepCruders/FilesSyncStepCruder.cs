@@ -62,7 +62,7 @@ public sealed class FilesSyncStepCruder : StepCruder
         parameters.FilesSyncSteps[recordName] = newFilesSyncStep;
     }
 
-    protected override ItemData CreateNewItem(ItemData? defaultItemData)
+    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
     {
         return new FilesSyncStep();
     }
