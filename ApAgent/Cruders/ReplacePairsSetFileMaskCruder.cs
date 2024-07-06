@@ -24,10 +24,7 @@ public sealed class ReplacePairsSetFileMaskCruder : ParCruder
     {
         var parameters = (ApAgentParameters)ParametersManager.Parameters;
         var replacePairSets = parameters.ReplacePairsSets;
-        if (!replacePairSets.ContainsKey(_replacePairSetName))
-            return new Dictionary<string, string>();
-        var replacePairSet = replacePairSets[_replacePairSetName];
-        return replacePairSet.PairsDict;
+        return replacePairSets.TryGetValue(_replacePairSetName, out var replacePairSet) ? replacePairSet.PairsDict : [];
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
@@ -58,9 +55,8 @@ public sealed class ReplacePairsSetFileMaskCruder : ParCruder
     {
         var parameters = (ApAgentParameters)ParametersManager.Parameters;
         var replacePairSets = parameters.ReplacePairsSets;
-        if (!replacePairSets.ContainsKey(_replacePairSetName))
+        if (!replacePairSets.TryGetValue(_replacePairSetName, out var replacePairSet))
             return;
-        var replacePairSet = replacePairSets[_replacePairSetName];
 
         if (newRecord is TextPairItemData textPairItemData && !string.IsNullOrWhiteSpace(textPairItemData.Text1) &&
             !string.IsNullOrWhiteSpace(textPairItemData.Text2))

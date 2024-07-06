@@ -45,7 +45,7 @@
 //    {
 //      FileInfo pf = new FileInfo(_parametersManager.ParametersFileName);
 //      string workFolder = parameters.WorkFolder ?? pf.Directory?.FullName;
-//      string workFolderCandidate = workFolder == null ? "" : Path.Combine(workFolder, CDatabaseBackupFiles);
+//      string workFolderCandidate = workFolder == null ? string.Empty : Path.Combine(workFolder, CDatabaseBackupFiles);
 //      return workFolderCandidate;
 //    }
 
