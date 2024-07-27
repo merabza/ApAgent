@@ -24,7 +24,7 @@ public sealed class ApAgent : CliAppLoop
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public ApAgent(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
-        Processes processes) : base(null, processes)
+        Processes processes) : base(null, null, processes)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -32,19 +32,11 @@ public sealed class ApAgent : CliAppLoop
         _processes = processes;
     }
 
-    protected override void BuildMainMenu()
+    public override CliMenuSet BuildMainMenu()
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        //if (parameters == null)
-        //{
-        //    StShared.WriteErrorLine("minimal parameters not found", true, _logger);
-        //    return false;
-        //}
-
         CliMenuSet mainMenuSet = new("Main Menu");
-        if (!AddChangeMenu(mainMenuSet))
-            return;
 
         //ძირითადი პარამეტრების რედაქტირება
         ApAgentParametersEditor apAgentParametersEditor =
@@ -116,5 +108,7 @@ public sealed class ApAgent : CliAppLoop
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
         mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
+
+        return mainMenuSet;
     }
 }
