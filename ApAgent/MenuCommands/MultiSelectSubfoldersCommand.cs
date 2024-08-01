@@ -15,7 +15,7 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public MultiSelectSubfoldersCommand(List<string> masksAndFolders, FolderPathsSetCruder folderPathsSetCruder) : base(
-        null, EMenuAction.Reload)
+        "Multi Select Subfolders", EMenuAction.Reload)
     {
         _masksAndFolders = masksAndFolders;
         _folderPathsSetCruder = folderPathsSetCruder;

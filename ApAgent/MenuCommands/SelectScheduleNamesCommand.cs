@@ -14,7 +14,8 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public SelectScheduleNamesCommand(IParametersManager parametersManager, string stepName, string scheduleName,
-        bool selected) : base(null, EMenuAction.Reload, EMenuAction.Reload, null, false, EStatusView.Table, true)
+        bool selected) : base($"{(selected ? "√" : "×")} {scheduleName}", EMenuAction.Reload, EMenuAction.Reload, null,
+        false, EStatusView.Table, true)
     {
         _parametersManager = parametersManager;
         _stepName = stepName;

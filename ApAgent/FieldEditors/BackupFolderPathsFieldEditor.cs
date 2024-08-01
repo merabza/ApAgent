@@ -12,6 +12,7 @@ public sealed class BackupFolderPathsFieldEditor : FieldEditor<Dictionary<string
 {
     private readonly IParametersManager _parametersManager;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public BackupFolderPathsFieldEditor(string propertyName, IParametersManager parametersManager,
         bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
     {
@@ -32,8 +33,7 @@ public sealed class BackupFolderPathsFieldEditor : FieldEditor<Dictionary<string
         var foldersSet = fileBackupFolderCruder.GetListMenu();
 
         foldersSet.InsertMenuItem(1,
-            new MultiSelectSubfoldersWithMasksCommand(currentValuesDict, fileBackupFolderCruder),
-            "Multi Select Subfolders");
+            new MultiSelectSubfoldersWithMasksCommand(currentValuesDict, fileBackupFolderCruder));
         return foldersSet;
     }
 

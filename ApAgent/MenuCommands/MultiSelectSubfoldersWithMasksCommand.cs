@@ -16,7 +16,7 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public MultiSelectSubfoldersWithMasksCommand(Dictionary<string, string> masksAndFolders,
-        FileBackupFolderCruder fileBackupFolderCruder) : base(null, EMenuAction.Reload)
+        FileBackupFolderCruder fileBackupFolderCruder) : base("Multi Select Subfolders", EMenuAction.Reload)
     {
         _masksAndFolders = masksAndFolders;
         _fileBackupFolderCruder = fileBackupFolderCruder;

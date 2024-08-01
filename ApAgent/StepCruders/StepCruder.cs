@@ -58,10 +58,8 @@ public /*open*/ class StepCruder : ParCruder
         var scheduleNamesList = parameters.JobsBySchedules.Where(w => w.JobStepName == recordName)
             .Select(s => s.ScheduleName).ToList();
         foreach (var kvp in parameters.JobSchedules)
-            itemSubMenuSet.AddMenuItem(
-                new SelectScheduleNamesCommand(ParametersManager, recordName, kvp.Key,
-                    scheduleNamesList.Contains(kvp.Key)),
-                $"{(scheduleNamesList.Contains(kvp.Key) ? "√" : "×")} {kvp.Key}");
+            itemSubMenuSet.AddMenuItem(new SelectScheduleNamesCommand(ParametersManager, recordName, kvp.Key,
+                scheduleNamesList.Contains(kvp.Key)));
     }
 
     public override bool ContainsRecordWithKey(string recordKey)

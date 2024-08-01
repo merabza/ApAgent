@@ -12,6 +12,7 @@ public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
 {
     private readonly IParametersManager _parametersManager;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public FolderPathsSetFieldEditor(string propertyName, IParametersManager parametersManager,
         bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
     {
@@ -31,8 +32,7 @@ public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
         FolderPathsSetCruder folderPathsSetCruder = new(currentValuesList, _parametersManager, record, this);
         var foldersSet = folderPathsSetCruder.GetListMenu();
 
-        foldersSet.InsertMenuItem(1, new MultiSelectSubfoldersCommand(currentValuesList, folderPathsSetCruder),
-            "Multi Select Subfolders");
+        foldersSet.InsertMenuItem(1, new MultiSelectSubfoldersCommand(currentValuesList, folderPathsSetCruder));
         return foldersSet;
     }
 
