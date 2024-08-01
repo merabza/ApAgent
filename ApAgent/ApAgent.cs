@@ -41,8 +41,7 @@ public sealed class ApAgent : CliAppLoop
         //ძირითადი პარამეტრების რედაქტირება
         ApAgentParametersEditor apAgentParametersEditor =
             new(_logger, _httpClientFactory, parameters, _parametersManager);
-        mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(apAgentParametersEditor),
-            "ApAgent Parameters Editor");
+        mainMenuSet.AddMenuItem(new ParametersEditorListCliMenuCommand(apAgentParametersEditor));
 
         //მთლიანი ფაილის გასუფთავება
         SaveApAgentParametersForLocalReServerCommand saveApAgentParametersCommand = new(_parametersManager);
@@ -107,7 +106,7 @@ public sealed class ApAgent : CliAppLoop
 
         //გასასვლელი
         var key = ConsoleKey.Escape.Value().ToLower();
-        mainMenuSet.AddMenuItem(key, "Exit", new ExitCliMenuCommand(), key.Length);
+        mainMenuSet.AddMenuItem(key, new ExitCliMenuCommand(), key.Length);
 
         return mainMenuSet;
     }

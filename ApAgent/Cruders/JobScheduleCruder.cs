@@ -113,6 +113,6 @@ public sealed class JobScheduleCruder : ParCruder
 
         RunAllStepsNowCommand runAllStepsNowCommand = new(_logger, _httpClientFactory, _processes, ParametersManager,
             recordName, _parametersFileName);
-        itemSubMenuSet.AddMenuItem(runAllStepsNowCommand, "Run All steps from this schedule now...");
+        itemSubMenuSet.AddMenuItem(runAllStepsNowCommand);
     }
 }

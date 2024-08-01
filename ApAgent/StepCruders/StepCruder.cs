@@ -48,7 +48,7 @@ public /*open*/ class StepCruder : ParCruder
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
         RunThisStepNowCommand runThisStepNowCommand = new(_logger, _httpClientFactory, _processes, ParametersManager,
             this, recordName, _parametersFileName);
-        itemSubMenuSet.AddMenuItem(runThisStepNowCommand, "Run this step now...");
+        itemSubMenuSet.AddMenuItem(runThisStepNowCommand);
 
         var parameters = (ApAgentParameters)ParametersManager.Parameters;
 

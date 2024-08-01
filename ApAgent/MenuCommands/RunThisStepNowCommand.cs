@@ -23,7 +23,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
     // ReSharper disable once ConvertToPrimaryConstructor
     public RunThisStepNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
         IParametersManager parametersManager, StepCruder stepCruder, string stepName,
-        string? parametersFileName) : base(null, EMenuAction.Reload)
+        string? parametersFileName) : base("Run this step now...", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
