@@ -44,6 +44,5 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
 
         StShared.WriteErrorLine("procLogFilesFolder does not counted. cannot run steps", true, _logger);
         return false;
-
     }
 }
