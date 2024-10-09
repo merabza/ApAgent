@@ -15,7 +15,7 @@ namespace ApAgent;
 public sealed class ApAgentParametersEditor : ParametersEditor
 {
     public ApAgentParametersEditor(ILogger logger, IHttpClientFactory httpClientFactory, IParameters parameters,
-        ParametersManager parametersManager) : base("InsuranceReport Parameters Editor", parameters, parametersManager)
+        ParametersManager parametersManager) : base("ApAgent Parameters Editor", parameters, parametersManager)
     {
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.LogFolder)));
         FieldEditors.Add(new FolderPathFieldEditor(nameof(ApAgentParameters.WorkFolder)));
