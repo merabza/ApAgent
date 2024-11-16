@@ -25,7 +25,7 @@ try
 
     var key = appKey + Environment.MachineName.Capitalize();
 
-    IArgumentsParser argParser = new ArgumentsParser<ApAgentParameters>(args, appName, key);
+    var argParser = new ArgumentsParser<ApAgentParameters>(args, appName, key);
     switch (argParser.Analysis())
     {
         case EParseResult.Ok: break;
