@@ -20,8 +20,8 @@ try
     const string appKey = "8959D94B-596E-48C1-A644-29667AEE2250";
 
     //პროგრამის ატრიბუტების დაყენება 
-    ProgramAttributes.Instance.SetAttribute("AppName", appName);
-    ProgramAttributes.Instance.SetAttribute("AppKey", appKey);
+    ProgramAttributes.Instance.AppName = appName;
+    ProgramAttributes.Instance.AppKey = appKey;
 
     var key = appKey + Environment.MachineName.Capitalize();
 
