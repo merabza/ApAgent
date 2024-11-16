@@ -16,12 +16,16 @@ try
 {
     Console.WriteLine("Loading...");
 
+    const string appName = "ApAgent";
+    const string appKey = "8959D94B-596E-48C1-A644-29667AEE2250";
+
     //პროგრამის ატრიბუტების დაყენება 
-    StatProgAttr.SetAttr();
+    ProgramAttributes.Instance.SetAttribute("AppName", appName);
+    ProgramAttributes.Instance.SetAttribute("AppKey", appKey);
 
-    var key = ProgramAttributes.Instance.GetAttribute<string>("AppKey") + Environment.MachineName.Capitalize();
+    var key = appKey + Environment.MachineName.Capitalize();
 
-    IArgumentsParser argParser = new ArgumentsParser<ApAgentParameters>(args, "ApAgent", key);
+    IArgumentsParser argParser = new ArgumentsParser<ApAgentParameters>(args, appName, key);
     switch (argParser.Analysis())
     {
         case EParseResult.Ok: break;
