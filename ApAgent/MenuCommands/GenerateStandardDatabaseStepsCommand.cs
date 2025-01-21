@@ -24,7 +24,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-        DatabaseServerConnectionCruder databaseServerConnectionCruder = new(_parametersManager, _logger);
+        var databaseServerConnectionCruder = new DatabaseServerConnectionCruder(_logger, null, _parametersManager);
 
         var databaseConnectionName =
             databaseServerConnectionCruder.GetNameWithPossibleNewName(
@@ -38,8 +38,8 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        StandardJobsSchemaGenerator standardJobsSchemaGenerator =
-            new(true, _logger, _parametersManager, databaseConnectionName, _parametersManager.ParametersFileName);
+        StandardJobsSchemaGenerator standardJobsSchemaGenerator = new(true, _logger, _parametersManager,
+            databaseConnectionName, _parametersManager.ParametersFileName);
         standardJobsSchemaGenerator.Generate();
 
         //შენახვა

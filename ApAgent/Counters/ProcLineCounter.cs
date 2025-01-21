@@ -4,6 +4,7 @@ using DatabasesManagement;
 using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using SystemToolsShared.Errors;
 
 namespace ApAgent.Counters;
 
@@ -15,10 +16,10 @@ public sealed class ProcLineCounter : SCounter
     private readonly IParametersManager _parametersManager;
     private readonly string? _uploadFileStorageName;
 
+
     // ReSharper disable once ConvertToPrimaryConstructor
     public ProcLineCounter(ILogger logger, IParametersManager parametersManager, string databaseServerConnectionName,
-        string? downloadFileStorageName, string? uploadFileStorageName) : base(
-        parametersManager)
+        string? downloadFileStorageName, string? uploadFileStorageName) : base(parametersManager)
     {
         _logger = logger;
         _parametersManager = parametersManager;
@@ -34,15 +35,14 @@ public sealed class ProcLineCounter : SCounter
         if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnections parametersDsc)
             return false;
 
-        var dac = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _databaseServerConnectionName,
-                new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), null, null,
-                CancellationToken.None)
-            .Result;
+        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections),
+            CancellationToken.None).Preserve().Result;
 
-        var isServerLocalResult = dac?.IsServerLocal(CancellationToken.None).Result;
-        if (isServerLocalResult is not null && isServerLocalResult.Value.IsT0)
-            return isServerLocalResult.Value.AsT0;
-        return false;
+        if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+
+        var isServerLocalResult = createDatabaseManagerResult.AsT0.IsServerLocal(CancellationToken.None).Result;
+        return isServerLocalResult is { IsT0: true, AsT0: true };
     }
 
     public int Count(EProcLineCase procLineCase)

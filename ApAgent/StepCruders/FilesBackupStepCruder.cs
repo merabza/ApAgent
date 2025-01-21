@@ -30,14 +30,14 @@ public sealed class FilesBackupStepCruder : StepCruder
         tempFieldEditors.AddRange(FieldEditors);
         FieldEditors.Clear();
 
-        FieldEditors.Add(
-            new TextFieldEditor(nameof(FilesBackupStep.MaskName), $"{Environment.MachineName.Capitalize()}_"));
+        FieldEditors.Add(new TextFieldEditor(nameof(FilesBackupStep.MaskName),
+            $"{Environment.MachineName.Capitalize()}_"));
         FieldEditors.Add(new TextFieldEditor(nameof(FilesBackupStep.DateMask), dateMask));
         FieldEditors.Add(new LocalPathFieldEditor(nameof(FilesBackupStep.LocalPath), ParametersManager, null,
             parametersFileName));
         FieldEditors.Add(new ArchiverFieldEditor(nameof(FilesBackupStep.ArchiverName), ParametersManager));
-        FieldEditors.Add(new SmartSchemaNameFieldEditor(nameof(FilesBackupStep.LocalSmartSchemaName),
-            ParametersManager));
+        FieldEditors.Add(
+            new SmartSchemaNameFieldEditor(nameof(FilesBackupStep.LocalSmartSchemaName), ParametersManager));
         FieldEditors.Add(new FileStorageNameFieldEditor(logger, nameof(FilesBackupStep.UploadFileStorageName),
             ParametersManager));
         FieldEditors.Add(new IntFieldEditor(nameof(FilesBackupStep.UploadProcLineId), 1));

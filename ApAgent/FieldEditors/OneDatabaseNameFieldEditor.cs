@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -22,7 +23,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
 {
     private readonly string _databaseServerConnectionNamePropertyName;
 
-    private readonly string _databaseWebAgentNamePropertyName;
+    //private readonly string _databaseWebAgentNamePropertyName;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
@@ -30,43 +31,19 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
     // ReSharper disable once ConvertToPrimaryConstructor
     public OneDatabaseNameFieldEditor(ILogger logger, IHttpClientFactory httpClientFactory, string propertyName,
         IParametersManager parametersManager, string databaseServerConnectionNamePropertyName,
-        string databaseWebAgentNamePropertyName, bool enterFieldDataOnCreate = false) : base(propertyName,
-        enterFieldDataOnCreate)
+        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
-        _databaseWebAgentNamePropertyName = databaseWebAgentNamePropertyName;
     }
 
     public override void UpdateField(string? recordName, object recordForUpdate)
     {
-        var databaseServerConnectionName =
-            GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
-        var databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
+        var databaseServerConnectionName = GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
 
-        var agentClient =
-            _parametersManager.Parameters is not IParametersWithDatabaseServerConnectionsAndApiClients parameters
-                ? null
-                : DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _httpClientFactory,
-                    databaseWebAgentName, new ApiClients(parameters.ApiClients), databaseServerConnectionName,
-                    new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null,
-                    CancellationToken.None).Result;
-
-        List<DatabaseInfoModel> dbList;
-
-        if (agentClient is null)
-        {
-            StShared.WriteErrorLine($"DatabaseManagementClient does not created for webAgent {databaseWebAgentName}",
-                true, _logger);
-            dbList = [];
-        }
-        else
-        {
-            DatabasesListCreator databasesListCreator = new(EDatabaseSet.AllDatabases, agentClient, EBackupType.Full);
-            dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
-        }
+        var dbList = CreateDbList(databaseServerConnectionName);
 
         var currentDatabaseName = GetValue(recordForUpdate);
 
@@ -76,5 +53,40 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         var selectedId = MenuInputer.InputIdFromMenuList(PropertyName.Pluralize(), listSet, currentDatabaseName);
         if (selectedId >= 0 && selectedId < dbList.Count)
             SetValue(recordForUpdate, dbList[selectedId].Name);
+    }
+
+
+    private List<DatabaseInfoModel> CreateDbList(string? databaseServerConnectionName)
+    {
+        var dbList = new List<DatabaseInfoModel>();
+
+        if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnectionsAndApiClients parameters)
+        {
+            Console.WriteLine("Parameters is invalid");
+            return dbList;
+        }
+
+
+        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+                databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
+                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None)
+            .Preserve()
+            .Result;
+
+        if (createDatabaseManagerResult.IsT1)
+        {
+            StShared.WriteErrorLine(
+                $"DatabaseManagementClient does not created for webAgent {databaseServerConnectionName}", true,
+                _logger);
+            dbList = [];
+        }
+        else
+        {
+            DatabasesListCreator databasesListCreator =
+                new(EDatabaseSet.AllDatabases, createDatabaseManagerResult.AsT0, EBackupType.Full);
+            dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
+        }
+
+        return dbList;
     }
 }

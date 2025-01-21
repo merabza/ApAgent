@@ -34,8 +34,7 @@ public sealed class JobScheduleCruder : ParCruder
         FieldEditors.Add(new IntFieldEditor(nameof(JobSchedule.FreqInterval), 1));
         FieldEditors.Add(new EnumFieldEditor<EDailyFrequency>(nameof(JobSchedule.DailyFrequencyType),
             EDailyFrequency.OccursOnce));
-        FieldEditors.Add(
-            new EnumFieldEditor<EEveryMeasure>(nameof(JobSchedule.FreqSubDayType), EEveryMeasure.Hour));
+        FieldEditors.Add(new EnumFieldEditor<EEveryMeasure>(nameof(JobSchedule.FreqSubDayType), EEveryMeasure.Hour));
         FieldEditors.Add(new IntFieldEditor(nameof(JobSchedule.FreqSubDayInterval), 1));
         FieldEditors.Add(new TimeSpanFieldEditor(nameof(JobSchedule.ActiveStartDayTime), new TimeSpan(0, 0, 0)));
         FieldEditors.Add(new TimeSpanFieldEditor(nameof(JobSchedule.ActiveEndDayTime), new TimeSpan(23, 59, 59)));

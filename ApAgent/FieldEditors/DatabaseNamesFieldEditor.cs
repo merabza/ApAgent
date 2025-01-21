@@ -15,6 +15,7 @@ using LibMenuInput;
 using LibParameters;
 using Microsoft.Extensions.Logging;
 using SystemToolsShared;
+using SystemToolsShared.Errors;
 
 namespace ApAgent.FieldEditors;
 
@@ -48,8 +49,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
     public override void UpdateField(string? recordName, object recordForUpdate)
     {
-        var databaseServerConnectionName =
-            GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
+        var databaseServerConnectionName = GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
         var databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
 
         var databaseSet = GetValue<EDatabaseSet>(recordForUpdate, _databaseSetPropertyName);
@@ -72,20 +72,22 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        var agentClient = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _httpClientFactory,
-                databaseWebAgentName, new ApiClients(parameters.ApiClients), databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
+        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+                databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
+                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None)
+            .Preserve()
             .Result;
 
-        if (agentClient is null)
+        if (createDatabaseManagerResult.IsT1)
         {
+            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
             StShared.WriteErrorLine($"DatabaseManagementClient does not created for webAgent {databaseWebAgentName}",
                 true, _logger);
             dbList = [];
         }
         else
         {
-            DatabasesListCreator databasesListCreator = new(databaseSet, agentClient, backupType);
+            DatabasesListCreator databasesListCreator = new(databaseSet, createDatabaseManagerResult.AsT0, backupType);
             dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
         }
 
@@ -93,8 +95,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         {
             Console.WriteLine("Databases list is:");
             var i = 0;
-            foreach (var databaseInfoModel in dbList.OrderBy(o => o.IsSystemDatabase)
-                         .ThenBy(tb => tb.Name))
+            foreach (var databaseInfoModel in dbList.OrderBy(o => o.IsSystemDatabase).ThenBy(tb => tb.Name))
             {
                 i++;
                 Console.WriteLine($"{i}. {databaseInfoModel.Name}");
@@ -103,8 +104,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         else
         {
             var oldDatabaseNames = GetValue(recordForUpdate, []) ?? [];
-            var oldDatabaseChecks = dbList.ToDictionary(
-                databaseInfoModel => databaseInfoModel.Name,
+            var oldDatabaseChecks = dbList.ToDictionary(databaseInfoModel => databaseInfoModel.Name,
                 databaseInfoModel => oldDatabaseNames.Contains(databaseInfoModel.Name));
             SetValue(recordForUpdate, MenuInputer.MultipleInputFromList(FieldName, oldDatabaseChecks));
         }

@@ -26,15 +26,14 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder
             EMultiDatabaseActionType.CheckRepairDataBase));
 
         //public string DatabaseServerConnectionName { get; set; }
-        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger,
+        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger, httpClientFactory,
             nameof(MultiDatabaseProcessStep.DatabaseServerConnectionName), ParametersManager, true));
         //public string DatabaseWebAgentName { get; set; }
         FieldEditors.Add(new ApiClientNameFieldEditor(logger, httpClientFactory,
             nameof(MultiDatabaseProcessStep.DatabaseWebAgentName), ParametersManager, true));
 
-        FieldEditors.Add(
-            new EnumFieldEditor<EDatabaseSet>(nameof(MultiDatabaseProcessStep.DatabaseSet),
-                EDatabaseSet.AllDatabases));
+        FieldEditors.Add(new EnumFieldEditor<EDatabaseSet>(nameof(MultiDatabaseProcessStep.DatabaseSet),
+            EDatabaseSet.AllDatabases));
         FieldEditors.Add(new DatabaseNamesFieldEditor(logger, httpClientFactory,
             nameof(MultiDatabaseProcessStep.DatabaseNames), ParametersManager,
             nameof(MultiDatabaseProcessStep.DatabaseServerConnectionName),

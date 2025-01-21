@@ -61,8 +61,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         var sn = 1;
-        foreach (var jobStepBySchedule in parameters.JobsBySchedules
-                     .Where(w => w.ScheduleName == _scheduleName)
+        foreach (var jobStepBySchedule in parameters.JobsBySchedules.Where(w => w.ScheduleName == _scheduleName)
                      .OrderBy(o => o.SequentialNumber).ThenBy(tb => tb.JobStepName))
         {
             jobStepBySchedule.SequentialNumber = sn;

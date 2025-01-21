@@ -24,7 +24,7 @@ public sealed class ExecuteSqlCommandStepCruder : StepCruder
         FieldEditors.Clear();
 
         //public string DatabaseServerConnectionName { get; set; }
-        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger,
+        FieldEditors.Add(new DatabaseServerConnectionNameFieldEditor(logger, httpClientFactory,
             nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName), ParametersManager, true));
         //public string DatabaseWebAgentName { get; set; }
         FieldEditors.Add(new ApiClientNameFieldEditor(logger, httpClientFactory,
@@ -32,8 +32,7 @@ public sealed class ExecuteSqlCommandStepCruder : StepCruder
 
         FieldEditors.Add(new OneDatabaseNameFieldEditor(logger, httpClientFactory,
             nameof(ExecuteSqlCommandStep.DatabaseName), ParametersManager,
-            nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName),
-            nameof(MultiDatabaseProcessStep.DatabaseWebAgentName)));
+            nameof(ExecuteSqlCommandStep.DatabaseServerConnectionName)));
 
         FieldEditors.Add(new TextFieldEditor(nameof(ExecuteSqlCommandStep.ExecuteQueryCommand)));
         FieldEditors.Add(new IntFieldEditor(nameof(ExecuteSqlCommandStep.CommandTimeOut), 1));

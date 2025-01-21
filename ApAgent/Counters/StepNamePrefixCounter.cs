@@ -3,6 +3,7 @@ using DatabasesManagement;
 using LibDatabaseParameters;
 using LibParameters;
 using Microsoft.Extensions.Logging;
+using SystemToolsShared.Errors;
 
 namespace ApAgent.Counters;
 
@@ -23,16 +24,19 @@ public sealed class StepNamePrefixCounter
 
     public string Count()
     {
-        var parameters =
-            (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
+        var parameters = (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        var dac = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
-            .Result;
+        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
+            CancellationToken.None).Preserve().Result;
 
-        var getDatabaseServerInfoResult = dac?.GetDatabaseServerInfo(CancellationToken.None).Result;
-        if (getDatabaseServerInfoResult is not null && getDatabaseServerInfoResult.Value.IsT0)
-            return getDatabaseServerInfoResult.Value.AsT0?.ServerName ?? string.Empty;
+        if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+
+        var getDatabaseServerInfoResult =
+            createDatabaseManagerResult.AsT0.GetDatabaseServerInfo(CancellationToken.None).Result;
+        if (getDatabaseServerInfoResult.IsT0)
+            return getDatabaseServerInfoResult.AsT0.ServerName ?? string.Empty;
+
         return string.Empty;
     }
 }

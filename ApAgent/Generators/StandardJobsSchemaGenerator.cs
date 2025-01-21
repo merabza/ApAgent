@@ -41,13 +41,16 @@ internal class StandardJobsSchemaGenerator
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var dac = DatabaseAgentClientsFabric.CreateDatabaseManager(true, _logger, _databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, null, CancellationToken.None)
-            .Result;
+        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
+            CancellationToken.None).Preserve().Result;
 
-        var testConnectionResult = dac?.TestConnection(null, CancellationToken.None).Result;
+        if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
 
-        if (dac is null || testConnectionResult is null || testConnectionResult.Value.IsSome)
+        var dac = createDatabaseManagerResult.AsT0;
+        var testConnectionResult = dac.TestConnection(null, CancellationToken.None).Result;
+
+        if (testConnectionResult.IsSome)
         {
             StShared.WriteErrorLine("Can not connect to server. Generation process stopped", true, _logger);
             return;
@@ -183,8 +186,7 @@ internal class StandardJobsSchemaGenerator
         var nextSequentialNumber = parameters.JobsBySchedules.Where(w => w.ScheduleName == scheduleName)
             .DefaultIfEmpty().Max(m => m?.SequentialNumber ?? 0) + 1;
 
-        parameters.JobsBySchedules.Add(new JobStepBySchedule(jobStepName, scheduleName,
-            nextSequentialNumber));
+        parameters.JobsBySchedules.Add(new JobStepBySchedule(jobStepName, scheduleName, nextSequentialNumber));
     }
 
     private void CreateMaintenanceStep(EMultiDatabaseActionType multiDatabaseActionType, string stepNamePrefix,
@@ -221,9 +223,9 @@ internal class StandardJobsSchemaGenerator
     }
 
     private void CreateBackupStep(EBackupType backupType, bool useCompression, bool useVerification,
-        string stepNamePrefix, string dateMask, string mainSmartSchemaName,
-        string reduceSmartSchemaName, string? databaseFileStorageName, string? databaseBackupsLocalPath,
-        string? archiverName, string? uploadFileStorageName, string scheduleNameFirst, string scheduleNameSecond,
+        string stepNamePrefix, string dateMask, string mainSmartSchemaName, string reduceSmartSchemaName,
+        string? databaseFileStorageName, string? databaseBackupsLocalPath, string? archiverName,
+        string? uploadFileStorageName, string scheduleNameFirst, string scheduleNameSecond,
         ApAgentParameters parameters)
     {
         var backupStepName = $"{stepNamePrefix} {backupType} Backup";
@@ -233,8 +235,8 @@ internal class StandardJobsSchemaGenerator
 
         BackupNameMiddlePartCounter backupNameMiddlePartCounter = new(backupType);
         BackupFileExtensionCounter backupFileExtensionCounter = new(backupType);
-        ProcLineCounter procLineCounter = new(_logger, _parametersManager,
-            _databaseServerConnectionName, databaseFileStorageName, uploadFileStorageName);
+        ProcLineCounter procLineCounter = new(_logger, _parametersManager, _databaseServerConnectionName,
+            databaseFileStorageName, uploadFileStorageName);
         SmartSchemaNameCounter smartSchemaNameCounter =
             new(_parametersManager, databaseFileStorageName, uploadFileStorageName);
 
@@ -254,13 +256,11 @@ internal class StandardJobsSchemaGenerator
                 DateMask = dateMask,
                 BackupFileExtension = backupFileExtensionCounter.Count()
             },
-
-            DbServerSideBackupPath = databaseBackupsLocalPath,
+            //DbServerSideBackupPath = databaseBackupsLocalPath,
 
             //ბაზის სერვერის მხარე
             SmartSchemaName = smartSchemaNameCounter.Count(ESmartSchemaCase.DatabaseServerSide, mainSmartSchemaName,
                 reduceSmartSchemaName),
-
             FileStorageName = databaseFileStorageName,
             //ჩამოტვირთვა და ლოკალური მხარე
             DownloadProcLineId = procLineCounter.Count(EProcLineCase.Download),
@@ -269,13 +269,11 @@ internal class StandardJobsSchemaGenerator
                 smartSchemaNameCounter.Count(ESmartSchemaCase.Local, mainSmartSchemaName, reduceSmartSchemaName),
             //დაკუმშვა
             ArchiverName = archiverName,
-
             CompressProcLineId = procLineCounter.Count(EProcLineCase.Archive),
             //ატვირთვა რეზერვაციისათვის
             UploadFileStorageName = uploadFileStorageName, //გარე ფაილსაცავის სახელი
             UploadProcLineId = procLineCounter.Count(EProcLineCase.Upload),
-            UploadSmartSchemaName = smartSchemaNameCounter.Count(ESmartSchemaCase.UploadServerSide,
-                mainSmartSchemaName,
+            UploadSmartSchemaName = smartSchemaNameCounter.Count(ESmartSchemaCase.UploadServerSide, mainSmartSchemaName,
                 reduceSmartSchemaName),
 
             //JobStep
@@ -298,12 +296,11 @@ internal class StandardJobsSchemaGenerator
     private static string CreateJobScheduleHourly(ApAgentParameters parameters)
     {
         {
-            var jsdKvp = parameters.JobSchedules.Where(w =>
-                w.Value is
-                {
-                    Enabled: true, ScheduleType: EScheduleType.Daily,
-                    DailyFrequencyType: EDailyFrequency.OccursManyTimes
-                }).ToList();
+            var jsdKvp = parameters.JobSchedules.Where(w => w.Value is
+            {
+                Enabled: true, ScheduleType: EScheduleType.Daily,
+                DailyFrequencyType: EDailyFrequency.OccursManyTimes
+            }).ToList();
 
             if (jsdKvp.Any())
                 return jsdKvp[0].Key;
@@ -332,11 +329,10 @@ internal class StandardJobsSchemaGenerator
     private static string CreateJobScheduleDaily(ApAgentParameters parameters)
     {
         {
-            var jsdKvp = parameters.JobSchedules.Where(w =>
-                w.Value is
-                {
-                    Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
-                }).ToList();
+            var jsdKvp = parameters.JobSchedules.Where(w => w.Value is
+            {
+                Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
+            }).ToList();
 
             if (jsdKvp.Any())
                 return jsdKvp[0].Key;

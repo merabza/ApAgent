@@ -24,8 +24,7 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-        var folderName =
-            MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
+        var folderName = MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
 
         if (string.IsNullOrWhiteSpace(folderName))
             return false;

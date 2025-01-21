@@ -28,19 +28,16 @@ public sealed class ApAgentParametersEditor : ParametersEditor
             ApAgentParameters.DefaultDownloadFileTempExtension));
         FieldEditors.Add(new TextFieldEditor(nameof(ApAgentParameters.ArchivingFileTempExtension),
             ApAgentParameters.DefaultArchivingFileTempExtension));
-        FieldEditors.Add(new TextFieldEditor(nameof(ApAgentParameters.DateMask),
-            ApAgentParameters.DefaultDateMask));
+        FieldEditors.Add(new TextFieldEditor(nameof(ApAgentParameters.DateMask), ApAgentParameters.DefaultDateMask));
 
-        FieldEditors.Add(
-            new DatabaseServerConnectionsFieldEditor(nameof(ApAgentParameters.DatabaseServerConnections),
-                parametersManager, logger));
+        FieldEditors.Add(new DatabaseServerConnectionsFieldEditor(logger, httpClientFactory, parametersManager,
+            nameof(ApAgentParameters.DatabaseServerConnections)));
         FieldEditors.Add(new ApiClientsFieldEditor(logger, httpClientFactory, nameof(ApAgentParameters.ApiClients),
             parametersManager));
         FieldEditors.Add(new FileStoragesFieldEditor(logger, nameof(ApAgentParameters.FileStorages),
             parametersManager));
         FieldEditors.Add(new ExcludeSetsFieldEditor(nameof(ApAgentParameters.ExcludeSets), parametersManager));
-        FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ApAgentParameters.ReplacePairsSets),
-            parametersManager));
+        FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ApAgentParameters.ReplacePairsSets), parametersManager));
         FieldEditors.Add(new SmartSchemasFieldEditor(nameof(ApAgentParameters.SmartSchemas), parametersManager));
         FieldEditors.Add(new ArchiversFieldEditor(nameof(ApAgentParameters.Archivers), parametersManager));
     }
