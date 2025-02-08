@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using ApAgent;
 using CliParameters;
+using LibApAgentData;
 using LibApAgentData.Models;
 using LibParameters;
 using LibToolActions.BackgroundTasks;
@@ -17,13 +18,11 @@ try
     Console.WriteLine("Loading...");
 
     const string appName = "ApAgent";
-    const string appKey = "8959D94B-596E-48C1-A644-29667AEE2250";
 
     //პროგრამის ატრიბუტების დაყენება 
     ProgramAttributes.Instance.AppName = appName;
-    ProgramAttributes.Instance.AppKey = appKey;
 
-    var key = appKey + Environment.MachineName.Capitalize();
+    var key = StringExtension.ApAgentAppKey + Environment.MachineName.Capitalize();
 
     var argParser = new ArgumentsParser<ApAgentParameters>(args, appName, key);
     switch (argParser.Analysis())
