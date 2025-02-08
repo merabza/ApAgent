@@ -22,7 +22,7 @@ try
     //პროგრამის ატრიბუტების დაყენება 
     ProgramAttributes.Instance.AppName = appName;
 
-    var key = StringExtension.ApAgentAppKey + Environment.MachineName.Capitalize();
+    var key = StringExtension.AppAgentAppKey + Environment.MachineName.Capitalize();
 
     var argParser = new ArgumentsParser<ApAgentParameters>(args, appName, key);
     switch (argParser.Analysis())
