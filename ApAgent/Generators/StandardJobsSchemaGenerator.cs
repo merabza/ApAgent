@@ -43,7 +43,7 @@ internal class StandardJobsSchemaGenerator
 
         var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-            CancellationToken.None).Preserve().Result;
+            CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
 

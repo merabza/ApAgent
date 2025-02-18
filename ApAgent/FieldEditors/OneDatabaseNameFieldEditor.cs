@@ -68,10 +68,8 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
 
 
         var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
-                databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None)
-            .Preserve()
-            .Result;
+            databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
+            new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1)
         {

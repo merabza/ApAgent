@@ -37,7 +37,7 @@ public sealed class ProcLineCounter : SCounter
 
         var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
             _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections),
-            CancellationToken.None).Preserve().Result;
+            CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
 
