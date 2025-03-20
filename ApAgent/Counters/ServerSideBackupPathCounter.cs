@@ -40,7 +40,6 @@
 //      return isServerLocal ? GetWorkFolderCandidate(parameters) : null;
 //    }
 
-
 //    private string GetWorkFolderCandidate(ApAgentParameters parameters)
 //    {
 //      FileInfo pf = new FileInfo(_parametersManager.ParametersFileName);

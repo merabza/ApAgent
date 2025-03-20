@@ -15,7 +15,6 @@ public sealed class ClearAllCommand : CliMenuCommand
         _parametersManager = parametersManager;
     }
 
-
     protected override bool RunBody()
     {
         if (!Inputer.InputBool("Clear All, are you sure?", false, false))

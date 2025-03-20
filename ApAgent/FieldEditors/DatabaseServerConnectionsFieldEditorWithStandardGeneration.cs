@@ -12,7 +12,6 @@
 //    {
 //    }
 
-
 //    public override CliMenuSet GetSubMenu(object record)
 //    {
 //        CliMenuSet menuSet = base.GetSubMenu(record);
@@ -21,7 +20,6 @@
 //        menuSet.AddMenuItem(genSchemaCommand, "Generate standard maintenance schema...");
 //        return menuSet;
 //    }
-
 
 //}
 

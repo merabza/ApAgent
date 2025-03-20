@@ -36,7 +36,6 @@ public sealed class FilesMoveStepCruder : StepCruder
         FieldEditors.Add(new BoolFieldEditor(nameof(FilesMoveStep.CreateFolderWithDateTime), true));
         FieldEditors.Add(new FolderPathsSetFieldEditor(nameof(FilesMoveStep.PriorityPoints), ParametersManager));
 
-
         FieldEditors.AddRange(tempFieldEditors);
     }
 

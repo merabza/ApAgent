@@ -55,7 +55,6 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
             SetValue(recordForUpdate, dbList[selectedId].Name);
     }
 
-
     private List<DatabaseInfoModel> CreateDbList(string? databaseServerConnectionName)
     {
         var dbList = new List<DatabaseInfoModel>();
@@ -65,7 +64,6 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
             Console.WriteLine("Parameters is invalid");
             return dbList;
         }
-
 
         var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
             databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),

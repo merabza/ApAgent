@@ -16,7 +16,6 @@
 //        public string DatabaseName { get; set; } //მონაცემთა ბაზის სახელი
 //        public string ReCounterTypeName { get; set; } //გადათვლის ტიპის სახელი
 
-
 //        public override ProcessesToolAction GetToolAction(ILogger logger, ProcessManager processManager,
 //            ApAgentParameters parameters, string procLogFilesFolder)
 //        {

@@ -24,7 +24,6 @@ public sealed class BackupFolderPathsFieldEditor : FieldEditor<Dictionary<string
         SetValue(recordForUpdate, data);
     }
 
-
     public override CliMenuSet GetSubMenu(object record)
     {
         var currentValuesDict = GetValue(record) ?? new Dictionary<string, string>();

@@ -38,7 +38,6 @@ public sealed class ReplacePairsSetFileMaskCruder : ParCruder
         return new TextPairItemData();
     }
 
-
     public override bool ContainsRecordWithKey(string recordKey)
     {
         var fileMasks = GetFileMasks();

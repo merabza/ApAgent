@@ -34,7 +34,6 @@ public sealed class ReplacePairsSetCruder : ParCruder
             itemSubMenuSet.AddMenuItem(detailListCommand);
     }
 
-
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
         var parameters = (ApAgentParameters)ParametersManager.Parameters;

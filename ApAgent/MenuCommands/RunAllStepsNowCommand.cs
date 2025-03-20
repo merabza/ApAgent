@@ -17,7 +17,6 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
     private readonly IParametersManager _parametersManager;
     private readonly Processes _processes;
 
-
     // ReSharper disable once ConvertToPrimaryConstructor
     public RunAllStepsNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
         IParametersManager parametersManager, string jobScheduleName, string? parametersFileName) : base(

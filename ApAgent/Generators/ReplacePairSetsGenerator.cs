@@ -11,7 +11,6 @@
 
 //        public string ExcludeSetGitBinObjName { get; private set; } //GitBinObj
 
-
 //        public ReplacePairSetsGenerator(IParametersManager parametersManager)
 //        {
 //            _parametersManager = parametersManager;

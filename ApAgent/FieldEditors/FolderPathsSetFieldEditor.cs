@@ -24,7 +24,6 @@ public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
         SetValue(recordForUpdate, data);
     }
 
-
     public override CliMenuSet GetSubMenu(object record)
     {
         var currentValuesList = GetValue(record) ?? new List<string>();

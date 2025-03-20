@@ -34,7 +34,6 @@ public sealed class FolderPathsSetCruder : ParCruder
         return new FolderPathItemData();
     }
 
-
     public override bool ContainsRecordWithKey(string recordKey)
     {
         return _currentValuesList.Contains(recordKey);

@@ -14,7 +14,6 @@ public sealed class BackupFileExtensionFieldEditor : TextFieldEditor
         _backupTypePropertyName = backupTypePropertyName;
     }
 
-
     public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
     {
         var backupType = GetValue<EBackupType>(recordForUpdate, _backupTypePropertyName);

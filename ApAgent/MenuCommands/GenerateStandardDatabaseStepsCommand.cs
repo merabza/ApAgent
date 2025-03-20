@@ -21,7 +21,6 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
         _logger = logger;
     }
 
-
     protected override bool RunBody()
     {
         var databaseServerConnectionCruder = new DatabaseServerConnectionCruder(_logger, null, _parametersManager);

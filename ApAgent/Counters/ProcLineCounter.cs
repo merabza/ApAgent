@@ -16,7 +16,6 @@ public sealed class ProcLineCounter : SCounter
     private readonly IParametersManager _parametersManager;
     private readonly string? _uploadFileStorageName;
 
-
     // ReSharper disable once ConvertToPrimaryConstructor
     public ProcLineCounter(ILogger logger, IParametersManager parametersManager, string databaseServerConnectionName,
         string? downloadFileStorageName, string? uploadFileStorageName) : base(parametersManager)
