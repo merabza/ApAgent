@@ -76,7 +76,6 @@ internal class StandardJobsSchemaGenerator
         //var smartSchemaReduceName = standardSmartSchemas.SmartSchemaReduceName; //Reduce
         //var smartSchemaHourlyName = standardSmartSchemas.SmartSchemaHourlyName; //Hourly
 
-
         StandardArchiversGenerator.Generate(_useConsole, _parametersManager);
 
         //თუ არ არსებობს შეიქმნას zipClass არქივატორი
@@ -125,7 +124,6 @@ internal class StandardJobsSchemaGenerator
 
         var databaseFullBackupsLocalPath =
             parameters.CountLocalPath(null, _parametersFileName, $"Database{EBackupType.Full}Backups");
-
 
         //ბაზების სრული ბექაპი
         CreateBackupStep(EBackupType.Full, isServerAllowsCompression, true, stepNamePrefix, dateMask,
@@ -244,7 +242,7 @@ internal class StandardJobsSchemaGenerator
         {
             DatabaseServerConnectionName = _databaseServerConnectionName,
             DatabaseSet = EDatabaseSet.AllDatabases,
-            DatabaseBackupParameters = new DatabaseBackupParametersModel
+            DatabaseBackupParameters = new DatabaseParameters
             {
                 BackupType = backupType,
                 //ბექაპირება
@@ -306,7 +304,6 @@ internal class StandardJobsSchemaGenerator
                 return jsdKvp[0].Key;
         }
 
-
         var jobScheduleHourly = new JobSchedule
         {
             Enabled = true,
@@ -338,7 +335,6 @@ internal class StandardJobsSchemaGenerator
                 return jsdKvp[0].Key;
         }
 
-
         var jobScheduleDaily = new JobSchedule
         {
             Enabled = true,
@@ -367,7 +363,6 @@ internal class StandardJobsSchemaGenerator
                 return jsdKvp[0].Key;
         }
 
-
         var jobScheduleAtStart = new JobSchedule
         {
             Enabled = true,
@@ -382,7 +377,6 @@ internal class StandardJobsSchemaGenerator
 
         return atStartName;
     }
-
 
     private static string CreateNewName(string[] templates, List<string> reservedNames)
     {

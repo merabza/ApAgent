@@ -28,7 +28,7 @@ public sealed class DbServerSideBackupPathFieldEditor : FieldEditor<string>
     {
         var databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
         var databaseBackupParameters =
-            GetValue<DatabaseBackupParametersModel>(recordForUpdate, _databaseBackupParametersPropertyName);
+            GetValue<DatabaseBackupParametersDomain>(recordForUpdate, _databaseBackupParametersPropertyName);
         var currentPath = GetValue(recordForUpdate);
 
         if (currentPath != null)

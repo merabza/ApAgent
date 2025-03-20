@@ -29,7 +29,7 @@ public sealed class LocalPathFieldEditor : FieldEditor<string>
         if (_databaseBackupParametersPropertyName != null)
         {
             var databaseBackupParameters =
-                GetValue<DatabaseBackupParametersModel>(recordForUpdate, _databaseBackupParametersPropertyName);
+                GetValue<DatabaseBackupParametersDomain>(recordForUpdate, _databaseBackupParametersPropertyName);
 
             workFolderCandidateForLocalPath = databaseBackupParameters is null
                 ? null

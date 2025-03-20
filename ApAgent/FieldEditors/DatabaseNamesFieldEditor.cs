@@ -59,7 +59,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         if (_databaseBackupParametersPropertyName is not null)
         {
             var databaseBackupParameters =
-                GetValue<DatabaseBackupParametersModel>(recordForUpdate, _databaseBackupParametersPropertyName);
+                GetValue<DatabaseBackupParametersDomain>(recordForUpdate, _databaseBackupParametersPropertyName);
             if (databaseBackupParameters is not null)
                 backupType = databaseBackupParameters.BackupType;
         }

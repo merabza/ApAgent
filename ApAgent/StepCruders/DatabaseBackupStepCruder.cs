@@ -31,8 +31,11 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         //FieldEditors.Add(new ApiClientNameFieldEditor(logger, httpClientFactory,
         //    nameof(DatabaseBackupStep.DatabaseWebAgentName), ParametersManager, true));
 
-        FieldEditors.Add(new DatabaseBackupParametersFieldEditor(logger,
-            nameof(DatabaseBackupStep.DatabaseBackupParameters), ParametersManager));
+        //FieldEditors.Add(new DatabaseBackupParametersFieldEditor(logger,
+        //    nameof(DatabaseBackupStep.DatabaseBackupParameters), ParametersManager));
+
+        FieldEditors.Add(new DatabaseParametersFieldEditor(logger, httpClientFactory,
+            nameof(DatabaseBackupStep.DatabaseBackupParameters), parametersManager));
 
         FieldEditors.Add(new EnumFieldEditor<EDatabaseSet>(nameof(DatabaseBackupStep.DatabaseSet),
             EDatabaseSet.AllDatabases));
@@ -40,7 +43,6 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         FieldEditors.Add(new DbServerFoldersSetNameFieldEditor(logger, httpClientFactory,
             nameof(DatabaseBackupStep.DbServerFoldersSetName), parametersManager,
             nameof(DatabaseBackupStep.DatabaseServerConnectionName)));
-
 
         FieldEditors.Add(new DatabaseNamesFieldEditor(logger, httpClientFactory,
             nameof(DatabaseBackupStep.DatabaseNames), ParametersManager,
