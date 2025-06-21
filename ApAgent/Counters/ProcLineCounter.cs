@@ -34,7 +34,7 @@ public sealed class ProcLineCounter : SCounter
         if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnections parametersDsc)
             return false;
 
-        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
             _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections),
             CancellationToken.None).Result;
 

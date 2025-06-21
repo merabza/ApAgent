@@ -65,7 +65,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
             return dbList;
         }
 
-        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
             databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
             new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
 

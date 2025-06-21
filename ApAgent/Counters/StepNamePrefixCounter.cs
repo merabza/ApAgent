@@ -26,7 +26,7 @@ public sealed class StepNamePrefixCounter
     {
         var parameters = (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
             CancellationToken.None).Result;
 

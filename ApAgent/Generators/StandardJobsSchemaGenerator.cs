@@ -41,7 +41,7 @@ internal class StandardJobsSchemaGenerator
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var createDatabaseManagerResult = DatabaseManagersFabric.CreateDatabaseManager(_logger, true,
+        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
             _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
             CancellationToken.None).Result;
 
@@ -117,7 +117,7 @@ internal class StandardJobsSchemaGenerator
 
         //დავიანგარიშოთ ლოკალურად სად უნდა იყოს სრული ბექაპების ფაილები
         //LocalPathCounter databaseFullBackupsLocalPathCounter =
-        //    LocalPathCounterFabric.CreateDatabaseBackupsLocalPathCounter(parameters,
+        //    LocalPathCounterFactory.CreateDatabaseBackupsLocalPathCounter(parameters,
         //        _parametersManager.ParametersFileName,
         //        EBackupType.Full);
         //string databaseFullBackupsLocalPath = databaseFullBackupsLocalPathCounter.Count(null);
@@ -134,7 +134,7 @@ internal class StandardJobsSchemaGenerator
 
         //დავიანგარიშოთ ლოკალურად სად უნდა იყოს ტრანზაქშენ ლოგების ბექაპების ფაილები
         //LocalPathCounter databaseTrLogBackupsLocalPathCounter =
-        //    LocalPathCounterFabric.CreateDatabaseBackupsLocalPathCounter(parameters,
+        //    LocalPathCounterFactory.CreateDatabaseBackupsLocalPathCounter(parameters,
         //        _parametersManager.ParametersFileName,
         //        EBackupType.TrLog);
         //string databaseTrLogBackupsLocalPath = databaseTrLogBackupsLocalPathCounter.Count(null);

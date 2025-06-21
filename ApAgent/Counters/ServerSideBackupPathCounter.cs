@@ -29,7 +29,7 @@
 //    {
 //      ApAgentParameters parameters = (ApAgentParameters) _parametersManager.Parameters;
 
-//      DatabaseAgentClient dac = DatabaseAgentClientsFabric.CreateAgentClient(_logger, _databaseWebAgentName,
+//      DatabaseAgentClient dac = DatabaseAgentClientsFactory.CreateAgentClient(_logger, _databaseWebAgentName,
 //        new WebAgents(parameters.WebAgents), _databaseServerConnectionName,
 //        new DatabaseServerConnections(parameters.DatabaseServerConnections));
 
