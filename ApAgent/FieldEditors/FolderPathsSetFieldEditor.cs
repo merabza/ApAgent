@@ -4,19 +4,15 @@ using ApAgent.Cruders;
 using ApAgent.MenuCommands;
 using CliMenu;
 using CliParameters.FieldEditors;
-using LibParameters;
 
 namespace ApAgent.FieldEditors;
 
 public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
 {
-    private readonly IParametersManager _parametersManager;
-
     // ReSharper disable once ConvertToPrimaryConstructor
-    public FolderPathsSetFieldEditor(string propertyName, IParametersManager parametersManager,
-        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
+    public FolderPathsSetFieldEditor(string propertyName, bool enterFieldDataOnCreate = false) : base(propertyName,
+        enterFieldDataOnCreate, null, true)
     {
-        _parametersManager = parametersManager;
     }
 
     public void Update(object recordForUpdate, List<string> data)
@@ -26,9 +22,9 @@ public sealed class FolderPathsSetFieldEditor : FieldEditor<List<string>>
 
     public override CliMenuSet GetSubMenu(object record)
     {
-        var currentValuesList = GetValue(record) ?? new List<string>();
+        var currentValuesList = GetValue(record) ?? [];
 
-        FolderPathsSetCruder folderPathsSetCruder = new(currentValuesList, _parametersManager, record, this);
+        var folderPathsSetCruder = new FolderPathsSetCruder(currentValuesList, record, this);
         var foldersSet = folderPathsSetCruder.GetListMenu();
 
         foldersSet.InsertMenuItem(1, new MultiSelectSubfoldersCommand(currentValuesList, folderPathsSetCruder));

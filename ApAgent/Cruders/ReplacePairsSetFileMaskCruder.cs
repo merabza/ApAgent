@@ -29,8 +29,7 @@ public sealed class ReplacePairsSetFileMaskCruder : ParCruder
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        return GetFileMasks().ToDictionary(k => k.Key,
-            v => (ItemData)new TextPairItemData { Text1 = v.Key, Text2 = v.Value });
+        return GetFileMasks().ToDictionary(k => k.Key, ItemData (v) => new TextPairItemData { Text1 = v.Key, Text2 = v.Value });
     }
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)

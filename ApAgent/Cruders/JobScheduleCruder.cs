@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using ApAgent.FieldEditors;
 using ApAgent.MenuCommands;
@@ -14,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ApAgent.Cruders;
 
-public sealed class JobScheduleCruder : ParCruder
+public sealed class JobScheduleCruder : ParCruder<JobSchedule>
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
@@ -22,7 +21,8 @@ public sealed class JobScheduleCruder : ParCruder
     private readonly Processes _processes;
 
     public JobScheduleCruder(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
-        Processes processes) : base(parametersManager, "Job Schedule", "Job Schedules")
+        Dictionary<string, JobSchedule> currentValuesDictionary, Processes processes) : base(parametersManager,
+        currentValuesDictionary, "Job Schedule", "Job Schedules")
     {
         _parametersFileName = parametersManager.ParametersFileName;
         _logger = logger;
@@ -42,39 +42,39 @@ public sealed class JobScheduleCruder : ParCruder
         FieldEditors.Add(new DateFieldEditor(nameof(JobSchedule.DurationEndDate), DateTime.MaxValue.Date));
     }
 
-    protected override Dictionary<string, ItemData> GetCrudersDictionary()
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        return parameters.JobSchedules.ToDictionary(p => p.Key, p => (ItemData)p.Value);
-    }
+    //protected override Dictionary<string, ItemData> GetCrudersDictionary()
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    return parameters.JobSchedules.ToDictionary(p => p.Key, p => (ItemData)p.Value);
+    //}
 
-    public override bool ContainsRecordWithKey(string recordKey)
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var jobSchedules = parameters.JobSchedules;
-        return jobSchedules.ContainsKey(recordKey);
-    }
+    //public override bool ContainsRecordWithKey(string recordKey)
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    var jobSchedules = parameters.JobSchedules;
+    //    return jobSchedules.ContainsKey(recordKey);
+    //}
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newJobSchedule = (JobSchedule)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.JobSchedules[recordName] = newJobSchedule;
-    }
+    //public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newJobSchedule = (JobSchedule)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.JobSchedules[recordName] = newJobSchedule;
+    //}
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newJobSchedule = (JobSchedule)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.JobSchedules.Add(recordName, newJobSchedule);
-    }
+    //protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newJobSchedule = (JobSchedule)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.JobSchedules.Add(recordName, newJobSchedule);
+    //}
 
-    protected override void RemoveRecordWithKey(string recordKey)
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var jobSchedules = parameters.JobSchedules;
-        jobSchedules.Remove(recordKey);
-    }
+    //protected override void RemoveRecordWithKey(string recordKey)
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    var jobSchedules = parameters.JobSchedules;
+    //    jobSchedules.Remove(recordKey);
+    //}
 
     protected override void CheckFieldsEnables(ItemData itemData, string? lastEditedFieldName = null)
     {
@@ -99,10 +99,10 @@ public sealed class JobScheduleCruder : ParCruder
         EnableFieldByName(nameof(JobSchedule.ActiveEndDayTime), enableDailyOccursManyTimes);
     }
 
-    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
-    {
-        return new JobSchedule();
-    }
+    //protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
+    //{
+    //    return new JobSchedule();
+    //}
 
     //public საჭიროა ApAgent პროექტისათვის
     public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)

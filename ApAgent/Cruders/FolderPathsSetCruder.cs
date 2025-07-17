@@ -8,15 +8,15 @@ using LibParameters;
 
 namespace ApAgent.Cruders;
 
-public sealed class FolderPathsSetCruder : ParCruder
+public sealed class FolderPathsSetCruder : Cruder
 {
     private readonly List<string> _currentValuesList;
     private readonly FolderPathsSetFieldEditor _folderPathsSetFieldEditor;
     private readonly object _record;
 
-    public FolderPathsSetCruder(List<string> currentValuesList, IParametersManager parametersManager, object record,
-        FolderPathsSetFieldEditor folderPathsSetFieldEditor) : base(parametersManager, "Priority Folder Path",
-        "Priority Folder Paths", true, false)
+    public FolderPathsSetCruder(List<string> currentValuesList, object record,
+        FolderPathsSetFieldEditor folderPathsSetFieldEditor) : base("Priority Folder Path", "Priority Folder Paths",
+        true, false)
     {
         _currentValuesList = currentValuesList;
         _record = record;
@@ -26,7 +26,7 @@ public sealed class FolderPathsSetCruder : ParCruder
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()
     {
-        return _currentValuesList.ToDictionary(p => p, p => (ItemData)new FolderPathItemData { Path = p });
+        return _currentValuesList.ToDictionary(p => p, ItemData (p) => new FolderPathItemData { Path = p });
     }
 
     protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)

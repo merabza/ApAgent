@@ -48,8 +48,8 @@ public sealed class ApAgent : CliAppLoop
         mainMenuSet.AddMenuItem(saveApAgentParametersCommand);
 
         //სამუშაოების დროის დაგეგმვების სია
-        CruderListCliMenuCommand jobSchedulesCommand =
-            new(new JobScheduleCruder(_logger, _httpClientFactory, _parametersManager, _processes));
+        CruderListCliMenuCommand jobSchedulesCommand = new(new JobScheduleCruder(_logger, _httpClientFactory,
+            _parametersManager, parameters.JobSchedules, _processes));
         mainMenuSet.AddMenuItem(jobSchedulesCommand);
 
         //მონაცემთა ბაზების ბექაპირების ნაბიჯების სია
