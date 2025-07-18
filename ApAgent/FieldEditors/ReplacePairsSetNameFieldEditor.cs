@@ -9,6 +9,7 @@ public sealed class ReplacePairsSetNameFieldEditor : FieldEditor<string>
     private readonly IParametersManager _parametersManager;
     private readonly bool _useNone;
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public ReplacePairsSetNameFieldEditor(string propertyName, IParametersManager parametersManager, bool useNone,
         bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate)
     {

@@ -27,14 +27,14 @@ public sealed class FilesMoveStepCruder : StepCruder
         FieldEditors.Add(new FileStorageNameFieldEditor(logger, nameof(FilesMoveStep.DestinationFileStorageName),
             ParametersManager));
         FieldEditors.Add(new TextFieldEditor(nameof(FilesMoveStep.MoveFolderMask), "yyyyMMddHHmmss"));
-        FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesMoveStep.ExcludeSet), ParametersManager, true));
+        FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesMoveStep.ExcludeSet), parametersManager, true));
         FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesMoveStep.DeleteDestinationFilesSet),
             ParametersManager, true));
         FieldEditors.Add(
-            new ReplacePairsSetNameFieldEditor(nameof(FilesMoveStep.ReplacePairsSet), ParametersManager, true));
+            new ReplacePairsSetNameFieldEditor(nameof(FilesMoveStep.ReplacePairsSet), parametersManager, true));
         FieldEditors.Add(new IntFieldEditor(nameof(FilesMoveStep.MaxFolderCount), 2));
         FieldEditors.Add(new BoolFieldEditor(nameof(FilesMoveStep.CreateFolderWithDateTime), true));
-        FieldEditors.Add(new FolderPathsSetFieldEditor(nameof(FilesMoveStep.PriorityPoints), ParametersManager));
+        FieldEditors.Add(new FolderPathsSetFieldEditor(nameof(FilesMoveStep.PriorityPoints)));
 
         FieldEditors.AddRange(tempFieldEditors);
     }

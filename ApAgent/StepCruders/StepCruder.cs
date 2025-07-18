@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using ApAgent.FieldEditors;
@@ -15,7 +16,7 @@ using SystemToolsShared;
 
 namespace ApAgent.StepCruders;
 
-public /*open*/ class StepCruder : ParCruder
+public /*open*/ class StepCruder : ParCruder<JobStep>
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
@@ -23,8 +24,8 @@ public /*open*/ class StepCruder : ParCruder
     private readonly Processes _processes;
 
     protected StepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        ParametersManager parametersManager, string crudName, string crudNamePlural) : base(parametersManager, crudName,
-        crudNamePlural)
+        ParametersManager parametersManager, Dictionary<string, JobStep> currentValuesDictionary, string crudName,
+        string crudNamePlural) : base(parametersManager, currentValuesDictionary, crudName, crudNamePlural)
     {
         _parametersFileName = parametersManager.ParametersFileName;
         _logger = logger;

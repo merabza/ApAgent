@@ -27,6 +27,11 @@ public sealed class ReplacePairsSetCruder : ParCruder<ReplacePairsSet>
         var replacePairsSet = replacePairsSets[recordName];
 
         var detailsCruder = new ReplacePairsSetFileMaskCruder(ParametersManager, recordName);
+
+        //var detailsCruder = new SimpleNamesWithDescriptionsFieldEditor<ReactAppTypeCruder>(
+        //    nameof(ReplacePairsSet.PairsDict), ParametersManager);
+
+
         NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
