@@ -16,8 +16,10 @@ namespace ApAgent.StepCruders;
 public sealed class DatabaseBackupStepCruder : StepCruder
 {
     public DatabaseBackupStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
-        "Database Backup Step", "Database Backup Steps")
+        ParametersManager parametersManager, Dictionary<string, DatabaseBackupStep> currentValuesDictionary) : base(
+        logger, httpClientFactory, processes, parametersManager,
+        currentValuesDictionary.ToDictionary(k => k.Key, JobStep (v) => v.Value), "Database Backup Step",
+        "Database Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
 
@@ -70,6 +72,15 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         FieldEditors.Add(new SmartSchemaNameFieldEditor(nameof(DatabaseBackupStep.UploadSmartSchemaName),
             ParametersManager));
         FieldEditors.AddRange(tempFieldEditors);
+    }
+
+    public static DatabaseBackupStepCruder Create(ILogger logger, IHttpClientFactory? httpClientFactory,
+        IParametersManager parametersManager, Processes processes)
+
+    {
+        var parameters = (ApAgentParameters)parametersManager.Parameters;
+        return new DatabaseBackupStepCruder(logger, httpClientFactory, processes, parametersManager,
+            parameters.DatabaseBackupSteps);
     }
 
     protected override Dictionary<string, ItemData> GetCrudersDictionary()

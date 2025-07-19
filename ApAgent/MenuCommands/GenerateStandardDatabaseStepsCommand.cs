@@ -23,7 +23,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-        var databaseServerConnectionCruder = new DatabaseServerConnectionCruder(_logger, null, _parametersManager);
+        var databaseServerConnectionCruder = DatabaseServerConnectionCruder.Create(_logger, null, _parametersManager);
 
         var databaseConnectionName =
             databaseServerConnectionCruder.GetNameWithPossibleNewName(
