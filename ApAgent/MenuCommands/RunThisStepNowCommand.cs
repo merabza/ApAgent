@@ -1,5 +1,4 @@
 ﻿using System.Net.Http;
-using ApAgent.StepCruders;
 using CliMenu;
 using LibApAgentData.Models;
 using LibApAgentData.Steps;
@@ -13,24 +12,26 @@ namespace ApAgent.MenuCommands;
 public sealed class RunThisStepNowCommand : CliMenuCommand
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly JobStep _jobStep;
     private readonly ILogger _logger;
     private readonly string? _parametersFileName;
     private readonly IParametersManager _parametersManager;
+
     private readonly Processes _processes;
-    private readonly StepCruder _stepCruder;
-    private readonly string _stepName;
+    //private readonly StepCruder _stepCruder;
+    //private readonly string _stepName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public RunThisStepNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        IParametersManager parametersManager, StepCruder stepCruder, string stepName,
-        string? parametersFileName) : base("Run this step now...", EMenuAction.Reload)
+        IParametersManager parametersManager, JobStep jobStep, string? parametersFileName) : base(
+        "Run this step now...", EMenuAction.Reload)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _processes = processes;
         _parametersManager = parametersManager;
-        _stepCruder = stepCruder;
-        _stepName = stepName;
+        _jobStep = jobStep;
+        //_stepName = stepName;
         _parametersFileName = parametersFileName;
     }
 
@@ -47,18 +48,18 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
             return false;
         }
 
-        var jobStep = (JobStep?)_stepCruder.GetItemByName(_stepName);
+        //JobStep? jobStep = (JobStep?)_stepCruder.GetItemByName(_stepName);
 
-        if (jobStep is null)
-        {
-            StShared.WriteErrorLine("jobStep does not found. step does not started", true, _logger);
-            return false;
-        }
+        //if (jobStep is null)
+        //{
+        //    StShared.WriteErrorLine("jobStep does not found. step does not started", true, _logger);
+        //    return false;
+        //}
 
         // ReSharper disable once using
         using var processManager = _processes.GetNewProcessManager();
 
-        var stepToolAction = jobStep.GetToolAction(_logger, _httpClientFactory, true, processManager, parameters,
+        var stepToolAction = _jobStep.GetToolAction(_logger, _httpClientFactory, true, processManager, parameters,
             procLogFilesFolder);
 
         if (stepToolAction is null)

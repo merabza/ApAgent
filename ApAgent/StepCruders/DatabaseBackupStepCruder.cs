@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
@@ -13,12 +12,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ApAgent.StepCruders;
 
-public sealed class DatabaseBackupStepCruder : StepCruder
+public sealed class DatabaseBackupStepCruder : StepCruder<DatabaseBackupStep>
 {
     public DatabaseBackupStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
         ParametersManager parametersManager, Dictionary<string, DatabaseBackupStep> currentValuesDictionary) : base(
-        logger, httpClientFactory, processes, parametersManager,
-        currentValuesDictionary.ToDictionary(k => k.Key, JobStep (v) => v.Value), "Database Backup Step",
+        logger, httpClientFactory, processes, parametersManager, currentValuesDictionary, "Database Backup Step",
         "Database Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
@@ -74,44 +72,44 @@ public sealed class DatabaseBackupStepCruder : StepCruder
         FieldEditors.AddRange(tempFieldEditors);
     }
 
-    public static DatabaseBackupStepCruder Create(ILogger logger, IHttpClientFactory? httpClientFactory,
-        IParametersManager parametersManager, Processes processes)
+    //public static DatabaseBackupStepCruder Create(ILogger logger, IHttpClientFactory? httpClientFactory,
+    //    IParametersManager parametersManager, Processes processes)
 
-    {
-        var parameters = (ApAgentParameters)parametersManager.Parameters;
-        return new DatabaseBackupStepCruder(logger, httpClientFactory, processes, parametersManager,
-            parameters.DatabaseBackupSteps);
-    }
+    //{
+    //    var parameters = (ApAgentParameters)parametersManager.Parameters;
+    //    return new DatabaseBackupStepCruder(logger, httpClientFactory, processes, parametersManager,
+    //        parameters.DatabaseBackupSteps);
+    //}
 
-    protected override Dictionary<string, ItemData> GetCrudersDictionary()
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        return parameters.DatabaseBackupSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
-    }
+    //protected override Dictionary<string, ItemData> GetCrudersDictionary()
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    return parameters.DatabaseBackupSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
+    //}
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newDatabaseBackupStep = (DatabaseBackupStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.DatabaseBackupSteps[recordName] = newDatabaseBackupStep;
-    }
+    //public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newDatabaseBackupStep = (DatabaseBackupStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.DatabaseBackupSteps[recordName] = newDatabaseBackupStep;
+    //}
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newDatabaseBackupStep = (DatabaseBackupStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.DatabaseBackupSteps.Add(recordName, newDatabaseBackupStep);
-    }
+    //protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newDatabaseBackupStep = (DatabaseBackupStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.DatabaseBackupSteps.Add(recordName, newDatabaseBackupStep);
+    //}
 
-    protected override void RemoveRecordWithKey(string recordKey)
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var databaseBackupSteps = parameters.DatabaseBackupSteps;
-        databaseBackupSteps.Remove(recordKey);
-    }
+    //protected override void RemoveRecordWithKey(string recordKey)
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    var databaseBackupSteps = parameters.DatabaseBackupSteps;
+    //    databaseBackupSteps.Remove(recordKey);
+    //}
 
-    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
-    {
-        return new DatabaseBackupStep();
-    }
+    //protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
+    //{
+    //    return new DatabaseBackupStep();
+    //}
 }

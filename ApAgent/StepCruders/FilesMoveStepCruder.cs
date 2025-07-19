@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using ApAgent.FieldEditors;
 using CliParameters.FieldEditors;
 using CliParametersEdit.FieldEditors;
 using CliParametersExcludeSetsEdit.FieldEditors;
-using LibApAgentData.Models;
 using LibApAgentData.Steps;
 using LibParameters;
 using LibToolActions.BackgroundTasks;
@@ -13,11 +11,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ApAgent.StepCruders;
 
-public sealed class FilesMoveStepCruder : StepCruder
+public sealed class FilesMoveStepCruder : StepCruder<FilesMoveStep>
 {
     public FilesMoveStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
-        "Files Move Step", "Files Move Steps")
+        ParametersManager parametersManager, Dictionary<string, FilesMoveStep> currentValuesDictionary) : base(logger,
+        httpClientFactory, processes, parametersManager, currentValuesDictionary, "Files Move Step", "Files Move Steps")
     {
         List<FieldEditor> tempFieldEditors = [.. FieldEditors];
         FieldEditors.Clear();
@@ -39,35 +37,35 @@ public sealed class FilesMoveStepCruder : StepCruder
         FieldEditors.AddRange(tempFieldEditors);
     }
 
-    protected override Dictionary<string, ItemData> GetCrudersDictionary()
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        return parameters.FilesMoveSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
-    }
+    //protected override Dictionary<string, ItemData> GetCrudersDictionary()
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    return parameters.FilesMoveSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
+    //}
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newFilesMoveStep = (FilesMoveStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.FilesMoveSteps.Add(recordName, newFilesMoveStep);
-    }
+    //protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newFilesMoveStep = (FilesMoveStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.FilesMoveSteps.Add(recordName, newFilesMoveStep);
+    //}
 
-    protected override void RemoveRecordWithKey(string recordKey)
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var filesMoveSteps = parameters.FilesMoveSteps;
-        filesMoveSteps.Remove(recordKey);
-    }
+    //protected override void RemoveRecordWithKey(string recordKey)
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    var filesMoveSteps = parameters.FilesMoveSteps;
+    //    filesMoveSteps.Remove(recordKey);
+    //}
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newFilesMoveStep = (FilesMoveStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.FilesMoveSteps[recordName] = newFilesMoveStep;
-    }
+    //public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newFilesMoveStep = (FilesMoveStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.FilesMoveSteps[recordName] = newFilesMoveStep;
+    //}
 
-    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
-    {
-        return new FilesMoveStep();
-    }
+    //protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
+    //{
+    //    return new FilesMoveStep();
+    //}
 }

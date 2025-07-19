@@ -60,7 +60,7 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
 
     private DirectoryInfo? CheckFolder(string folderName)
     {
-        DirectoryInfo dir = new(folderName);
+        var dir = new DirectoryInfo(folderName);
 
         if (!dir.Exists)
         {
@@ -97,8 +97,8 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
 
     private static bool Contains(string dir1, string dir2)
     {
-        DirectoryInfo di1 = new(dir1);
-        DirectoryInfo di2 = new(dir2);
+        var di1 = new DirectoryInfo(dir1);
+        var di2 = new DirectoryInfo(dir2);
         return Contains(di1, di2);
     }
 }

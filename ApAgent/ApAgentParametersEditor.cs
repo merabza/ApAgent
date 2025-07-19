@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using ApAgent.FieldEditors;
+using ApAgent.Cruders;
 using CliParameters;
 using CliParameters.FieldEditors;
 using CliParametersApiClientsEdit;
@@ -53,7 +53,9 @@ public sealed class ApAgentParametersEditor : ParametersEditor
         FieldEditors.Add(new DictionaryFieldEditor<ExcludeSetCruder, ExcludeSet>(nameof(ApAgentParameters.ExcludeSets),
             logger, parametersManager));
 
-        FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ApAgentParameters.ReplacePairsSets), parametersManager));
+        //FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ApAgentParameters.ReplacePairsSets), parametersManager));
+        FieldEditors.Add(new DictionaryFieldEditor<ReplacePairsSetCruder, ReplacePairsSet>(
+            nameof(ApAgentParameters.ReplacePairsSets), logger, httpClientFactory, parametersManager));
 
         //FieldEditors.Add(new SmartSchemasFieldEditor(nameof(ApAgentParameters.SmartSchemas), parametersManager));
         FieldEditors.Add(

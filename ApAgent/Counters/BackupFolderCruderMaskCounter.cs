@@ -1,18 +1,19 @@
-﻿using ApAgent.Cruders;
+﻿//using ApAgent.Cruders;
 
-namespace ApAgent.Counters;
+//namespace ApAgent.Counters;
 
-public sealed class BackupFolderCruderMaskCounter : MaskCounter
-{
-    private readonly FileBackupFolderCruder _fileBackupFolderCruder;
+//public sealed class BackupFolderCruderMaskCounter : MaskCounter
+//{
+//    private readonly FileBackupFolderCruder _fileBackupFolderCruder;
 
-    public BackupFolderCruderMaskCounter(FileBackupFolderCruder fileBackupFolderCruder)
-    {
-        _fileBackupFolderCruder = fileBackupFolderCruder;
-    }
+//    // ReSharper disable once ConvertToPrimaryConstructor
+//    public BackupFolderCruderMaskCounter(FileBackupFolderCruder fileBackupFolderCruder)
+//    {
+//        _fileBackupFolderCruder = fileBackupFolderCruder;
+//    }
 
-    protected override bool MaskExists(string mask)
-    {
-        return _fileBackupFolderCruder.ContainsRecordWithKey(mask);
-    }
-}
+//    protected override bool MaskExists(string mask)
+//    {
+//        return _fileBackupFolderCruder.ContainsRecordWithKey(mask);
+//    }
+//}

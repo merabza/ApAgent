@@ -17,6 +17,12 @@ public sealed class ReplacePairsSetCruder : ParCruder<ReplacePairsSet>
     {
     }
 
+    public static ReplacePairsSetCruder Create(IParametersManager parametersManager)
+    {
+        var parameters = (ApAgentParameters)parametersManager.Parameters;
+        return new ReplacePairsSetCruder(parametersManager, parameters.ReplacePairsSets);
+    }
+
     //public საჭიროა ApAgent პროექტისათვის
     public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
@@ -31,8 +37,8 @@ public sealed class ReplacePairsSetCruder : ParCruder<ReplacePairsSet>
         //var detailsCruder = new SimpleNamesWithDescriptionsFieldEditor<ReactAppTypeCruder>(
         //    nameof(ReplacePairsSet.PairsDict), ParametersManager);
 
-
-        NewItemCliMenuCommand newItemCommand = new(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
+        var newItemCommand =
+            new NewItemCliMenuCommand(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
         foreach (var detailListCommand in replacePairsSet.PairsDict.Select(mask =>

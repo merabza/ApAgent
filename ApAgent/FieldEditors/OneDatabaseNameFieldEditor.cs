@@ -78,8 +78,8 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         }
         else
         {
-            DatabasesListCreator databasesListCreator =
-                new(EDatabaseSet.AllDatabases, createDatabaseManagerResult.AsT0, EBackupType.Full);
+            var databasesListCreator = new DatabasesListCreator(EDatabaseSet.AllDatabases,
+                createDatabaseManagerResult.AsT0, EBackupType.Full);
             dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
         }
 

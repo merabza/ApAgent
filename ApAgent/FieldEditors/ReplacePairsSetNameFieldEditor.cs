@@ -19,7 +19,7 @@ public sealed class ReplacePairsSetNameFieldEditor : FieldEditor<string>
 
     public override void UpdateField(string? recordName, object recordForUpdate)
     {
-        ReplacePairsSetCruder replacePairsSetCruderCruder = new(_parametersManager);
+        var replacePairsSetCruderCruder = ReplacePairsSetCruder.Create(_parametersManager);
         SetValue(recordForUpdate,
             replacePairsSetCruderCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate), null,
                 _useNone));

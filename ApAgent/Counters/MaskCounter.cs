@@ -11,7 +11,7 @@ public /*open*/ class MaskCounter
 
     public string CountMask(string path)
     {
-        DirectoryInfo dir = new(path);
+        var dir = new DirectoryInfo(path);
         var mask = dir.Name;
 
         var startDefVal = mask;

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using ApAgent.Counters;
+using ApAgent.Cruders;
 using ApAgent.FieldEditors;
+using CliParameters;
 using CliParameters.FieldEditors;
 using CliParametersEdit.FieldEditors;
 using CliParametersExcludeSetsEdit.FieldEditors;
-using LibApAgentData.Models;
 using LibApAgentData.Steps;
 using LibParameters;
 using LibToolActions.BackgroundTasks;
@@ -16,17 +16,18 @@ using SystemToolsShared;
 
 namespace ApAgent.StepCruders;
 
-public sealed class FilesBackupStepCruder : StepCruder
+public sealed class FilesBackupStepCruder : StepCruder<FilesBackupStep>
 {
     public FilesBackupStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
-        "Files Backup Step", "Files Backup Steps")
+        ParametersManager parametersManager, Dictionary<string, FilesBackupStep> currentValuesDictionary) : base(logger,
+        httpClientFactory, processes, parametersManager, currentValuesDictionary, "Files Backup Step",
+        "Files Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
         DateMaskCounter dateMaskCounter = new();
         var dateMask = dateMaskCounter.Count();
 
-        List<FieldEditor> tempFieldEditors = new();
+        List<FieldEditor> tempFieldEditors = [];
         tempFieldEditors.AddRange(FieldEditors);
         FieldEditors.Clear();
 
@@ -45,41 +46,45 @@ public sealed class FilesBackupStepCruder : StepCruder
             ParametersManager));
         FieldEditors.Add(new BoolFieldEditor(nameof(FilesBackupStep.BackupSeparately), true));
         FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesBackupStep.ExcludeSetName), ParametersManager));
-        FieldEditors.Add(new BackupFolderPathsFieldEditor(nameof(FilesBackupStep.BackupFolderPaths),
-            ParametersManager));
+        //FieldEditors.Add(new BackupFolderPathsFieldEditor(nameof(FilesBackupStep.BackupFolderPaths),
+        //    ParametersManager));
+
+        FieldEditors.Add(
+            new SimpleNamesWithDescriptionsFieldEditor<FileBackupFolderCruder>(
+                nameof(FilesBackupStep.BackupFolderPaths)));
 
         FieldEditors.AddRange(tempFieldEditors);
     }
 
-    protected override Dictionary<string, ItemData> GetCrudersDictionary()
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        return parameters.FilesBackupSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
-    }
+    //protected override Dictionary<string, ItemData> GetCrudersDictionary()
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    return parameters.FilesBackupSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
+    //}
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newFilesBackupStep = (FilesBackupStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.FilesBackupSteps.Add(recordName, newFilesBackupStep);
-    }
+    //protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newFilesBackupStep = (FilesBackupStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.FilesBackupSteps.Add(recordName, newFilesBackupStep);
+    //}
 
-    protected override void RemoveRecordWithKey(string recordKey)
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var filesBackupSteps = parameters.FilesBackupSteps;
-        filesBackupSteps.Remove(recordKey);
-    }
+    //protected override void RemoveRecordWithKey(string recordKey)
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    var filesBackupSteps = parameters.FilesBackupSteps;
+    //    filesBackupSteps.Remove(recordKey);
+    //}
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newFilesBackupStep = (FilesBackupStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.FilesBackupSteps[recordName] = newFilesBackupStep;
-    }
+    //public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newFilesBackupStep = (FilesBackupStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.FilesBackupSteps[recordName] = newFilesBackupStep;
+    //}
 
-    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
-    {
-        return new FilesBackupStep();
-    }
+    //protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
+    //{
+    //    return new FilesBackupStep();
+    //}
 }

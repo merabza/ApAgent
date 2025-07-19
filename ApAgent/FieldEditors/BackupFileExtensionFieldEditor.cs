@@ -17,7 +17,7 @@ public sealed class BackupFileExtensionFieldEditor : TextFieldEditor
     public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
     {
         var backupType = GetValue<EBackupType>(recordForUpdate, _backupTypePropertyName);
-        BackupFileExtensionCounter backupFileExtensionCounter = new(backupType);
+        var backupFileExtensionCounter = new BackupFileExtensionCounter(backupType);
         SetValue(recordForUpdate,
             Inputer.InputText(FieldName, GetValue(recordForUpdate, backupFileExtensionCounter.Count())));
     }

@@ -16,7 +16,7 @@ using SystemToolsShared;
 
 namespace ApAgent.StepCruders;
 
-public /*open*/ class StepCruder : ParCruder<JobStep>
+public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep, new()
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
@@ -24,7 +24,7 @@ public /*open*/ class StepCruder : ParCruder<JobStep>
     private readonly Processes _processes;
 
     protected StepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        ParametersManager parametersManager, Dictionary<string, JobStep> currentValuesDictionary, string crudName,
+        ParametersManager parametersManager, Dictionary<string, TStep> currentValuesDictionary, string crudName,
         string crudNamePlural) : base(parametersManager, currentValuesDictionary, crudName, crudNamePlural)
     {
         _parametersFileName = parametersManager.ParametersFileName;
@@ -47,8 +47,17 @@ public /*open*/ class StepCruder : ParCruder<JobStep>
     public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
     {
         base.FillDetailsSubMenu(itemSubMenuSet, recordName);
-        RunThisStepNowCommand runThisStepNowCommand = new(_logger, _httpClientFactory, _processes, ParametersManager,
-            this, recordName, _parametersFileName);
+
+        var jobStep = (JobStep?)GetItemByName(recordName);
+
+        if (jobStep is null)
+        {
+            StShared.WriteErrorLine("jobStep does not found. step does not started", true, _logger);
+            return;
+        }
+
+        var runThisStepNowCommand = new RunThisStepNowCommand(_logger, _httpClientFactory, _processes,
+            ParametersManager, jobStep, _parametersFileName);
         itemSubMenuSet.AddMenuItem(runThisStepNowCommand);
 
         var parameters = (ApAgentParameters)ParametersManager.Parameters;

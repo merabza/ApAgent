@@ -37,7 +37,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        StandardJobsSchemaGenerator standardJobsSchemaGenerator = new(true, _logger, _parametersManager,
+        var standardJobsSchemaGenerator = new StandardJobsSchemaGenerator(true, _logger, _parametersManager,
             databaseConnectionName, _parametersManager.ParametersFileName);
         standardJobsSchemaGenerator.Generate();
 

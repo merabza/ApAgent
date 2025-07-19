@@ -85,7 +85,8 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         }
         else
         {
-            DatabasesListCreator databasesListCreator = new(databaseSet, createDatabaseManagerResult.AsT0, backupType);
+            var databasesListCreator =
+                new DatabasesListCreator(databaseSet, createDatabaseManagerResult.AsT0, backupType);
             dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
         }
 

@@ -44,7 +44,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
                     s.JobStepName == _stepName && s.ScheduleName == _scheduleName);
             if (jobStepBySchedule == null)
             {
-                JobStepBySchedule newJobStepBySchedule = new(_stepName, _scheduleName,
+                var newJobStepBySchedule = new JobStepBySchedule(_stepName, _scheduleName,
                     parameters.JobsBySchedules.Where(w => w.ScheduleName == _scheduleName).DefaultIfEmpty()
                         .Max(m => m?.SequentialNumber ?? 0) + 1);
                 parameters.JobsBySchedules.Add(newJobStepBySchedule);

@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using CliParameters.FieldEditors;
-using LibApAgentData.Models;
 using LibApAgentData.Steps;
 using LibParameters;
 using LibToolActions.BackgroundTasks;
@@ -10,11 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace ApAgent.StepCruders;
 
-public sealed class UnZipOnPlaceStepCruder : StepCruder
+public sealed class UnZipOnPlaceStepCruder : StepCruder<UnZipOnPlaceStep>
 {
     public UnZipOnPlaceStepCruder(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
-        ParametersManager parametersManager) : base(logger, httpClientFactory, processes, parametersManager,
-        "Unzip On Place Step", "Unzip On Place Steps")
+        ParametersManager parametersManager, Dictionary<string, UnZipOnPlaceStep> currentValuesDictionary) : base(
+        logger, httpClientFactory, processes, parametersManager, currentValuesDictionary, "Unzip On Place Step",
+        "Unzip On Place Steps")
     {
         List<FieldEditor> tempFieldEditors = new();
         tempFieldEditors.AddRange(FieldEditors);
@@ -26,35 +25,35 @@ public sealed class UnZipOnPlaceStepCruder : StepCruder
         FieldEditors.AddRange(tempFieldEditors);
     }
 
-    protected override Dictionary<string, ItemData> GetCrudersDictionary()
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        return parameters.UnZipOnPlaceSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
-    }
+    //protected override Dictionary<string, ItemData> GetCrudersDictionary()
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    return parameters.UnZipOnPlaceSteps.ToDictionary(p => p.Key, p => (ItemData)p.Value);
+    //}
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newUnZipOnPlaceStep = (UnZipOnPlaceStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.UnZipOnPlaceSteps.Add(recordName, newUnZipOnPlaceStep);
-    }
+    //protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newUnZipOnPlaceStep = (UnZipOnPlaceStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.UnZipOnPlaceSteps.Add(recordName, newUnZipOnPlaceStep);
+    //}
 
-    protected override void RemoveRecordWithKey(string recordKey)
-    {
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var unZipOnPlaceSteps = parameters.UnZipOnPlaceSteps;
-        unZipOnPlaceSteps.Remove(recordKey);
-    }
+    //protected override void RemoveRecordWithKey(string recordKey)
+    //{
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    var unZipOnPlaceSteps = parameters.UnZipOnPlaceSteps;
+    //    unZipOnPlaceSteps.Remove(recordKey);
+    //}
 
-    public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
-    {
-        var newUnZipOnPlaceStep = (UnZipOnPlaceStep)newRecord;
-        var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        parameters.UnZipOnPlaceSteps[recordName] = newUnZipOnPlaceStep;
-    }
+    //public override void UpdateRecordWithKey(string recordName, ItemData newRecord)
+    //{
+    //    var newUnZipOnPlaceStep = (UnZipOnPlaceStep)newRecord;
+    //    var parameters = (ApAgentParameters)ParametersManager.Parameters;
+    //    parameters.UnZipOnPlaceSteps[recordName] = newUnZipOnPlaceStep;
+    //}
 
-    protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
-    {
-        return new UnZipOnPlaceStep();
-    }
+    //protected override ItemData CreateNewItem(string? recordKey, ItemData? defaultItemData)
+    //{
+    //    return new UnZipOnPlaceStep();
+    //}
 }

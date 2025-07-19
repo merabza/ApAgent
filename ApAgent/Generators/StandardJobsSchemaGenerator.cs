@@ -105,11 +105,12 @@ internal class StandardJobsSchemaGenerator
         //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
         var isServerAllowsCompression = dbServerInfo.AllowsCompression;
 
-        FileStorageCruderNameCounter uploadFileStorageCruderNameCounter =
-            new(_logger, _parametersManager, "Upload FileStorage", null);
+        var uploadFileStorageCruderNameCounter =
+            new FileStorageCruderNameCounter(_logger, _parametersManager, "Upload FileStorage", null);
         var uploadFileStorageName = uploadFileStorageCruderNameCounter.Count();
 
-        StepNamePrefixCounter stepNamePrefixCounter = new(_logger, _parametersManager, _databaseServerConnectionName);
+        var stepNamePrefixCounter =
+            new StepNamePrefixCounter(_logger, _parametersManager, _databaseServerConnectionName);
         var stepNamePrefix = stepNamePrefixCounter.Count();
 
         DateMaskCounter dateMaskCounter = new();
@@ -165,14 +166,14 @@ internal class StandardJobsSchemaGenerator
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        FileStorageGenerator fileStorageGenerator = new(_parametersManager);
+        var fileStorageGenerator = new FileStorageGenerator(_parametersManager);
 
         var fullPath = parameters.CountLocalPath(null, _parametersFileName, $"Database{backupType}Backups");
 
         if (string.IsNullOrWhiteSpace(fullPath))
             throw new Exception("fullPath does not counted");
 
-        DirectoryInfo dir = new(fullPath);
+        var dir = new DirectoryInfo(fullPath);
         fileStorageGenerator.GenerateForLocalPath(dir.Name, fullPath);
         return dir.Name;
     }
@@ -231,12 +232,12 @@ internal class StandardJobsSchemaGenerator
         if (parameters.DatabaseBackupSteps.ContainsKey(backupStepName))
             return;
 
-        BackupNameMiddlePartCounter backupNameMiddlePartCounter = new(backupType);
-        BackupFileExtensionCounter backupFileExtensionCounter = new(backupType);
-        ProcLineCounter procLineCounter = new(_logger, _parametersManager, _databaseServerConnectionName,
+        var backupNameMiddlePartCounter = new BackupNameMiddlePartCounter(backupType);
+        var backupFileExtensionCounter = new BackupFileExtensionCounter(backupType);
+        var procLineCounter = new ProcLineCounter(_logger, _parametersManager, _databaseServerConnectionName,
             databaseFileStorageName, uploadFileStorageName);
-        SmartSchemaNameCounter smartSchemaNameCounter =
-            new(_parametersManager, databaseFileStorageName, uploadFileStorageName);
+        var smartSchemaNameCounter =
+            new SmartSchemaNameCounter(_parametersManager, databaseFileStorageName, uploadFileStorageName);
 
         var databaseBackupStep = new DatabaseBackupStep
         {
