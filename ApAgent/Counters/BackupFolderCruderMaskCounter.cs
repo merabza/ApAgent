@@ -17,3 +17,4 @@
 //        return _fileBackupFolderCruder.ContainsRecordWithKey(mask);
 //    }
 //}
+

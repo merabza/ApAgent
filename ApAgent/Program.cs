@@ -75,7 +75,7 @@ try
 
     var processes = new Processes(processesLogger);
 
-    var apAgent = new ApAgent.ApAgent(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key),
+    var apAgent = new ApAgentCliAppLoop(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key),
         processes);
     return apAgent.Run() ? 0 : 1;
 }

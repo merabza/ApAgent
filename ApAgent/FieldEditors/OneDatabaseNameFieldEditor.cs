@@ -47,7 +47,7 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
 
         var currentDatabaseName = GetValue(recordForUpdate);
 
-        CliMenuSet listSet = new();
+        var listSet = new CliMenuSet();
         foreach (var listItem in dbList.Select(s => s.Name)) listSet.AddMenuItem(new CliMenuCommand(listItem));
 
         var selectedId = MenuInputer.InputIdFromMenuList(PropertyName.Pluralize(), listSet, currentDatabaseName);

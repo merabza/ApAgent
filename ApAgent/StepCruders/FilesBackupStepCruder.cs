@@ -24,7 +24,7 @@ public sealed class FilesBackupStepCruder : StepCruder<FilesBackupStep>
         "Files Backup Steps")
     {
         var parametersFileName = parametersManager.ParametersFileName;
-        DateMaskCounter dateMaskCounter = new();
+        var dateMaskCounter = new DateMaskCounter();
         var dateMask = dateMaskCounter.Count();
 
         List<FieldEditor> tempFieldEditors = [];

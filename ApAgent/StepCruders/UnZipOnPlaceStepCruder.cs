@@ -15,7 +15,7 @@ public sealed class UnZipOnPlaceStepCruder : StepCruder<UnZipOnPlaceStep>
         logger, httpClientFactory, processes, parametersManager, currentValuesDictionary, "Unzip On Place Step",
         "Unzip On Place Steps")
     {
-        List<FieldEditor> tempFieldEditors = new();
+        List<FieldEditor> tempFieldEditors = [];
         tempFieldEditors.AddRange(FieldEditors);
         FieldEditors.Clear();
 

@@ -113,7 +113,7 @@ internal class StandardJobsSchemaGenerator
             new StepNamePrefixCounter(_logger, _parametersManager, _databaseServerConnectionName);
         var stepNamePrefix = stepNamePrefixCounter.Count();
 
-        DateMaskCounter dateMaskCounter = new();
+        var dateMaskCounter = new DateMaskCounter();
         var dateMask = dateMaskCounter.Count();
 
         //დავიანგარიშოთ ლოკალურად სად უნდა იყოს სრული ბექაპების ფაილები

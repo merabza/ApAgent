@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ApAgent;
 
-public sealed class ApAgent : CliAppLoop
+public sealed class ApAgentCliAppLoop : CliAppLoop
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
@@ -23,7 +23,7 @@ public sealed class ApAgent : CliAppLoop
     private readonly Processes _processes;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public ApAgent(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
+    public ApAgentCliAppLoop(ILogger logger, IHttpClientFactory httpClientFactory, ParametersManager parametersManager,
         Processes processes) : base(null, null, processes)
     {
         _logger = logger;
@@ -53,50 +53,43 @@ public sealed class ApAgent : CliAppLoop
         mainMenuSet.AddMenuItem(jobSchedulesCommand);
 
         //მონაცემთა ბაზების ბექაპირების ნაბიჯების სია
-        var databaseBackupStepCommand =
-            new CruderListCliMenuCommand(new DatabaseBackupStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.DatabaseBackupSteps));
+        var databaseBackupStepCommand = new CruderListCliMenuCommand(new DatabaseBackupStepCruder(_logger,
+            _httpClientFactory, _processes, _parametersManager, parameters.DatabaseBackupSteps));
         mainMenuSet.AddMenuItem(databaseBackupStepCommand);
 
         //რამდენიმე ბაზის დამუშავების ბრძანებების სია
-        var multiDatabaseProcessStepCommand = new CruderListCliMenuCommand(
-            new MultiDatabaseProcessStepCruder(_logger, _httpClientFactory, _processes, _parametersManager, parameters.MultiDatabaseProcessSteps));
+        var multiDatabaseProcessStepCommand = new CruderListCliMenuCommand(new MultiDatabaseProcessStepCruder(_logger,
+            _httpClientFactory, _processes, _parametersManager, parameters.MultiDatabaseProcessSteps));
         mainMenuSet.AddMenuItem(multiDatabaseProcessStepCommand);
 
         //პროგრამის გაშვების ნაბიჯების სია
-        var runProgramStepCommand =
-            new CruderListCliMenuCommand(new RunProgramStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.RunProgramSteps));
+        var runProgramStepCommand = new CruderListCliMenuCommand(new RunProgramStepCruder(_logger, _httpClientFactory,
+            _processes, _parametersManager, parameters.RunProgramSteps));
         mainMenuSet.AddMenuItem(runProgramStepCommand);
 
         //მონაცემთა ბაზების მხარეს გასაშვები ბრძანებების ნაბიჯების სია
-        var executeSqlCommandStepCommand =
-            new CruderListCliMenuCommand(new ExecuteSqlCommandStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.ExecuteSqlCommandSteps));
+        var executeSqlCommandStepCommand = new CruderListCliMenuCommand(new ExecuteSqlCommandStepCruder(_logger,
+            _httpClientFactory, _processes, _parametersManager, parameters.ExecuteSqlCommandSteps));
         mainMenuSet.AddMenuItem(executeSqlCommandStepCommand);
 
         //ფაილების დაბეკაპების ნაბიჯების სია
-        var filesBackupStepCommand =
-            new CruderListCliMenuCommand(new FilesBackupStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.FilesBackupSteps));
+        var filesBackupStepCommand = new CruderListCliMenuCommand(new FilesBackupStepCruder(_logger, _httpClientFactory,
+            _processes, _parametersManager, parameters.FilesBackupSteps));
         mainMenuSet.AddMenuItem(filesBackupStepCommand);
 
         //ფაილების დასინქრონიზების ნაბიჯების სია
-        var filesSyncStepCommand =
-            new CruderListCliMenuCommand(new FilesSyncStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.FilesSyncSteps));
+        var filesSyncStepCommand = new CruderListCliMenuCommand(new FilesSyncStepCruder(_logger, _httpClientFactory,
+            _processes, _parametersManager, parameters.FilesSyncSteps));
         mainMenuSet.AddMenuItem(filesSyncStepCommand);
 
         //ფაილების გადაადგილების ნაბიჯების სია
-        var filesMoveStepCommand =
-            new CruderListCliMenuCommand(new FilesMoveStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.FilesMoveSteps));
+        var filesMoveStepCommand = new CruderListCliMenuCommand(new FilesMoveStepCruder(_logger, _httpClientFactory,
+            _processes, _parametersManager, parameters.FilesMoveSteps));
         mainMenuSet.AddMenuItem(filesMoveStepCommand);
 
         //ფაილების გადაადგილების ნაბიჯების სია
-        var unZipOnPlaceStepCommand =
-            new CruderListCliMenuCommand(new UnZipOnPlaceStepCruder(_logger, _httpClientFactory, _processes,
-                _parametersManager, parameters.UnZipOnPlaceSteps));
+        var unZipOnPlaceStepCommand = new CruderListCliMenuCommand(new UnZipOnPlaceStepCruder(_logger,
+            _httpClientFactory, _processes, _parametersManager, parameters.UnZipOnPlaceSteps));
         mainMenuSet.AddMenuItem(unZipOnPlaceStepCommand);
 
         //ნაბიჯების გასუფთავება
