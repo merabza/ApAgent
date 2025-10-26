@@ -130,8 +130,8 @@ internal class StandardJobsSchemaGenerator
         CreateBackupStep(EBackupType.Full, isServerAllowsCompression, true, stepNamePrefix, dateMask,
             StandardSmartSchemas.DailyStandardSmartSchemaName, StandardSmartSchemas.ReduceSmartSchemaName,
             isServerLocal ? fullBuFileStorageName : null, databaseFullBackupsLocalPath,
-            isServerAllowsCompression ? null : EArchiveType.ZipClass.ToString(), uploadFileStorageName,
-            scheduleDailyName, scheduleAtStartName, parameters);
+            isServerAllowsCompression ? null : nameof(EArchiveType.ZipClass), uploadFileStorageName, scheduleDailyName,
+            scheduleAtStartName, parameters);
 
         //დავიანგარიშოთ ლოკალურად სად უნდა იყოს ტრანზაქშენ ლოგების ბექაპების ფაილები
         //LocalPathCounter databaseTrLogBackupsLocalPathCounter =
