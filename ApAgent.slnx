@@ -8,7 +8,9 @@
     <Project Path="../ApAgentData/LibApAgentData/LibApAgentData.csproj" />
   </Folder>
   <Folder Name="/AppCliTools/">
+    <Project Path="../AppCliTools/CliMenu.Tests/CliMenu.Tests.csproj" />
     <Project Path="../AppCliTools/CliMenu/CliMenu.csproj" />
+    <Project Path="../AppCliTools/CliParameters.Tests/CliParameters.Tests.csproj" />
     <Project Path="../AppCliTools/CliParameters/CliParameters.csproj" />
     <Project Path="../AppCliTools/CliParametersApiClientsEdit/CliParametersApiClientsEdit.csproj" />
     <Project Path="../AppCliTools/CliParametersDataEdit/CliParametersDataEdit.csproj" />
