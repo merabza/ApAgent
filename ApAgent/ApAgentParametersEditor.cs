@@ -1,17 +1,17 @@
 ﻿using System.Net.Http;
 using ApAgent.Cruders;
-using CliParameters;
-using CliParameters.FieldEditors;
-using CliParametersApiClientsEdit;
-using CliParametersDataEdit.Cruders;
-using CliParametersEdit.Cruders;
-using CliParametersExcludeSetsEdit.Cruders;
-using LibApAgentData.Models;
-using LibApiClientParameters;
-using LibDatabaseParameters;
-using LibFileParameters.Models;
-using LibParameters;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.CliParametersApiClientsEdit;
+using AppCliTools.CliParametersDataEdit.Cruders;
+using AppCliTools.CliParametersEdit.Cruders;
+using AppCliTools.CliParametersExcludeSetsEdit.Cruders;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibApiClientParameters;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibFileParameters.Models;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent;
 

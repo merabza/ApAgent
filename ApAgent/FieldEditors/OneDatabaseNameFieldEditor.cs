@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
-using CliMenu;
-using CliParameters.FieldEditors;
-using DatabasesManagement;
-using DbTools;
-using DbTools.Models;
-using LibApAgentData;
-using LibApAgentData.Models;
-using LibApiClientParameters;
-using LibDatabaseParameters;
-using LibMenuInput;
-using LibParameters;
+using ApAgentData.LibApAgentData;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.LibMenuInput;
+using DatabaseTools.DbTools;
+using DatabaseTools.DbTools.Models;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using OneOf;
+using ParametersManagement.LibApiClientParameters;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using SystemTools.SystemToolsShared.Errors;
+using ToolsManagement.DatabasesManagement;
 
 namespace ApAgent.FieldEditors;
 
@@ -39,20 +41,26 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
-        var databaseServerConnectionName = GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
+        string? databaseServerConnectionName =
+            GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
 
-        var dbList = CreateDbList(databaseServerConnectionName);
+        List<DatabaseInfoModel> dbList = CreateDbList(databaseServerConnectionName);
 
-        var currentDatabaseName = GetValue(recordForUpdate);
+        string? currentDatabaseName = GetValue(recordForUpdate);
 
         var listSet = new CliMenuSet();
-        foreach (var listItem in dbList.Select(s => s.Name)) listSet.AddMenuItem(new CliMenuCommand(listItem));
+        foreach (string listItem in dbList.Select(s => s.Name))
+        {
+            listSet.AddMenuItem(new CliMenuCommand(listItem));
+        }
 
-        var selectedId = MenuInputer.InputIdFromMenuList(PropertyName.Pluralize(), listSet, currentDatabaseName);
+        int selectedId = MenuInputer.InputIdFromMenuList(PropertyName.Pluralize(), listSet, currentDatabaseName);
         if (selectedId >= 0 && selectedId < dbList.Count)
+        {
             SetValue(recordForUpdate, dbList[selectedId].Name);
+        }
     }
 
     private List<DatabaseInfoModel> CreateDbList(string? databaseServerConnectionName)
@@ -65,9 +73,10 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
             return dbList;
         }
 
-        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
-            databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-            new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
+            .CreateDatabaseManager(_logger, true, databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections),
+                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1)
         {

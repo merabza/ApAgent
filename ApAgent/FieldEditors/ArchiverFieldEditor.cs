@@ -1,7 +1,8 @@
-﻿using System.Linq;
-using CliParameters.FieldEditors;
-using CliParametersEdit.Cruders;
-using LibParameters;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.CliParametersEdit.Cruders;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.FieldEditors;
 
@@ -16,11 +17,11 @@ public sealed class ArchiverFieldEditor : FieldEditor<string>
         _parametersManager = parametersManager;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
         var archiverCruder = ArchiverCruder.Create(_parametersManager);
-        var keys = archiverCruder.GetKeys();
-        var def = keys.Count > 1 ? null : archiverCruder.GetKeys().SingleOrDefault();
+        List<string> keys = archiverCruder.GetKeys();
+        string? def = keys.Count > 1 ? null : archiverCruder.GetKeys().SingleOrDefault();
         SetValue(recordForUpdate,
             archiverCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate, def), null, true));
     }

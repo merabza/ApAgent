@@ -1,8 +1,8 @@
-﻿using CliParameters.FieldEditors;
-using LibApAgentData.Models;
-using LibDatabaseParameters;
-using LibMenuInput;
-using LibParameters;
+﻿using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.LibMenuInput;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.FieldEditors;
 
@@ -21,7 +21,7 @@ public sealed class LocalPathFieldEditor : FieldEditor<string>
         _parametersFileName = parametersFileName;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
         string? workFolderCandidateForLocalPath;
 

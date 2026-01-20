@@ -1,6 +1,6 @@
-﻿using LibApAgentData.Models;
-using LibFileParameters.Models;
-using LibParameters;
+﻿using ApAgentData.LibApAgentData.Models;
+using ParametersManagement.LibFileParameters.Models;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.Generators;
 
@@ -19,7 +19,6 @@ public sealed class FileStorageGenerator
 
         var fileStorage = new FileStorageData { FileStoragePath = fileStoragePath };
 
-        if (!parameters.FileStorages.ContainsKey(fileStorageName))
-            parameters.FileStorages.Add(fileStorageName, fileStorage);
+        parameters.FileStorages.TryAdd(fileStorageName, fileStorage);
     }
 }

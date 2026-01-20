@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Net.Http;
 using ApAgent.FieldEditors;
 using ApAgent.MenuCommands;
-using CliMenu;
-using CliParameters;
-using CliParameters.FieldEditors;
-using LibApAgentData.Models;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent.Cruders;
 
@@ -80,19 +80,19 @@ public sealed class JobScheduleCruder : ParCruder<JobSchedule>
     {
         var jobSchedule = (JobSchedule)itemData;
 
-        var enableDuration = jobSchedule.ScheduleType != EScheduleType.Once;
+        bool enableDuration = jobSchedule.ScheduleType != EScheduleType.Once;
         EnableFieldByName(nameof(JobSchedule.DurationStartDate), enableDuration);
         EnableFieldByName(nameof(JobSchedule.DurationEndDate), enableDuration);
 
-        var enableOnce = jobSchedule.ScheduleType == EScheduleType.Once;
+        bool enableOnce = jobSchedule.ScheduleType == EScheduleType.Once;
         EnableFieldByName(nameof(JobSchedule.RunOnceDateTime), enableOnce);
 
-        var enableDaily = jobSchedule.ScheduleType == EScheduleType.Daily;
+        bool enableDaily = jobSchedule.ScheduleType == EScheduleType.Daily;
         EnableFieldByName(nameof(JobSchedule.FreqInterval), enableDaily);
         EnableFieldByName(nameof(JobSchedule.DailyFrequencyType), enableDaily);
         EnableFieldByName(nameof(JobSchedule.ActiveStartDayTime), enableDaily);
 
-        var enableDailyOccursManyTimes =
+        bool enableDailyOccursManyTimes =
             enableDaily && jobSchedule.DailyFrequencyType == EDailyFrequency.OccursManyTimes;
         EnableFieldByName(nameof(JobSchedule.FreqSubDayType), enableDailyOccursManyTimes);
         EnableFieldByName(nameof(JobSchedule.FreqSubDayInterval), enableDailyOccursManyTimes);
@@ -105,12 +105,12 @@ public sealed class JobScheduleCruder : ParCruder<JobSchedule>
     //}
 
     //public საჭიროა ApAgent პროექტისათვის
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string itemName)
     {
-        base.FillDetailsSubMenu(itemSubMenuSet, recordName);
+        base.FillDetailsSubMenu(itemSubMenuSet, itemName);
 
         var runAllStepsNowCommand = new RunAllStepsNowCommand(_logger, _httpClientFactory, _processes,
-            ParametersManager, recordName, _parametersFileName);
+            ParametersManager, itemName, _parametersFileName);
         itemSubMenuSet.AddMenuItem(runAllStepsNowCommand);
     }
 }

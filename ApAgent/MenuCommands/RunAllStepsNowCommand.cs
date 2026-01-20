@@ -1,10 +1,10 @@
 ﻿using System.Net.Http;
-using CliMenu;
-using LibApAgentData.Models;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent.MenuCommands;
 
@@ -34,12 +34,14 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var procLogFilesFolder =
+        string? procLogFilesFolder =
             parameters.CountLocalPath(parameters.ProcLogFilesFolder, _parametersFileName, "ProcLogFiles");
 
         if (!string.IsNullOrWhiteSpace(procLogFilesFolder))
+        {
             return parameters.RunAllSteps(_logger, _httpClientFactory, true, _jobScheduleName, _processes,
                 procLogFilesFolder);
+        }
 
         StShared.WriteErrorLine("procLogFilesFolder does not counted. cannot run steps", true, _logger);
         return false;

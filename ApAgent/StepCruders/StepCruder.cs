@@ -4,15 +4,15 @@ using System.Linq;
 using System.Net.Http;
 using ApAgent.FieldEditors;
 using ApAgent.MenuCommands;
-using CliMenu;
-using CliParameters;
-using CliParameters.FieldEditors;
-using LibApAgentData.Models;
-using LibApAgentData.Steps;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Models;
+using ApAgentData.LibApAgentData.Steps;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent.StepCruders;
 
@@ -44,11 +44,11 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
     }
 
     //public საჭიროა ApAgent პროექტისათვის
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string itemName)
     {
-        base.FillDetailsSubMenu(itemSubMenuSet, recordName);
+        base.FillDetailsSubMenu(itemSubMenuSet, itemName);
 
-        var jobStep = (JobStep?)GetItemByName(recordName);
+        var jobStep = (JobStep?)GetItemByName(itemName);
 
         if (jobStep is null)
         {
@@ -65,17 +65,19 @@ public /*open*/ class StepCruder<TStep> : ParCruder<TStep> where TStep : JobStep
         //if (parameters == null)
         //    return;
 
-        var scheduleNamesList = parameters.JobsBySchedules.Where(w => w.JobStepName == recordName)
+        List<string> scheduleNamesList = parameters.JobsBySchedules.Where(w => w.JobStepName == itemName)
             .Select(s => s.ScheduleName).ToList();
-        foreach (var kvp in parameters.JobSchedules)
-            itemSubMenuSet.AddMenuItem(new SelectScheduleNamesCommand(ParametersManager, recordName, kvp.Key,
+        foreach (KeyValuePair<string, JobSchedule> kvp in parameters.JobSchedules)
+        {
+            itemSubMenuSet.AddMenuItem(new SelectScheduleNamesCommand(ParametersManager, itemName, kvp.Key,
                 scheduleNamesList.Contains(kvp.Key)));
+        }
     }
 
     public override bool ContainsRecordWithKey(string recordKey)
     {
         var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var steps = parameters.GetSteps();
+        Dictionary<string, JobStep> steps = parameters.GetSteps();
         return steps.ContainsKey(recordKey);
     }
 }

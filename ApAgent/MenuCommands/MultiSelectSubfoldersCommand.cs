@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using ApAgent.Cruders;
-using CliMenu;
-using LibMenuInput;
-using SystemToolsShared;
+using AppCliTools.CliMenu;
+using AppCliTools.LibMenuInput;
+using SystemTools.SystemToolsShared;
 
 namespace ApAgent.MenuCommands;
 
@@ -23,28 +23,35 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
 
     protected override bool RunBody()
     {
-        var folderName = MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
+        string? folderName =
+            MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
         if (string.IsNullOrWhiteSpace(folderName))
+        {
             return false;
+        }
 
-        var dir = CheckFolder(folderName);
+        DirectoryInfo? dir = CheckFolder(folderName);
         if (dir == null)
+        {
             return false;
+        }
 
         //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
-        var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
+        Dictionary<string, bool> foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
             .ToDictionary(k => k.Name, v => _masksAndFolders.Contains(v.FullName));
         //გამოვიდეს სიიდან ამრჩევი
         MenuInputer.MultipleInputFromList($"Select subfolders from {folderName}", foldersChecks);
 
-        foreach (var kvp in foldersChecks)
+        foreach (KeyValuePair<string, bool> kvp in foldersChecks)
         {
-            var path = Path.Combine(folderName, kvp.Key);
+            string path = Path.Combine(folderName, kvp.Key);
             if (kvp.Value)
             {
                 //ჩართული ჩავამატოთ თუ არ არსებობს
                 if (!_masksAndFolders.Contains(path))
+                {
                     _masksAndFolders.Add(path);
+                }
             }
             else
             {
@@ -79,7 +86,9 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
         }
 
         if (dir.GetDirectories().Length > 0)
+        {
             return dir;
+        }
 
         StShared.WriteErrorLine($"folder {folderName} have not subfolders", true);
         return null;
@@ -89,8 +98,16 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
     {
         while (true)
         {
-            if (di2.FullName == di1.FullName) return true;
-            if (di2.Parent == null) return false;
+            if (di2.FullName == di1.FullName)
+            {
+                return true;
+            }
+
+            if (di2.Parent == null)
+            {
+                return false;
+            }
+
             di2 = di2.Parent;
         }
     }

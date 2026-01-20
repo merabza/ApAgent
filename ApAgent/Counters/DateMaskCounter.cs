@@ -1,9 +1,6 @@
 ﻿namespace ApAgent.Counters;
 
-public sealed class DateMaskCounter
+public static class DateMaskKeeper
 {
-    public string Count()
-    {
-        return "_yyyy_MM_dd_HHmmss_fffffff";
-    }
+    public const string DateMask = "_yyyy_MM_dd_HHmmss_fffffff";
 }

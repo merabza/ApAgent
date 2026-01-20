@@ -1,6 +1,6 @@
 ﻿using ApAgent.Cruders;
-using CliParameters.FieldEditors;
-using LibParameters;
+using AppCliTools.CliParameters.FieldEditors;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.FieldEditors;
 
@@ -17,7 +17,7 @@ public sealed class ReplacePairsSetNameFieldEditor : FieldEditor<string>
         _useNone = useNone;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
         var replacePairsSetCruderCruder = ReplacePairsSetCruder.Create(_parametersManager);
         SetValue(recordForUpdate,

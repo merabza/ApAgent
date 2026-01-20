@@ -1,11 +1,11 @@
 ﻿using System.Net.Http;
-using CliMenu;
-using LibApAgentData.Models;
-using LibApAgentData.Steps;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Models;
+using ApAgentData.LibApAgentData.Steps;
+using AppCliTools.CliMenu;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent.MenuCommands;
 
@@ -39,7 +39,7 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var procLogFilesFolder =
+        string? procLogFilesFolder =
             parameters.CountLocalPath(parameters.ProcLogFilesFolder, _parametersFileName, "ProcLogFiles");
 
         if (string.IsNullOrWhiteSpace(procLogFilesFolder))
@@ -57,10 +57,10 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         //}
 
         // ReSharper disable once using
-        using var processManager = _processes.GetNewProcessManager();
+        using ProcessManager processManager = _processes.GetNewProcessManager();
 
-        var stepToolAction = _jobStep.GetToolAction(_logger, _httpClientFactory, true, processManager, parameters,
-            procLogFilesFolder);
+        ProcessesToolAction? stepToolAction = _jobStep.GetToolAction(_logger, _httpClientFactory, true, processManager,
+            parameters, procLogFilesFolder);
 
         if (stepToolAction is null)
         {

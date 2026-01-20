@@ -2,9 +2,9 @@
 using System.Linq;
 using ApAgent.FieldEditors;
 using ApAgent.Models;
-using CliParameters.Cruders;
-using CliParameters.FieldEditors;
-using LibParameters;
+using AppCliTools.CliParameters.Cruders;
+using AppCliTools.CliParameters.FieldEditors;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.Cruders;
 
@@ -44,11 +44,13 @@ public sealed class FolderPathsSetCruder : Cruder
         _currentValuesList.Remove(recordKey);
     }
 
-    protected override void AddRecordWithKey(string recordName, ItemData newRecord)
+    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
     {
-        var newPath = ((FolderPathItemData)newRecord).Path;
+        string? newPath = ((FolderPathItemData)newRecord).Path;
         if (!string.IsNullOrWhiteSpace(newPath))
+        {
             _currentValuesList.Add(newPath);
+        }
     }
 
     public override void Save(string message)

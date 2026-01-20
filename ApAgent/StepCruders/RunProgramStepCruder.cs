@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using CliParameters.FieldEditors;
-using LibApAgentData.Steps;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Steps;
+using AppCliTools.CliParameters.FieldEditors;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent.StepCruders;
 

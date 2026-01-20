@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using CliParameters.Cruders;
-using LibApAgentData.Models;
-using LibParameters;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliParameters.Cruders;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.Cruders;
 
@@ -23,8 +23,10 @@ public sealed class ReplacePairsSetFileMaskCruder : SimpleNamesWithDescriptionsC
     protected override Dictionary<string, string> GetDictionary()
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
-        var replacePairSets = parameters.ReplacePairsSets;
-        return replacePairSets.TryGetValue(_replacePairSetName, out var replacePairSet) ? replacePairSet.PairsDict : [];
+        Dictionary<string, ReplacePairsSet> replacePairSets = parameters.ReplacePairsSets;
+        return replacePairSets.TryGetValue(_replacePairSetName, out ReplacePairsSet? replacePairSet)
+            ? replacePairSet.PairsDict
+            : [];
     }
 
     //protected override Dictionary<string, string> GetDictionary()

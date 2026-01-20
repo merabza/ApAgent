@@ -1,6 +1,6 @@
-﻿using CliParameters.FieldEditors;
-using LibDataInput;
-using LibParameters;
+﻿using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.LibDataInput;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.FieldEditors;
 
@@ -16,9 +16,9 @@ public sealed class ArchiverProcLineIdFieldEditor : FieldEditor<int>
         _archiverNamePropertyName = archiverNamePropertyName;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
-        var archiverName = GetValue<string>(recordForUpdate, _archiverNamePropertyName);
+        string? archiverName = GetValue<string>(recordForUpdate, _archiverNamePropertyName);
 
         SetValue(recordForUpdate,
             Inputer.InputInt(FieldName, archiverName == null ? 1 : GetValue(recordForUpdate, _defaultValue)));

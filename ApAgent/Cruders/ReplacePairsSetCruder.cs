@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CliMenu;
-using CliParameters;
-using CliParameters.CliMenuCommands;
-using LibApAgentData.Models;
-using LibParameters;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.CliMenuCommands;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.Cruders;
 
@@ -24,26 +24,28 @@ public sealed class ReplacePairsSetCruder : ParCruder<ReplacePairsSet>
     }
 
     //public საჭიროა ApAgent პროექტისათვის
-    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string recordName)
+    public override void FillDetailsSubMenu(CliMenuSet itemSubMenuSet, string itemName)
     {
-        base.FillDetailsSubMenu(itemSubMenuSet, recordName);
+        base.FillDetailsSubMenu(itemSubMenuSet, itemName);
 
         var parameters = (ApAgentParameters)ParametersManager.Parameters;
-        var replacePairsSets = parameters.ReplacePairsSets;
-        var replacePairsSet = replacePairsSets[recordName];
+        Dictionary<string, ReplacePairsSet> replacePairsSets = parameters.ReplacePairsSets;
+        ReplacePairsSet replacePairsSet = replacePairsSets[itemName];
 
-        var detailsCruder = new ReplacePairsSetFileMaskCruder(ParametersManager, recordName);
+        var detailsCruder = new ReplacePairsSetFileMaskCruder(ParametersManager, itemName);
 
         //var detailsCruder = new SimpleNamesWithDescriptionsFieldEditor<ReactAppTypeCruder>(
         //    nameof(ReplacePairsSet.PairsDict), ParametersManager);
 
         var newItemCommand =
-            new NewItemCliMenuCommand(detailsCruder, recordName, $"Create New {detailsCruder.CrudName}");
+            new NewItemCliMenuCommand(detailsCruder, itemName, $"Create New {detailsCruder.CrudName}");
         itemSubMenuSet.AddMenuItem(newItemCommand);
 
-        foreach (var detailListCommand in replacePairsSet.PairsDict.Select(mask =>
-                     new ItemSubMenuCliMenuCommand(detailsCruder, mask.Key, recordName, true)))
+        foreach (ItemSubMenuCliMenuCommand detailListCommand in replacePairsSet.PairsDict.Select(mask =>
+                     new ItemSubMenuCliMenuCommand(detailsCruder, mask.Key, itemName, true)))
+        {
             itemSubMenuSet.AddMenuItem(detailListCommand);
+        }
     }
 
     //protected override Dictionary<string, ItemData> GetCrudersDictionary()

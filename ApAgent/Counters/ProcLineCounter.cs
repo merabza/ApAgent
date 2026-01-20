@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading;
-using DatabasesManagement;
-using LibDatabaseParameters;
-using LibParameters;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared.Errors;
+using OneOf;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared.Errors;
+using ToolsManagement.DatabasesManagement;
 
 namespace ApAgent.Counters;
 
@@ -30,23 +31,32 @@ public sealed class ProcLineCounter : SCounter
     private bool IsServerLocal()
     {
         if (string.IsNullOrWhiteSpace(_databaseServerConnectionName))
+        {
             return false;
+        }
+
         if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnections parametersDsc)
+        {
             return false;
+        }
 
-        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
-            _databaseServerConnectionName, new DatabaseServerConnections(parametersDsc.DatabaseServerConnections),
-            CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
+            .CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
+                new DatabaseServerConnections(parametersDsc.DatabaseServerConnections), CancellationToken.None).Result;
 
-        if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+        if (createDatabaseManagerResult.IsT1)
+        {
+            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+        }
 
-        var isServerLocalResult = createDatabaseManagerResult.AsT0.IsServerLocal(CancellationToken.None).Result;
+        OneOf<bool, Err[]> isServerLocalResult =
+            createDatabaseManagerResult.AsT0.IsServerLocal(CancellationToken.None).Result;
         return isServerLocalResult is { IsT0: true, AsT0: true };
     }
 
     public int Count(EProcLineCase procLineCase)
     {
-        var isServerLocal = IsServerLocal();
+        bool isServerLocal = IsServerLocal();
 
         return procLineCase switch
         {

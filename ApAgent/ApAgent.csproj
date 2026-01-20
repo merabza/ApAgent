@@ -5,14 +5,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ApAgentData\LibApAgentData\LibApAgentData.csproj" />
-    <ProjectReference Include="..\..\AppCliTools\CliParametersApiClientsEdit\CliParametersApiClientsEdit.csproj" />
-    <ProjectReference Include="..\..\AppCliTools\CliParametersDataEdit\CliParametersDataEdit.csproj" />
-    <ProjectReference Include="..\..\AppCliTools\CliParametersEdit\CliParametersEdit.csproj" />
-    <ProjectReference Include="..\..\AppCliTools\CliParametersExcludeSetsEdit\CliParametersExcludeSetsEdit.csproj" />
-    <ProjectReference Include="..\..\AppCliTools\CliTools\CliTools.csproj" />
-    <ProjectReference Include="..\..\SystemTools\SystemToolsShared\SystemToolsShared.csproj" />
-    <ProjectReference Include="..\..\ToolsManagement\DatabasesManagement\DatabasesManagement.csproj" />
+    <ProjectReference Include="..\..\ApAgentData\ApAgentData.LibApAgentData\ApAgentData.LibApAgentData.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersDataEdit\AppCliTools.CliParametersDataEdit.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParametersExcludeSetsEdit\AppCliTools.CliParametersExcludeSetsEdit.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliParameters\AppCliTools.CliParameters.csproj" />
+    <ProjectReference Include="..\..\AppCliTools\AppCliTools.CliTools\AppCliTools.CliTools.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

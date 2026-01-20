@@ -4,21 +4,24 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using ApAgent.Counters;
-using CliParametersEdit.Counters;
-using CliParametersEdit.Generators;
-using DatabasesManagement;
-using DbTools;
-using LibApAgentData.Models;
-using LibApAgentData.Steps;
-using LibDatabaseParameters;
-using LibParameters;
+using ApAgentData.LibApAgentData.Models;
+using ApAgentData.LibApAgentData.Steps;
+using AppCliTools.CliParametersEdit.Counters;
+using AppCliTools.CliParametersEdit.Generators;
+using DatabaseTools.DbTools;
+using DatabaseTools.DbTools.Models;
+using LanguageExt;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
-using SystemToolsShared.Errors;
+using OneOf;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using SystemTools.SystemToolsShared.Errors;
+using ToolsManagement.DatabasesManagement;
 
 namespace ApAgent.Generators;
 
-internal class StandardJobsSchemaGenerator
+internal sealed class StandardJobsSchemaGenerator
 {
     private readonly string _databaseServerConnectionName;
     private readonly ILogger _logger;
@@ -41,14 +44,17 @@ internal class StandardJobsSchemaGenerator
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-            CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
+            .CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
 
-        if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+        if (createDatabaseManagerResult.IsT1)
+        {
+            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+        }
 
-        var dac = createDatabaseManagerResult.AsT0;
-        var testConnectionResult = dac.TestConnection(null, CancellationToken.None).Result;
+        IDatabaseManager? dac = createDatabaseManagerResult.AsT0;
+        Option<Err[]> testConnectionResult = dac.TestConnection(null, CancellationToken.None).Result;
 
         if (testConnectionResult.IsSome)
         {
@@ -58,16 +64,16 @@ internal class StandardJobsSchemaGenerator
 
         //შემოწმდეს არსებობს თუ არა ყოველდღიური შედულე 
         //და თუ არ არსებობს, დაემატოს ღამის 4 საათზე.
-        var scheduleDailyName = CreateJobScheduleDaily(parameters);
+        string scheduleDailyName = CreateJobScheduleDaily(parameters);
 
         //შემოწმდეს არსებობს თუ არა სტარტაპის შედულე 
         //და თუ არ არსებობს, დაემატოს.
-        var scheduleAtStartName = CreateJobScheduleAtStart(parameters);
+        string scheduleAtStartName = CreateJobScheduleAtStart(parameters);
 
         //შემოწმდეს არსებობს თუ არა შედულე რომელიც პროცესს გაუშვებს 
         //საათში ერთხელ ოღონდ შუა საათში
         //და თუ არ არსებობს, დაემატოს.
-        var scheduleHourlyName = CreateJobScheduleHourly(parameters);
+        string scheduleHourlyName = CreateJobScheduleHourly(parameters);
 
         StandardSmartSchemas.Generate(_parametersManager);
 
@@ -84,15 +90,18 @@ internal class StandardJobsSchemaGenerator
         //string archiverRarName = standardArchiversGenerator.ArchiverRarName; //Rar
 
         //1. დადგინდეს SQL სერვერი ლოკალურია თუ მოშორებული.
-        var isServerLocalResult = dac.IsServerLocal(CancellationToken.None).Result;
-        var isServerLocal = false;
+        OneOf<bool, Err[]> isServerLocalResult = dac.IsServerLocal(CancellationToken.None).Result;
+        bool isServerLocal = false;
         if (isServerLocalResult.IsT0)
+        {
             isServerLocal = isServerLocalResult.AsT0;
+        }
 
-        var fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
-        var trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
+        string fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
+        string trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
-        var getDatabaseServerInfoResult = dac.GetDatabaseServerInfo(CancellationToken.None).Result;
+        OneOf<DbServerInfo, Err[]> getDatabaseServerInfoResult =
+            dac.GetDatabaseServerInfo(CancellationToken.None).Result;
         if (getDatabaseServerInfoResult.IsT1)
         {
             Err.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
@@ -100,21 +109,20 @@ internal class StandardJobsSchemaGenerator
             return;
         }
 
-        var dbServerInfo = getDatabaseServerInfoResult.AsT0;
+        DbServerInfo? dbServerInfo = getDatabaseServerInfoResult.AsT0;
 
         //დასაშვებია თუ არა სერვერის მხარეს ბექაპირებისას კომპრესია
-        var isServerAllowsCompression = dbServerInfo.AllowsCompression;
+        bool isServerAllowsCompression = dbServerInfo.AllowsCompression;
 
         var uploadFileStorageCruderNameCounter =
             new FileStorageCruderNameCounter(_logger, _parametersManager, "Upload FileStorage", null);
-        var uploadFileStorageName = uploadFileStorageCruderNameCounter.Count();
+        string? uploadFileStorageName = uploadFileStorageCruderNameCounter.Count();
 
         var stepNamePrefixCounter =
             new StepNamePrefixCounter(_logger, _parametersManager, _databaseServerConnectionName);
-        var stepNamePrefix = stepNamePrefixCounter.Count();
+        string stepNamePrefix = stepNamePrefixCounter.Count();
 
-        var dateMaskCounter = new DateMaskCounter();
-        var dateMask = dateMaskCounter.Count();
+        const string dateMask = DateMaskKeeper.DateMask;
 
         //დავიანგარიშოთ ლოკალურად სად უნდა იყოს სრული ბექაპების ფაილები
         //LocalPathCounter databaseFullBackupsLocalPathCounter =
@@ -123,7 +131,7 @@ internal class StandardJobsSchemaGenerator
         //        EBackupType.Full);
         //string databaseFullBackupsLocalPath = databaseFullBackupsLocalPathCounter.Count(null);
 
-        var databaseFullBackupsLocalPath =
+        string? databaseFullBackupsLocalPath =
             parameters.CountLocalPath(null, _parametersFileName, $"Database{EBackupType.Full}Backups");
 
         //ბაზების სრული ბექაპი
@@ -140,7 +148,7 @@ internal class StandardJobsSchemaGenerator
         //        EBackupType.TrLog);
         //string databaseTrLogBackupsLocalPath = databaseTrLogBackupsLocalPathCounter.Count(null);
 
-        var databaseTrLogBackupsLocalPath =
+        string? databaseTrLogBackupsLocalPath =
             parameters.CountLocalPath(null, _parametersFileName, $"Database{EBackupType.TrLog}Backups");
 
         //ტრანზაქშენ ლოგების ბექაპი, საათობრივად, მხოლოდ იმ ბაზებისათვის, რომელთათვისაც დასაშვებია ტრანზაქშენ ლოგებით ბექაპი
@@ -168,10 +176,12 @@ internal class StandardJobsSchemaGenerator
 
         var fileStorageGenerator = new FileStorageGenerator(_parametersManager);
 
-        var fullPath = parameters.CountLocalPath(null, _parametersFileName, $"Database{backupType}Backups");
+        string? fullPath = parameters.CountLocalPath(null, _parametersFileName, $"Database{backupType}Backups");
 
         if (string.IsNullOrWhiteSpace(fullPath))
+        {
             throw new Exception("fullPath does not counted");
+        }
 
         var dir = new DirectoryInfo(fullPath);
         fileStorageGenerator.GenerateForLocalPath(dir.Name, fullPath);
@@ -181,8 +191,11 @@ internal class StandardJobsSchemaGenerator
     private static void CreateScheduleByJobStep(string jobStepName, string scheduleName, ApAgentParameters parameters)
     {
         if (parameters.JobsBySchedules.Any(a => a.JobStepName == jobStepName && a.ScheduleName == scheduleName))
+        {
             return;
-        var nextSequentialNumber = parameters.JobsBySchedules.Where(w => w.ScheduleName == scheduleName)
+        }
+
+        int nextSequentialNumber = parameters.JobsBySchedules.Where(w => w.ScheduleName == scheduleName)
             .DefaultIfEmpty().Max(m => m?.SequentialNumber ?? 0) + 1;
 
         parameters.JobsBySchedules.Add(new JobStepBySchedule(jobStepName, scheduleName, nextSequentialNumber));
@@ -191,10 +204,12 @@ internal class StandardJobsSchemaGenerator
     private void CreateMaintenanceStep(EMultiDatabaseActionType multiDatabaseActionType, string stepNamePrefix,
         string scheduleNameFirst, string scheduleNameSecond, ApAgentParameters parameters)
     {
-        var stepName = $"{stepNamePrefix} - {multiDatabaseActionType} for all databases";
+        string stepName = $"{stepNamePrefix} - {multiDatabaseActionType} for all databases";
 
         if (parameters.MultiDatabaseProcessSteps.ContainsKey(stepName))
+        {
             return;
+        }
 
         var multiDatabaseProcessStep = new MultiDatabaseProcessStep
         {
@@ -227,10 +242,12 @@ internal class StandardJobsSchemaGenerator
         string? uploadFileStorageName, string scheduleNameFirst, string scheduleNameSecond,
         ApAgentParameters parameters)
     {
-        var backupStepName = $"{stepNamePrefix} {backupType} Backup";
+        string backupStepName = $"{stepNamePrefix} {backupType} Backup";
 
         if (parameters.DatabaseBackupSteps.ContainsKey(backupStepName))
+        {
             return;
+        }
 
         var backupNameMiddlePartCounter = new BackupNameMiddlePartCounter(backupType);
         var backupFileExtensionCounter = new BackupFileExtensionCounter(backupType);
@@ -294,15 +311,15 @@ internal class StandardJobsSchemaGenerator
 
     private static string CreateJobScheduleHourly(ApAgentParameters parameters)
     {
+        List<KeyValuePair<string, JobSchedule>> jsdKvp = parameters.JobSchedules.Where(w => w.Value is
         {
-            var jsdKvp = parameters.JobSchedules.Where(w => w.Value is
-            {
-                Enabled: true, ScheduleType: EScheduleType.Daily,
-                DailyFrequencyType: EDailyFrequency.OccursManyTimes
-            }).ToList();
+            Enabled: true, ScheduleType: EScheduleType.Daily,
+            DailyFrequencyType: EDailyFrequency.OccursManyTimes
+        }).ToList();
 
-            if (jsdKvp.Any())
-                return jsdKvp[0].Key;
+        if (jsdKvp.Any())
+        {
+            return jsdKvp[0].Key;
         }
 
         var jobScheduleHourly = new JobSchedule
@@ -319,21 +336,21 @@ internal class StandardJobsSchemaGenerator
             ActiveEndDayTime = new TimeSpan(23, 59, 59)
         };
 
-        var name = CreateNewName(["Hourly"], parameters.JobSchedules.Keys.ToList());
+        string name = CreateNewName(["Hourly"], parameters.JobSchedules.Keys.ToList());
         parameters.JobSchedules.Add(name, jobScheduleHourly);
         return name;
     }
 
     private static string CreateJobScheduleDaily(ApAgentParameters parameters)
     {
+        List<KeyValuePair<string, JobSchedule>> jsdKvp = parameters.JobSchedules.Where(w => w.Value is
         {
-            var jsdKvp = parameters.JobSchedules.Where(w => w.Value is
-            {
-                Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
-            }).ToList();
+            Enabled: true, ScheduleType: EScheduleType.Daily, DailyFrequencyType: EDailyFrequency.OccursOnce
+        }).ToList();
 
-            if (jsdKvp.Any())
-                return jsdKvp[0].Key;
+        if (jsdKvp.Any())
+        {
+            return jsdKvp[0].Key;
         }
 
         var jobScheduleDaily = new JobSchedule
@@ -347,7 +364,7 @@ internal class StandardJobsSchemaGenerator
             ActiveStartDayTime = new TimeSpan(4, 0, 0)
         };
 
-        var name = CreateNewName(["Daily", "DailyAt4"], [.. parameters.JobSchedules.Keys]);
+        string name = CreateNewName(["Daily", "DailyAt4"], [.. parameters.JobSchedules.Keys]);
         parameters.JobSchedules.Add(name, jobScheduleDaily);
 
         return name;
@@ -356,12 +373,12 @@ internal class StandardJobsSchemaGenerator
     private static string CreateJobScheduleAtStart(ApAgentParameters parameters)
     {
         const string atStartName = "AtStart";
-        {
-            var jsdKvp = parameters.JobSchedules
-                .Where(w => w.Value.Enabled && w.Value.ScheduleType == EScheduleType.AtStart).ToList();
+        List<KeyValuePair<string, JobSchedule>> jsdKvp = parameters.JobSchedules
+            .Where(w => w.Value is { Enabled: true, ScheduleType: EScheduleType.AtStart }).ToList();
 
-            if (jsdKvp.Count != 0)
-                return jsdKvp[0].Key;
+        if (jsdKvp.Count != 0)
+        {
+            return jsdKvp[0].Key;
         }
 
         var jobScheduleAtStart = new JobSchedule
@@ -381,12 +398,16 @@ internal class StandardJobsSchemaGenerator
 
     private static string CreateNewName(string[] templates, List<string> reservedNames)
     {
-        var ver = 1;
+        int ver = 1;
         while (true)
         {
-            foreach (var temp in templates.Select(template => ver == 1 ? template : $"{template}{ver}")
-                         .Where(temp => !reservedNames.Contains(temp)))
-                return temp;
+            foreach (string temp in templates.Select(template => ver == 1 ? template : $"{template}{ver}"))
+            {
+                if (!reservedNames.Contains(temp))
+                {
+                    return temp;
+                }
+            }
 
             ver++;
         }

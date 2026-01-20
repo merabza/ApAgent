@@ -1,5 +1,5 @@
 ﻿using System;
-using LibParameters;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.Counters;
 
@@ -18,7 +18,10 @@ public sealed class SmartSchemaNameCounter : SCounter
     public string Count(ESmartSchemaCase smartSchemaCase, string mainSmartSchemaName, string reduceSmartSchemaName)
     {
         if (mainSmartSchemaName == reduceSmartSchemaName)
+        {
             return mainSmartSchemaName;
+        }
+
         return smartSchemaCase switch
         {
             ESmartSchemaCase.DatabaseServerSide => _databaseFileStorageName is not null &&

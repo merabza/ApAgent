@@ -1,7 +1,8 @@
 ﻿using System;
-using LibApAgentData.Models;
-using LibParameters;
-using SystemToolsShared;
+using ApAgentData.LibApAgentData.Models;
+using ParametersManagement.LibFileParameters.Models;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace ApAgent.Counters;
 
@@ -24,16 +25,16 @@ public /*open*/ class SCounter
             return true;
         }
 
-        if (!parameters.FileStorages.ContainsKey(fileStorageName))
+        if (!parameters.FileStorages.TryGetValue(fileStorageName, out FileStorageData? fileStorage))
         {
             StShared.WriteErrorLine($"FileStorage with Name {fileStorageName} does not exists. ", true);
             return true;
         }
 
-        var fileStorage = parameters.FileStorages[fileStorageName];
-
         if (fileStorage.FileStoragePath is null)
+        {
             throw new Exception("fileStorage.FileStoragePath is null");
+        }
 
         return FileStat.IsFileSchema(fileStorage.FileStoragePath);
     }

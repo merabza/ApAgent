@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using CliParameters.FieldEditors;
-using LibDataInput;
-using LibParameters;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.LibDataInput;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.FieldEditors;
 
@@ -16,14 +16,14 @@ public sealed class DateFieldEditor : FieldEditor<DateTime>
         _defaultValue = defaultValue;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
         SetValue(recordForUpdate, Inputer.InputDate(FieldName, GetValue(recordForUpdate, _defaultValue)));
     }
 
     public override string GetValueStatus(object? record)
     {
-        var val = GetValue(record);
+        DateTime val = GetValue(record);
         return val.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
         //სტანდარტული ფორმატის გადაყვანა custom ფორმატში

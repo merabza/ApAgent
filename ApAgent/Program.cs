@@ -1,16 +1,16 @@
 using System;
 using System.Net.Http;
 using ApAgent;
-using CliParameters;
-using LibApAgentData;
-using LibApAgentData.Models;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliParameters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
 using Serilog;
 using Serilog.Events;
-using SystemToolsShared;
+using SystemTools.SystemToolsShared;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 ILogger<Program>? logger = null;
 try
@@ -22,15 +22,14 @@ try
     //პროგრამის ატრიბუტების დაყენება 
     ProgramAttributes.Instance.AppName = appName;
 
-    var key = StringExtension.AppAgentAppKey + Environment.MachineName.Capitalize();
+    string key = StringExtension.AppAgentAppKey + Environment.MachineName.Capitalize();
 
     var argParser = new ArgumentsParser<ApAgentParameters>(args, appName, key);
-    switch (argParser.Analysis())
+    EParseResult parseResult = argParser.Analysis();
+
+    if (parseResult != EParseResult.Ok)
     {
-        case EParseResult.Ok: break;
-        case EParseResult.Usage: return 1;
-        case EParseResult.Error: return 2;
-        default: throw new ArgumentOutOfRangeException();
+        return 1;
     }
 
     var par = (ApAgentParameters?)argParser.Par;
@@ -40,11 +39,11 @@ try
         return 3;
     }
 
-    var parametersFileName = argParser.ParametersFileName;
+    string? parametersFileName = argParser.ParametersFileName;
     var apAgentServicesCreator = new ApAgentServicesCreator(par);
 
     // ReSharper disable once using
-    using var serviceProvider = apAgentServicesCreator.CreateServiceProvider(LogEventLevel.Information);
+    using ServiceProvider? serviceProvider = apAgentServicesCreator.CreateServiceProvider(LogEventLevel.Information);
 
     if (serviceProvider == null)
     {
@@ -86,5 +85,5 @@ catch (Exception e)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }

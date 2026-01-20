@@ -1,7 +1,7 @@
-﻿using CliMenu;
-using LibApAgentData.Models;
-using LibDataInput;
-using LibParameters;
+﻿using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using AppCliTools.LibDataInput;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.MenuCommands;
 
@@ -18,7 +18,9 @@ public sealed class ClearAllCommand : CliMenuCommand
     protected override bool RunBody()
     {
         if (!Inputer.InputBool("Clear All, are you sure?", false, false))
+        {
             return false;
+        }
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 

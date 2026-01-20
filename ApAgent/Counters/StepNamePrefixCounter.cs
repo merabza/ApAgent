@@ -1,9 +1,11 @@
 ﻿using System.Threading;
-using DatabasesManagement;
-using LibDatabaseParameters;
-using LibParameters;
+using DatabaseTools.DbTools.Models;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared.Errors;
+using OneOf;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared.Errors;
+using ToolsManagement.DatabasesManagement;
 
 namespace ApAgent.Counters;
 
@@ -26,16 +28,21 @@ public sealed class StepNamePrefixCounter
     {
         var parameters = (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
-            _databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-            CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
+            .CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
 
-        if (createDatabaseManagerResult.IsT1) Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+        if (createDatabaseManagerResult.IsT1)
+        {
+            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+        }
 
-        var getDatabaseServerInfoResult =
+        OneOf<DbServerInfo, Err[]> getDatabaseServerInfoResult =
             createDatabaseManagerResult.AsT0.GetDatabaseServerInfo(CancellationToken.None).Result;
         if (getDatabaseServerInfoResult.IsT0)
+        {
             return getDatabaseServerInfoResult.AsT0.ServerName ?? string.Empty;
+        }
 
         return string.Empty;
     }

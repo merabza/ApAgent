@@ -4,15 +4,15 @@ using System.Net.Http;
 using ApAgent.Counters;
 using ApAgent.Cruders;
 using ApAgent.FieldEditors;
-using CliParameters;
-using CliParameters.FieldEditors;
-using CliParametersEdit.FieldEditors;
-using CliParametersExcludeSetsEdit.FieldEditors;
-using LibApAgentData.Steps;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Steps;
+using AppCliTools.CliParameters;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.CliParametersEdit.FieldEditors;
+using AppCliTools.CliParametersExcludeSetsEdit.FieldEditors;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent.StepCruders;
 
@@ -23,9 +23,8 @@ public sealed class FilesBackupStepCruder : StepCruder<FilesBackupStep>
         httpClientFactory, processes, parametersManager, currentValuesDictionary, "Files Backup Step",
         "Files Backup Steps")
     {
-        var parametersFileName = parametersManager.ParametersFileName;
-        var dateMaskCounter = new DateMaskCounter();
-        var dateMask = dateMaskCounter.Count();
+        string? parametersFileName = parametersManager.ParametersFileName;
+        const string dateMask = DateMaskKeeper.DateMask;
 
         List<FieldEditor> tempFieldEditors = [];
         tempFieldEditors.AddRange(FieldEditors);

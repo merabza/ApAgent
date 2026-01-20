@@ -1,5 +1,5 @@
 ﻿using System;
-using DbTools;
+using DatabaseTools.DbTools;
 
 namespace ApAgent.Counters;
 
@@ -14,12 +14,18 @@ public sealed class BackupFileExtensionCounter
 
     public string Count()
     {
-        return _backupType switch
+        return Count(_backupType);
+    }
+
+    private string Count(EBackupType backupType)
+    {
+        return backupType switch
         {
             EBackupType.Full => "bak",
             EBackupType.Diff => "dif",
             EBackupType.TrLog => "trn",
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(backupType), backupType,
+                $"Unexpected backup type value: {backupType}")
         };
     }
 }

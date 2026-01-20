@@ -3,15 +3,15 @@ using System.Net.Http;
 using ApAgent.Cruders;
 using ApAgent.MenuCommands;
 using ApAgent.StepCruders;
-using CliMenu;
-using CliParameters.CliMenuCommands;
-using CliTools;
-using CliTools.CliMenuCommands;
-using LibApAgentData.Models;
-using LibDataInput;
-using LibParameters;
-using LibToolActions.BackgroundTasks;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParameters.CliMenuCommands;
+using AppCliTools.CliTools;
+using AppCliTools.CliTools.CliMenuCommands;
+using AppCliTools.LibDataInput;
 using Microsoft.Extensions.Logging;
+using ParametersManagement.LibParameters;
+using ToolsManagement.LibToolActions.BackgroundTasks;
 
 namespace ApAgent;
 
@@ -106,7 +106,7 @@ public sealed class ApAgentCliAppLoop : CliAppLoop
         mainMenuSet.AddMenuItem(clearAllCommand);
 
         //გასასვლელი
-        var key = ConsoleKey.Escape.Value().ToLower();
+        string key = ConsoleKey.Escape.Value().ToUpperInvariant();
         mainMenuSet.AddMenuItem(key, new ExitCliMenuCommand(), key.Length);
 
         return mainMenuSet;

@@ -1,7 +1,7 @@
 ﻿using ApAgent.Counters;
-using CliParameters.FieldEditors;
-using DbTools;
-using LibDataInput;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.LibDataInput;
+using DatabaseTools.DbTools;
 
 namespace ApAgent.FieldEditors;
 
@@ -14,7 +14,7 @@ public sealed class BackupFileExtensionFieldEditor : TextFieldEditor
         _backupTypePropertyName = backupTypePropertyName;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate) //, object currentRecord
+    public override void UpdateField(string? recordKey, object recordForUpdate) //, object currentRecord
     {
         var backupType = GetValue<EBackupType>(recordForUpdate, _backupTypePropertyName);
         var backupFileExtensionCounter = new BackupFileExtensionCounter(backupType);

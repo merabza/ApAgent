@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using CliMenu;
-using LibApAgentData.Models;
-using LibParameters;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using ParametersManagement.LibParameters;
 
 namespace ApAgent.MenuCommands;
 
@@ -30,16 +30,18 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
         if (_selected)
         {
             //წავშალოთ
-            var jobStepBySchedule =
+            JobStepBySchedule? jobStepBySchedule =
                 parameters.JobsBySchedules.SingleOrDefault(s =>
                     s.JobStepName == _stepName && s.ScheduleName == _scheduleName);
             if (jobStepBySchedule != null)
+            {
                 parameters.JobsBySchedules.Remove(jobStepBySchedule);
+            }
         }
         else
         {
             //ჩავამატოთ
-            var jobStepBySchedule =
+            JobStepBySchedule? jobStepBySchedule =
                 parameters.JobsBySchedules.SingleOrDefault(s =>
                     s.JobStepName == _stepName && s.ScheduleName == _scheduleName);
             if (jobStepBySchedule == null)
@@ -60,9 +62,10 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        var sn = 1;
-        foreach (var jobStepBySchedule in parameters.JobsBySchedules.Where(w => w.ScheduleName == _scheduleName)
-                     .OrderBy(o => o.SequentialNumber).ThenBy(tb => tb.JobStepName))
+        int sn = 1;
+        foreach (JobStepBySchedule jobStepBySchedule in parameters.JobsBySchedules
+                     .Where(w => w.ScheduleName == _scheduleName).OrderBy(o => o.SequentialNumber)
+                     .ThenBy(tb => tb.JobStepName))
         {
             jobStepBySchedule.SequentialNumber = sn;
             sn++;

@@ -12,10 +12,10 @@ public /*open*/ class MaskCounter
     public string CountMask(string path)
     {
         var dir = new DirectoryInfo(path);
-        var mask = dir.Name;
+        string mask = dir.Name;
 
-        var startDefVal = mask;
-        var index = 1;
+        string startDefVal = mask;
+        int index = 1;
         while (MaskExists(mask))
         {
             index++;

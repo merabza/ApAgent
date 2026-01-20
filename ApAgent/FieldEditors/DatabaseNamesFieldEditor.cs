@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
-using CliParameters.FieldEditors;
-using DatabasesManagement;
-using DbTools;
-using DbTools.Models;
-using LibApAgentData;
-using LibApAgentData.Models;
-using LibApiClientParameters;
-using LibDatabaseParameters;
-using LibMenuInput;
-using LibParameters;
+using ApAgentData.LibApAgentData;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliParameters.FieldEditors;
+using AppCliTools.LibMenuInput;
+using DatabaseTools.DbTools;
+using DatabaseTools.DbTools.Models;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
-using SystemToolsShared.Errors;
+using OneOf;
+using ParametersManagement.LibApiClientParameters;
+using ParametersManagement.LibDatabaseParameters;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
+using SystemTools.SystemToolsShared.Errors;
+using ToolsManagement.DatabasesManagement;
 
 namespace ApAgent.FieldEditors;
 
@@ -47,10 +48,11 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         _databaseBackupParametersPropertyName = databaseBackupParametersPropertyName;
     }
 
-    public override void UpdateField(string? recordName, object recordForUpdate)
+    public override void UpdateField(string? recordKey, object recordForUpdate)
     {
-        var databaseServerConnectionName = GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
-        var databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
+        string? databaseServerConnectionName =
+            GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
+        string? databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
 
         var databaseSet = GetValue<EDatabaseSet>(recordForUpdate, _databaseSetPropertyName);
 
@@ -61,7 +63,9 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
             var databaseBackupParameters =
                 GetValue<DatabaseBackupParametersDomain>(recordForUpdate, _databaseBackupParametersPropertyName);
             if (databaseBackupParameters is not null)
+            {
                 backupType = databaseBackupParameters.BackupType;
+            }
         }
 
         if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnectionsAndApiClients parameters)
@@ -72,9 +76,10 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        var createDatabaseManagerResult = DatabaseManagersFactory.CreateDatabaseManager(_logger, true,
-            databaseServerConnectionName, new DatabaseServerConnections(parameters.DatabaseServerConnections),
-            new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
+            .CreateDatabaseManager(_logger, true, databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections),
+                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1)
         {
@@ -93,8 +98,9 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         if (databaseSet != EDatabaseSet.DatabasesBySelection)
         {
             Console.WriteLine("Databases list is:");
-            var i = 0;
-            foreach (var databaseInfoModel in dbList.OrderBy(o => o.IsSystemDatabase).ThenBy(tb => tb.Name))
+            int i = 0;
+            foreach (DatabaseInfoModel databaseInfoModel in dbList.OrderBy(o => o.IsSystemDatabase)
+                         .ThenBy(tb => tb.Name))
             {
                 i++;
                 Console.WriteLine($"{i}. {databaseInfoModel.Name}");
@@ -102,8 +108,9 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         }
         else
         {
-            var oldDatabaseNames = GetValue(recordForUpdate, []) ?? [];
-            var oldDatabaseChecks = dbList.ToDictionary(databaseInfoModel => databaseInfoModel.Name,
+            List<string> oldDatabaseNames = GetValue(recordForUpdate, []) ?? [];
+            Dictionary<string, bool> oldDatabaseChecks = dbList.ToDictionary(
+                databaseInfoModel => databaseInfoModel.Name,
                 databaseInfoModel => oldDatabaseNames.Contains(databaseInfoModel.Name));
             SetValue(recordForUpdate, MenuInputer.MultipleInputFromList(FieldName, oldDatabaseChecks));
         }
@@ -111,7 +118,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
     public override string GetValueStatus(object? record)
     {
-        var val = GetValue(record);
+        List<string>? val = GetValue(record);
         return val is null ? string.Empty : string.Join(",", val);
     }
 }

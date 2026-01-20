@@ -1,10 +1,10 @@
 ﻿using ApAgent.Generators;
-using CliMenu;
-using CliParametersDataEdit.Cruders;
-using LibApAgentData.Models;
-using LibParameters;
+using ApAgentData.LibApAgentData.Models;
+using AppCliTools.CliMenu;
+using AppCliTools.CliParametersDataEdit.Cruders;
 using Microsoft.Extensions.Logging;
-using SystemToolsShared;
+using ParametersManagement.LibParameters;
+using SystemTools.SystemToolsShared;
 
 namespace ApAgent.MenuCommands;
 
@@ -25,7 +25,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
     {
         var databaseServerConnectionCruder = DatabaseServerConnectionCruder.Create(_logger, null, _parametersManager);
 
-        var databaseConnectionName =
+        string? databaseConnectionName =
             databaseServerConnectionCruder.GetNameWithPossibleNewName(
                 "Select local connection for Generate standard database maintenance schema", null);
 
