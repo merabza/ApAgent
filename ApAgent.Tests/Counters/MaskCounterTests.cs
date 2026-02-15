@@ -9,7 +9,7 @@ public class MaskCounterTests
     public MaskCounterTests()
     {
         // Create a temporary test directory
-        _testDirectoryPath = Path.Combine(Path.GetTempPath(), "TestDirectory_" + Guid.NewGuid().ToString());
+        _testDirectoryPath = Path.Combine(Path.GetTempPath(), "TestDirectory_" + Guid.NewGuid());
         Directory.CreateDirectory(_testDirectoryPath);
     }
 
@@ -20,7 +20,7 @@ public class MaskCounterTests
         var counter = new MaskCounter();
 
         // Act
-        var result = counter.CountMask(_testDirectoryPath);
+        string result = counter.CountMask(_testDirectoryPath);
 
         // Assert
         Assert.Equal(new DirectoryInfo(_testDirectoryPath).Name, result);
@@ -31,13 +31,13 @@ public class MaskCounterTests
     {
         // Arrange
         var counter = new MaskCounter();
-        var testDir = Path.Combine(Path.GetTempPath(), "MyCustomDirectory");
+        string testDir = Path.Combine(Path.GetTempPath(), "MyCustomDirectory");
         Directory.CreateDirectory(testDir);
 
         try
         {
             // Act
-            var result = counter.CountMask(testDir);
+            string result = counter.CountMask(testDir);
 
             // Assert
             Assert.Equal("MyCustomDirectory", result);
@@ -56,11 +56,11 @@ public class MaskCounterTests
     public void CountMask_WhenMaskExists_AppendsIndexToMask()
     {
         // Arrange
-        var dirName = new DirectoryInfo(_testDirectoryPath).Name;
+        string dirName = new DirectoryInfo(_testDirectoryPath).Name;
         var counter = new TestMaskCounterWithExistingMask(dirName);
 
         // Act
-        var result = counter.CountMask(_testDirectoryPath);
+        string result = counter.CountMask(_testDirectoryPath);
 
         // Assert
         // The first mask exists, so it should return the mask with "2" appended
@@ -71,11 +71,11 @@ public class MaskCounterTests
     public void CountMask_WhenMultipleMasksExist_ReturnsFirstAvailableIndex()
     {
         // Arrange
-        var dirName = new DirectoryInfo(_testDirectoryPath).Name;
-        var counter = new TestMaskCounterWithMultipleExistingMasks(new[] { dirName, dirName + "2", dirName + "3" });
+        string dirName = new DirectoryInfo(_testDirectoryPath).Name;
+        var counter = new TestMaskCounterWithMultipleExistingMasks([dirName, dirName + "2", dirName + "3"]);
 
         // Act
-        var result = counter.CountMask(_testDirectoryPath);
+        string result = counter.CountMask(_testDirectoryPath);
 
         // Assert
         // The first three masks exist, so it should return the mask with "4" appended
@@ -86,16 +86,17 @@ public class MaskCounterTests
     public void CountMask_WhenManyMasksExist_IncrementsCorrectly()
     {
         // Arrange
-        var dirName = new DirectoryInfo(_testDirectoryPath).Name;
+        string dirName = new DirectoryInfo(_testDirectoryPath).Name;
         var existingMasks = new List<string>();
         for (int i = 0; i < 10; i++)
         {
             existingMasks.Add(i == 0 ? dirName : dirName + (i + 1));
         }
+
         var counter = new TestMaskCounterWithMultipleExistingMasks(existingMasks.ToArray());
 
         // Act
-        var result = counter.CountMask(_testDirectoryPath);
+        string result = counter.CountMask(_testDirectoryPath);
 
         // Assert
         Assert.Equal(dirName + "11", result);
