@@ -43,7 +43,7 @@ try
     var apAgentServicesCreator = new ApAgentServicesCreator(par);
 
     // ReSharper disable once using
-    using ServiceProvider? serviceProvider = apAgentServicesCreator.CreateServiceProvider(LogEventLevel.Information);
+    await using ServiceProvider? serviceProvider = apAgentServicesCreator.CreateServiceProvider(LogEventLevel.Information);
 
     if (serviceProvider == null)
     {
@@ -76,7 +76,7 @@ try
 
     var apAgent = new ApAgentCliAppLoop(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key),
         processes);
-    return apAgent.Run() ? 0 : 1;
+    return (await apAgent.Run()) ? 0 : 1;
 }
 catch (Exception e)
 {

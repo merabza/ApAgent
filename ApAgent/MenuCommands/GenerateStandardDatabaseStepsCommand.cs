@@ -1,4 +1,6 @@
-﻿using ApAgent.Generators;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ApAgent.Generators;
 using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliMenu;
 using AppCliTools.CliParametersDataEdit.Cruders;
@@ -21,7 +23,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
         _logger = logger;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var databaseServerConnectionCruder = DatabaseServerConnectionCruder.Create(_logger, null, _parametersManager);
 
@@ -42,7 +44,7 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
         standardJobsSchemaGenerator.Generate();
 
         //შენახვა
-        _parametersManager.Save(parameters, "Maintain schema generated success");
+        await _parametersManager.Save(parameters, "Maintain schema generated success");
         return true;
     }
 }

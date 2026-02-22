@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
@@ -18,7 +20,7 @@ public sealed class SaveApAgentParametersForLocalReServerCommand : CliMenuComman
         _parametersManager = parametersManager;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -40,7 +42,7 @@ public sealed class SaveApAgentParametersForLocalReServerCommand : CliMenuComman
         }
 
         //შევინახოთ პარამეტრების ფაილი
-        _parametersManager.Save(parameters, "Parameters for ReServer Saved",
+        await _parametersManager.Save(parameters, "Parameters for ReServer Saved",
             parameters.ApAgentParametersFileNameForLocalReServer);
 
         return true;

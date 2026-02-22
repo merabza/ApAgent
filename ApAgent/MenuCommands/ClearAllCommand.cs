@@ -1,4 +1,6 @@
-﻿using ApAgentData.LibApAgentData.Models;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliMenu;
 using AppCliTools.LibDataInput;
 using ParametersManagement.LibParameters;
@@ -15,7 +17,7 @@ public sealed class ClearAllCommand : CliMenuCommand
         _parametersManager = parametersManager;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         if (!Inputer.InputBool("Clear All, are you sure?", false, false))
         {
@@ -25,7 +27,7 @@ public sealed class ClearAllCommand : CliMenuCommand
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         parameters.ClearAll();
-        _parametersManager.Save(parameters, "Data cleared success");
+        await _parametersManager.Save(parameters, "Data cleared success");
         return true;
     }
 }

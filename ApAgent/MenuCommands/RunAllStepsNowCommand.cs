@@ -1,4 +1,6 @@
 ﻿using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliMenu;
 using Microsoft.Extensions.Logging;
@@ -30,7 +32,7 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
         _parametersFileName = parametersFileName;
     }
 
-    protected override bool RunBody()
+    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -39,11 +41,11 @@ public sealed class RunAllStepsNowCommand : CliMenuCommand
 
         if (!string.IsNullOrWhiteSpace(procLogFilesFolder))
         {
-            return parameters.RunAllSteps(_logger, _httpClientFactory, true, _jobScheduleName, _processes,
-                procLogFilesFolder);
+            return ValueTask.FromResult(parameters.RunAllSteps(_logger, _httpClientFactory, true, _jobScheduleName,
+                _processes, procLogFilesFolder));
         }
 
         StShared.WriteErrorLine("procLogFilesFolder does not counted. cannot run steps", true, _logger);
-        return false;
+        return ValueTask.FromResult(false);
     }
 }

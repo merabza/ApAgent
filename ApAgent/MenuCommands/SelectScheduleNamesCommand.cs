@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliMenu;
 using ParametersManagement.LibParameters;
@@ -23,7 +25,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
         _selected = selected;
     }
 
-    protected override bool RunBody()
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -54,7 +56,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
         }
 
         ReNumSequences();
-        _parametersManager.Save(parameters, "Schedule Updated");
+        await _parametersManager.Save(parameters, "Schedule Updated");
         return true;
     }
 

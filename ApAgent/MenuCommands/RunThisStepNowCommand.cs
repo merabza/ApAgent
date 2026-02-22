@@ -1,4 +1,6 @@
 ﻿using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using ApAgentData.LibApAgentData.Models;
 using ApAgentData.LibApAgentData.Steps;
 using AppCliTools.CliMenu;
@@ -18,8 +20,6 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
     private readonly IParametersManager _parametersManager;
 
     private readonly Processes _processes;
-    //private readonly StepCruder _stepCruder;
-    //private readonly string _stepName;
 
     // ReSharper disable once ConvertToPrimaryConstructor
     public RunThisStepNowCommand(ILogger logger, IHttpClientFactory httpClientFactory, Processes processes,
@@ -31,11 +31,10 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         _processes = processes;
         _parametersManager = parametersManager;
         _jobStep = jobStep;
-        //_stepName = stepName;
         _parametersFileName = parametersFileName;
     }
 
-    protected override bool RunBody()
+    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
@@ -45,16 +44,8 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (string.IsNullOrWhiteSpace(procLogFilesFolder))
         {
             StShared.WriteErrorLine("procLogFilesFolder does not counted. step does not started", true, _logger);
-            return false;
+            return new ValueTask<bool>(false);
         }
-
-        //JobStep? jobStep = (JobStep?)_stepCruder.GetItemByName(_stepName);
-
-        //if (jobStep is null)
-        //{
-        //    StShared.WriteErrorLine("jobStep does not found. step does not started", true, _logger);
-        //    return false;
-        //}
 
         // ReSharper disable once using
         using ProcessManager processManager = _processes.GetNewProcessManager();
@@ -65,10 +56,10 @@ public sealed class RunThisStepNowCommand : CliMenuCommand
         if (stepToolAction is null)
         {
             StShared.WriteErrorLine("stepToolAction does not found. step does not started", true, _logger);
-            return false;
+            return new ValueTask<bool>(false);
         }
 
         processManager.Run(stepToolAction);
-        return true;
+        return new ValueTask<bool>(true);
     }
 }
