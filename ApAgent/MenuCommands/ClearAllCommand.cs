@@ -27,7 +27,7 @@ public sealed class ClearAllCommand : CliMenuCommand
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         parameters.ClearAll();
-        await _parametersManager.Save(parameters, "Data cleared success");
+        await _parametersManager.Save(parameters, "Data cleared success", null, cancellationToken);
         return true;
     }
 }

@@ -27,9 +27,9 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
     {
         var databaseServerConnectionCruder = DatabaseServerConnectionCruder.Create(_logger, null, _parametersManager);
 
-        string? databaseConnectionName =
-            databaseServerConnectionCruder.GetNameWithPossibleNewName(
-                "Select local connection for Generate standard database maintenance schema", null);
+        string? databaseConnectionName = await databaseServerConnectionCruder.GetNameWithPossibleNewName(
+            "Select local connection for Generate standard database maintenance schema", null, null, false,
+            cancellationToken);
 
         if (string.IsNullOrWhiteSpace(databaseConnectionName))
         {
@@ -41,10 +41,10 @@ public sealed class GenerateStandardDatabaseStepsCommand : CliMenuCommand
 
         var standardJobsSchemaGenerator = new StandardJobsSchemaGenerator(true, _logger, _parametersManager,
             databaseConnectionName, _parametersManager.ParametersFileName);
-        standardJobsSchemaGenerator.Generate();
+        await standardJobsSchemaGenerator.Generate(cancellationToken);
 
         //შენახვა
-        await _parametersManager.Save(parameters, "Maintain schema generated success");
+        await _parametersManager.Save(parameters, "Maintain schema generated success", null, cancellationToken);
         return true;
     }
 }

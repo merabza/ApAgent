@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using ApAgent.Counters;
 using ApAgentData.LibApAgentData.Models;
 using ApAgentData.LibApAgentData.Steps;
@@ -40,13 +41,13 @@ internal sealed class StandardJobsSchemaGenerator
         _parametersFileName = parametersFileName;
     }
 
-    internal void Generate()
+    internal async ValueTask Generate(CancellationToken cancellationToken = default)
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
-            .CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult =
+            await DatabaseManagersFactory.CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {
@@ -54,7 +55,7 @@ internal sealed class StandardJobsSchemaGenerator
         }
 
         IDatabaseManager? dac = createDatabaseManagerResult.AsT0;
-        Option<Err[]> testConnectionResult = dac.TestConnection(null, CancellationToken.None).Result;
+        Option<Err[]> testConnectionResult = await dac.TestConnection(null, cancellationToken);
 
         if (testConnectionResult.IsSome)
         {
@@ -90,7 +91,7 @@ internal sealed class StandardJobsSchemaGenerator
         //string archiverRarName = standardArchiversGenerator.ArchiverRarName; //Rar
 
         //1. დადგინდეს SQL სერვერი ლოკალურია თუ მოშორებული.
-        OneOf<bool, Err[]> isServerLocalResult = dac.IsServerLocal(CancellationToken.None).Result;
+        OneOf<bool, Err[]> isServerLocalResult = await dac.IsServerLocal(cancellationToken);
         bool isServerLocal = false;
         if (isServerLocalResult.IsT0)
         {
@@ -100,8 +101,7 @@ internal sealed class StandardJobsSchemaGenerator
         string fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
         string trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
-        OneOf<DbServerInfo, Err[]> getDatabaseServerInfoResult =
-            dac.GetDatabaseServerInfo(CancellationToken.None).Result;
+        OneOf<DbServerInfo, Err[]> getDatabaseServerInfoResult = await dac.GetDatabaseServerInfo(cancellationToken);
         if (getDatabaseServerInfoResult.IsT1)
         {
             Err.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
@@ -116,7 +116,7 @@ internal sealed class StandardJobsSchemaGenerator
 
         var uploadFileStorageCruderNameCounter =
             new FileStorageCruderNameCounter(_logger, _parametersManager, "Upload FileStorage", null);
-        string? uploadFileStorageName = uploadFileStorageCruderNameCounter.Count();
+        string? uploadFileStorageName = await uploadFileStorageCruderNameCounter.Count(cancellationToken);
 
         var stepNamePrefixCounter =
             new StepNamePrefixCounter(_logger, _parametersManager, _databaseServerConnectionName);

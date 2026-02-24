@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ApAgent.FieldEditors;
 using ApAgent.Models;
 using AppCliTools.CliParameters.Cruders;
@@ -39,23 +41,27 @@ public sealed class FolderPathsSetCruder : Cruder
         return _currentValuesList.Contains(recordKey);
     }
 
-    protected override void RemoveRecordWithKey(string recordKey)
+    protected override ValueTask RemoveRecordWithKey(string recordKey, CancellationToken cancellationToken = default)
     {
         _currentValuesList.Remove(recordKey);
+        return ValueTask.CompletedTask;
     }
 
-    protected override void AddRecordWithKey(string recordKey, ItemData newRecord)
+    protected override ValueTask AddRecordWithKey(string recordKey, ItemData newRecord,
+        CancellationToken cancellationToken = default)
     {
         string? newPath = ((FolderPathItemData)newRecord).Path;
         if (!string.IsNullOrWhiteSpace(newPath))
         {
             _currentValuesList.Add(newPath);
         }
+
+        return ValueTask.CompletedTask;
     }
 
-    public override void Save(string message)
+    public override async ValueTask Save(string message, CancellationToken cancellationToken = default)
     {
         _folderPathsSetFieldEditor.Update(_record, _currentValuesList);
-        base.Save(message);
+        await base.Save(message, cancellationToken);
     }
 }

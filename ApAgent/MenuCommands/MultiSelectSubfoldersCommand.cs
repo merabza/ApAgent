@@ -23,19 +23,19 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
         _folderPathsSetCruder = folderPathsSetCruder;
     }
 
-    protected override ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
     {
         string? folderName =
             MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
         if (string.IsNullOrWhiteSpace(folderName))
         {
-            return new ValueTask<bool>(false);
+            return false;
         }
 
         DirectoryInfo? dir = CheckFolder(folderName);
         if (dir == null)
         {
-            return new ValueTask<bool>(false);
+            return false;
         }
 
         //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
@@ -62,9 +62,9 @@ public sealed class MultiSelectSubfoldersCommand : CliMenuCommand
             }
         }
 
-        _folderPathsSetCruder.Save("Changes saved");
+        await _folderPathsSetCruder.Save("Changes saved", cancellationToken);
 
-        return new ValueTask<bool>(true);
+        return true;
     }
 
     private DirectoryInfo? CheckFolder(string folderName)

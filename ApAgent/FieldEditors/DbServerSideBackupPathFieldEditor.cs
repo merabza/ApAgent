@@ -1,4 +1,6 @@
-﻿using ApAgentData.LibApAgentData.Models;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.LibDataInput;
 using AppCliTools.LibMenuInput;
@@ -24,7 +26,8 @@ public sealed class DbServerSideBackupPathFieldEditor : FieldEditor<string>
         _databaseBackupParametersPropertyName = databaseBackupParametersPropertyName;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate)
+    public override ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         string? databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
         var databaseBackupParameters =
@@ -34,14 +37,14 @@ public sealed class DbServerSideBackupPathFieldEditor : FieldEditor<string>
         if (currentPath != null && Inputer.InputBool("Clear?", false, false))
         {
             SetValue(recordForUpdate, null);
-            return;
+            return ValueTask.CompletedTask;
         }
 
         if (!string.IsNullOrWhiteSpace(databaseWebAgentName))
         {
             StShared.WriteWarningLine("Cannot set Db Server Side Backup Path, because Web Agent is used", true, null,
                 true);
-            return;
+            return ValueTask.CompletedTask;
         }
 
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
@@ -54,5 +57,6 @@ public sealed class DbServerSideBackupPathFieldEditor : FieldEditor<string>
         string? newValue = MenuInputer.InputFolderPath(FieldName, workFolderCandidateForLocalPath);
 
         SetValue(recordForUpdate, string.IsNullOrWhiteSpace(newValue) ? null : newValue);
+        return ValueTask.CompletedTask;
     }
 }

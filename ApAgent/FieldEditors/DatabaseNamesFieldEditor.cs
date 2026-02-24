@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using ApAgentData.LibApAgentData;
 using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliParameters.FieldEditors;
@@ -48,7 +49,8 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         _databaseBackupParametersPropertyName = databaseBackupParametersPropertyName;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate)
+    public override async ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         string? databaseServerConnectionName =
             GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
@@ -76,10 +78,10 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
-            .CreateDatabaseManager(_logger, true, databaseServerConnectionName,
+        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult =
+            await DatabaseManagersFactory.CreateDatabaseManager(_logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections),
-                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, CancellationToken.None).Result;
+                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {
@@ -92,7 +94,7 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         {
             var databasesListCreator =
                 new DatabasesListCreator(databaseSet, createDatabaseManagerResult.AsT0, backupType);
-            dbList = databasesListCreator.LoadDatabaseNames(CancellationToken.None).Result;
+            dbList = await databasesListCreator.LoadDatabaseNames(cancellationToken);
         }
 
         if (databaseSet != EDatabaseSet.DatabasesBySelection)

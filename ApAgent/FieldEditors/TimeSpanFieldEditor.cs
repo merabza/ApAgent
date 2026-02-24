@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.LibDataInput;
 using SystemTools.SystemToolsShared;
@@ -15,9 +17,11 @@ public sealed class TimeSpanFieldEditor : FieldEditor<TimeSpan>
         _defaultValue = defaultValue;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate)
+    public override ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         SetValue(recordForUpdate, Inputer.InputTimeSpan(FieldName, GetValue(recordForUpdate, _defaultValue)));
+        return ValueTask.CompletedTask;
     }
 
     public override void SetDefault(ItemData currentItem)

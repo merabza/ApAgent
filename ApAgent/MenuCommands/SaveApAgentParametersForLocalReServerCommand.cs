@@ -43,7 +43,7 @@ public sealed class SaveApAgentParametersForLocalReServerCommand : CliMenuComman
 
         //შევინახოთ პარამეტრების ფაილი
         await _parametersManager.Save(parameters, "Parameters for ReServer Saved",
-            parameters.ApAgentParametersFileNameForLocalReServer);
+            parameters.ApAgentParametersFileNameForLocalReServer, cancellationToken);
 
         return true;
     }

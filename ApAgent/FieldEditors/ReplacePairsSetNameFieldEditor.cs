@@ -1,4 +1,6 @@
-﻿using ApAgent.Cruders;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ApAgent.Cruders;
 using AppCliTools.CliParameters.FieldEditors;
 using ParametersManagement.LibParameters;
 
@@ -17,11 +19,12 @@ public sealed class ReplacePairsSetNameFieldEditor : FieldEditor<string>
         _useNone = useNone;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate)
+    public override async ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         var replacePairsSetCruderCruder = ReplacePairsSetCruder.Create(_parametersManager);
         SetValue(recordForUpdate,
-            replacePairsSetCruderCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate), null,
-                _useNone));
+            await replacePairsSetCruderCruder.GetNameWithPossibleNewName(FieldName, GetValue(recordForUpdate), null,
+                _useNone, cancellationToken));
     }
 }

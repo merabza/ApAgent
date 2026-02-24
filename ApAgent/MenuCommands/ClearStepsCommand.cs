@@ -27,7 +27,7 @@ public sealed class ClearStepsCommand : CliMenuCommand
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
         parameters.ClearSteps();
-        await _parametersManager.Save(parameters, "Steps cleared success");
+        await _parametersManager.Save(parameters, "Steps cleared success", null, cancellationToken);
         return true;
     }
 }

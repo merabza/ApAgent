@@ -56,7 +56,7 @@ public sealed class SelectScheduleNamesCommand : CliMenuCommand
         }
 
         ReNumSequences();
-        await _parametersManager.Save(parameters, "Schedule Updated");
+        await _parametersManager.Save(parameters, "Schedule Updated", null, cancellationToken);
         return true;
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using ApAgentData.LibApAgentData;
 using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliMenu;
@@ -41,7 +42,8 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate)
+    public override ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         string? databaseServerConnectionName =
             GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
@@ -61,6 +63,8 @@ public sealed class OneDatabaseNameFieldEditor : FieldEditor<string>
         {
             SetValue(recordForUpdate, dbList[selectedId].Name);
         }
+
+        return ValueTask.CompletedTask;
     }
 
     private List<DatabaseInfoModel> CreateDbList(string? databaseServerConnectionName)

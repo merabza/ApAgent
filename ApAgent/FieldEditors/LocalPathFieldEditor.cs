@@ -1,4 +1,6 @@
-﻿using ApAgentData.LibApAgentData.Models;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ApAgentData.LibApAgentData.Models;
 using AppCliTools.CliParameters.FieldEditors;
 using AppCliTools.LibMenuInput;
 using ParametersManagement.LibDatabaseParameters;
@@ -21,7 +23,8 @@ public sealed class LocalPathFieldEditor : FieldEditor<string>
         _parametersFileName = parametersFileName;
     }
 
-    public override void UpdateField(string? recordKey, object recordForUpdate)
+    public override ValueTask UpdateField(string? recordKey, object recordForUpdate,
+        CancellationToken cancellationToken = default)
     {
         string? workFolderCandidateForLocalPath;
 
@@ -43,5 +46,6 @@ public sealed class LocalPathFieldEditor : FieldEditor<string>
 
         SetValue(recordForUpdate,
             MenuInputer.InputFolderPath(FieldName, GetValue(recordForUpdate, workFolderCandidateForLocalPath)));
+        return ValueTask.CompletedTask;
     }
 }
