@@ -78,14 +78,14 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         List<DatabaseInfoModel> dbList;
 
-        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult =
+        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections),
                 new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {
-            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
             StShared.WriteErrorLine($"DatabaseManagementClient does not created for webAgent {databaseWebAgentName}",
                 true, _logger);
             dbList = [];

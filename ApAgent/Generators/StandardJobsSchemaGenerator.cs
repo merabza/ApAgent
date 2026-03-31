@@ -45,18 +45,17 @@ internal sealed class StandardJobsSchemaGenerator
     {
         var parameters = (ApAgentParameters)_parametersManager.Parameters;
 
-        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult =
+        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {
-            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
         }
 
         IDatabaseManager? dac = createDatabaseManagerResult.AsT0;
-        Option<Err[]> testConnectionResult = await dac.TestConnection(null, cancellationToken);
-
+        Option<Error[]> testConnectionResult = await dac.TestConnection(null, cancellationToken);
         if (testConnectionResult.IsSome)
         {
             StShared.WriteErrorLine("Can not connect to server. Generation process stopped", true, _logger);
@@ -91,7 +90,7 @@ internal sealed class StandardJobsSchemaGenerator
         //string archiverRarName = standardArchiversGenerator.ArchiverRarName; //Rar
 
         //1. დადგინდეს SQL სერვერი ლოკალურია თუ მოშორებული.
-        OneOf<bool, Err[]> isServerLocalResult = await dac.IsServerLocal(cancellationToken);
+        OneOf<bool, Error[]> isServerLocalResult = await dac.IsServerLocal(cancellationToken);
         bool isServerLocal = false;
         if (isServerLocalResult.IsT0)
         {
@@ -101,10 +100,10 @@ internal sealed class StandardJobsSchemaGenerator
         string fullBuFileStorageName = RegisterFileStorage(EBackupType.Full);
         string trLogBuFileStorageName = RegisterFileStorage(EBackupType.TrLog);
 
-        OneOf<DbServerInfo, Err[]> getDatabaseServerInfoResult = await dac.GetDatabaseServerInfo(cancellationToken);
+        OneOf<DbServerInfo, Error[]> getDatabaseServerInfoResult = await dac.GetDatabaseServerInfo(cancellationToken);
         if (getDatabaseServerInfoResult.IsT1)
         {
-            Err.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
+            Error.PrintErrorsOnConsole(getDatabaseServerInfoResult.AsT1);
             StShared.WriteErrorLine("dbServerInfo does not created. Generation process stopped", true, _logger);
             return;
         }

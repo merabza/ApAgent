@@ -28,16 +28,16 @@ public sealed class StepNamePrefixCounter
     {
         var parameters = (IParametersWithDatabaseServerConnections)_parametersManager.Parameters;
 
-        OneOf<IDatabaseManager, Err[]> createDatabaseManagerResult = DatabaseManagersFactory
+        OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult = DatabaseManagersFactory
             .CreateDatabaseManager(_logger, true, _databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections), CancellationToken.None).Result;
 
         if (createDatabaseManagerResult.IsT1)
         {
-            Err.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
+            Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
         }
 
-        OneOf<DbServerInfo, Err[]> getDatabaseServerInfoResult =
+        OneOf<DbServerInfo, Error[]> getDatabaseServerInfoResult =
             createDatabaseManagerResult.AsT0.GetDatabaseServerInfo(CancellationToken.None).Result;
         if (getDatabaseServerInfoResult.IsT0)
         {
