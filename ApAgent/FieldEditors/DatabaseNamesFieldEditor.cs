@@ -23,12 +23,8 @@ namespace ApAgent.FieldEditors;
 
 public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 {
-    private readonly string? _databaseBackupParametersPropertyName;
-
     private readonly string _databaseServerConnectionNamePropertyName;
-
     private readonly string _databaseSetPropertyName;
-    private readonly string _databaseWebAgentNamePropertyName;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private readonly IParametersManager _parametersManager;
@@ -36,17 +32,13 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
     // ReSharper disable once ConvertToPrimaryConstructor
     public DatabaseNamesFieldEditor(ILogger logger, IHttpClientFactory httpClientFactory, string propertyName,
         IParametersManager parametersManager, string databaseServerConnectionNamePropertyName,
-        string databaseWebAgentNamePropertyName, string databaseSetPropertyName,
-        string? databaseBackupParametersPropertyName = null, bool enterFieldDataOnCreate = false) : base(propertyName,
-        enterFieldDataOnCreate)
+        string databaseSetPropertyName) : base(propertyName)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _parametersManager = parametersManager;
         _databaseServerConnectionNamePropertyName = databaseServerConnectionNamePropertyName;
-        _databaseWebAgentNamePropertyName = databaseWebAgentNamePropertyName;
         _databaseSetPropertyName = databaseSetPropertyName;
-        _databaseBackupParametersPropertyName = databaseBackupParametersPropertyName;
     }
 
     public override async ValueTask UpdateField(string? recordKey, object recordForUpdate,
@@ -54,25 +46,14 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
     {
         string? databaseServerConnectionName =
             GetValue<string>(recordForUpdate, _databaseServerConnectionNamePropertyName);
-        string? databaseWebAgentName = GetValue<string>(recordForUpdate, _databaseWebAgentNamePropertyName);
 
         var databaseSet = GetValue<EDatabaseSet>(recordForUpdate, _databaseSetPropertyName);
 
-        var backupType = EBackupType.Full;
+        const EBackupType backupType = EBackupType.Full;
 
-        if (_databaseBackupParametersPropertyName is not null)
+        if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnections parameters)
         {
-            var databaseBackupParameters =
-                GetValue<DatabaseBackupParametersDomain>(recordForUpdate, _databaseBackupParametersPropertyName);
-            if (databaseBackupParameters is not null)
-            {
-                backupType = databaseBackupParameters.BackupType;
-            }
-        }
-
-        if (_parametersManager.Parameters is not IParametersWithDatabaseServerConnectionsAndApiClients parameters)
-        {
-            Console.WriteLine("Parameters is invalid");
+            StShared.WriteErrorLine("Parameters is invalid", true);
             return;
         }
 
@@ -81,12 +62,13 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
         OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_logger, true, databaseServerConnectionName,
                 new DatabaseServerConnections(parameters.DatabaseServerConnections),
-                new ApiClients(parameters.ApiClients), _httpClientFactory, null, null, cancellationToken);
+                null, _httpClientFactory, null, null, cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {
             Error.PrintErrorsOnConsole(createDatabaseManagerResult.AsT1);
-            StShared.WriteErrorLine($"DatabaseManagementClient does not created for webAgent {databaseWebAgentName}",
+            StShared.WriteErrorLine(
+                $"DatabaseManagementClient does not created for database Server Connection {databaseServerConnectionName}",
                 true, _logger);
             dbList = [];
         }

@@ -45,12 +45,11 @@ public sealed class FilesBackupStepCruder : StepCruder<FilesBackupStep>
             ParametersManager));
         FieldEditors.Add(new BoolFieldEditor(nameof(FilesBackupStep.BackupSeparately), true));
         FieldEditors.Add(new ExcludeSetNameFieldEditor(nameof(FilesBackupStep.ExcludeSetName), ParametersManager));
-        //FieldEditors.Add(new BackupFolderPathsFieldEditor(nameof(FilesBackupStep.BackupFolderPaths),
-        //    ParametersManager));
+        //FieldEditors.Add(new BackupFolderPathsFieldEditor(nameof(FilesBackupStep.BackupFolderPaths)));
 
         FieldEditors.Add(
             new SimpleNamesWithDescriptionsFieldEditor<FileBackupFolderCruder>(
-                nameof(FilesBackupStep.BackupFolderPaths)));
+                nameof(FilesBackupStep.BackupFolderPaths), ParametersManager));
 
         FieldEditors.AddRange(tempFieldEditors);
     }

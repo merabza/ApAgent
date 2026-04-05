@@ -1,109 +1,129 @@
-﻿//using System.Collections.Generic;
-//using System.IO;
-//using System.Linq;
-//using ApAgent.Counters;
-//using ApAgent.Cruders;
-//using CliMenu;
-//using LibMenuInput;
-//using SystemToolsShared;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using ApAgent.Counters;
+using ApAgent.Cruders;
+using AppCliTools.CliMenu;
+using AppCliTools.LibMenuInput;
+using SystemTools.SystemToolsShared;
 
-//namespace ApAgent.MenuCommands;
+namespace ApAgent.MenuCommands;
 
-//public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
-//{
-//    private readonly FileBackupFolderCruder _fileBackupFolderCruder;
-//    private readonly Dictionary<string, string> _masksAndFolders;
+public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
+{
+    private readonly FileBackupFolderCruder _fileBackupFolderCruder;
+    private readonly Dictionary<string, string> _masksAndFolders;
 
-//    // ReSharper disable once ConvertToPrimaryConstructor
-//    public MultiSelectSubfoldersWithMasksCommand(Dictionary<string, string> masksAndFolders,
-//        FileBackupFolderCruder fileBackupFolderCruder) : base("Multi Select Subfolders", EMenuAction.Reload)
-//    {
-//        _masksAndFolders = masksAndFolders;
-//        _fileBackupFolderCruder = fileBackupFolderCruder;
-//    }
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public MultiSelectSubfoldersWithMasksCommand(Dictionary<string, string> masksAndFolders, FileBackupFolderCruder fileBackupFolderCruder) : base(
+        "Multi Select Subfolders", EMenuAction.Reload)
+    {
+        _masksAndFolders = masksAndFolders;
+        _fileBackupFolderCruder = fileBackupFolderCruder;
+        //_fileBackupFolderCruder = fileBackupFolderCruder;
+    }
 
-//    protected override bool RunBody()
-//    {
-//        var folderName = MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
+    protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
 
-//        if (string.IsNullOrWhiteSpace(folderName))
-//            return false;
+    {
+        var folderName = MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
 
-//        var dir = CheckFolder(folderName);
-//        if (dir == null)
-//            return false;
+        if (string.IsNullOrWhiteSpace(folderName))
+        {
+            return false;
+        }
 
-//        //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
-//        var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
-//            .ToDictionary(k => k.Name, v => _masksAndFolders.ContainsValue(v.FullName));
-//        //გამოვიდეს სიიდან ამრჩევი
-//        MenuInputer.MultipleInputFromList($"Select subfolders from {folderName}", foldersChecks);
-//        var dictMaskCounter = new DictMaskCounter(_masksAndFolders);
+        var dir = CheckFolder(folderName);
+        if (dir == null)
+        {
+            return false;
+        }
 
-//        foreach (var kvp in foldersChecks)
-//        {
-//            var path = Path.Combine(folderName, kvp.Key);
-//            if (kvp.Value)
-//            {
-//                //ჩართული ჩავამატოთ თუ არ არსებობს
-//                if (!_masksAndFolders.ContainsValue(path))
-//                    _masksAndFolders.Add(dictMaskCounter.CountMask(path), path);
-//            }
-//            else
-//            {
-//                //გამორთული ამოვაკლოთ თუ არსებობს
-//                if (_masksAndFolders.ContainsValue(path))
-//                    _masksAndFolders.Remove(path);
-//            }
-//        }
+        //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
+        var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
+            .ToDictionary(k => k.Name, v => _masksAndFolders.ContainsValue(v.FullName));
+        //გამოვიდეს სიიდან ამრჩევი
+        MenuInputer.MultipleInputFromList($"Select subfolders from {folderName}", foldersChecks);
+        var dictMaskCounter = new DictMaskCounter(_masksAndFolders);
 
-//        _fileBackupFolderCruder.Save("Changes saved");
-//        return true;
-//    }
+        foreach (var kvp in foldersChecks)
+        {
+            var path = Path.Combine(folderName, kvp.Key);
+            if (kvp.Value)
+            {
+                //ჩართული ჩავამატოთ თუ არ არსებობს
+                if (!_masksAndFolders.ContainsValue(path))
+                {
+                    _masksAndFolders.Add(dictMaskCounter.CountMask(path), path);
+                }
+            }
+            else
+            {
+                //გამორთული ამოვაკლოთ თუ არსებობს
+                if (_masksAndFolders.ContainsValue(path))
+                {
+                    _masksAndFolders.Remove(path);
+                }
+            }
+        }
 
-//    private DirectoryInfo? CheckFolder(string folderName)
-//    {
-//        var dir = new DirectoryInfo(folderName);
+        await _fileBackupFolderCruder.Save("Changes saved", cancellationToken);
+        return true;
+    }
 
-//        if (!dir.Exists)
-//        {
-//            StShared.WriteErrorLine($"folder {folderName} does not exists", true);
-//            return null;
-//        }
+    private DirectoryInfo? CheckFolder(string folderName)
+    {
+        var dir = new DirectoryInfo(folderName);
 
-//        //დადგინდეს ეს ფოლდერი თვითონ და ამ ფოლდერის რომელიმე მშობელი ფოლდერი არის თუ არა დასაბექაპებელ სიაში.
-//        //და თუ არის, მაშინ არ დავუშვათ ამ ფოლდერის ქვეფოლდერების სიის გამოძახება.
-//        //მიზეზი კი გამოვიტანოთ შეტყობინების სახით
-//        //არ შეიძლება ქვეფოლდერის არჩევა დასაბეკაპებლად, თუ მისი წინაპარი უკვე არჩეულია. ჯერ ამოიღეთ სიიდან წინაპარი
-//        if (_masksAndFolders.Any(kvp => Contains(kvp.Value, dir.FullName)))
-//        {
-//            StShared.WriteErrorLine($"folder {folderName} can not use because of existing backup folders", true);
-//            return null;
-//        }
+        if (!dir.Exists)
+        {
+            StShared.WriteErrorLine($"folder {folderName} does not exists", true);
+            return null;
+        }
 
-//        if (dir.GetDirectories().Length > 0)
-//            return dir;
+        //დადგინდეს ეს ფოლდერი თვითონ და ამ ფოლდერის რომელიმე მშობელი ფოლდერი არის თუ არა დასაბექაპებელ სიაში.
+        //და თუ არის, მაშინ არ დავუშვათ ამ ფოლდერის ქვეფოლდერების სიის გამოძახება.
+        //მიზეზი კი გამოვიტანოთ შეტყობინების სახით
+        //არ შეიძლება ქვეფოლდერის არჩევა დასაბეკაპებლად, თუ მისი წინაპარი უკვე არჩეულია. ჯერ ამოიღეთ სიიდან წინაპარი
+        if (_masksAndFolders.Any(kvp => Contains(kvp.Value, dir.FullName)))
+        {
+            StShared.WriteErrorLine($"folder {folderName} can not use because of existing backup folders", true);
+            return null;
+        }
 
-//        StShared.WriteErrorLine($"folder {folderName} have not subfolders", true);
-//        return null;
-//    }
+        if (dir.GetDirectories().Length > 0)
+        {
+            return dir;
+        }
 
-//    private static bool Contains(DirectoryInfo di1, DirectoryInfo di2)
-//    {
-//        while (true)
-//        {
-//            if (di2.FullName == di1.FullName) return true;
-//            if (di2.Parent == null) return false;
-//            di2 = di2.Parent;
-//        }
-//    }
+        StShared.WriteErrorLine($"folder {folderName} have not subfolders", true);
+        return null;
+    }
 
-//    private static bool Contains(string dir1, string dir2)
-//    {
-//        var di1 = new DirectoryInfo(dir1);
-//        var di2 = new DirectoryInfo(dir2);
-//        return Contains(di1, di2);
-//    }
-//}
+    private static bool Contains(DirectoryInfo di1, DirectoryInfo di2)
+    {
+        while (true)
+        {
+            if (di2.FullName == di1.FullName)
+            {
+                return true;
+            }
 
+            if (di2.Parent == null)
+            {
+                return false;
+            }
 
+            di2 = di2.Parent;
+        }
+    }
+
+    private static bool Contains(string dir1, string dir2)
+    {
+        var di1 = new DirectoryInfo(dir1);
+        var di2 = new DirectoryInfo(dir2);
+        return Contains(di1, di2);
+    }
+}

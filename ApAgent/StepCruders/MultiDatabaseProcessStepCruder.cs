@@ -38,7 +38,6 @@ public sealed class MultiDatabaseProcessStepCruder : StepCruder<MultiDatabasePro
         FieldEditors.Add(new DatabaseNamesFieldEditor(logger, httpClientFactory,
             nameof(MultiDatabaseProcessStep.DatabaseNames), ParametersManager,
             nameof(MultiDatabaseProcessStep.DatabaseServerConnectionName),
-            nameof(MultiDatabaseProcessStep.DatabaseWebAgentName), nameof(MultiDatabaseProcessStep.DatabaseServerName),
             nameof(MultiDatabaseProcessStep.DatabaseSet)));
 
         FieldEditors.AddRange(tempFieldEditors);

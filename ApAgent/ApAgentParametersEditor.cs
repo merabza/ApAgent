@@ -40,8 +40,8 @@ public sealed class ApAgentParametersEditor : ParametersEditor
 
         //FieldEditors.Add(new ApiClientsFieldEditor(logger, httpClientFactory, nameof(ApAgentParameters.ApiClients),
         //    parametersManager));
-        FieldEditors.Add(new DictionaryFieldEditor<ApiClientCruder, ApiClientSettings>(
-            nameof(ApAgentParameters.ApiClients), logger, httpClientFactory, parametersManager));
+        //FieldEditors.Add(new DictionaryFieldEditor<ApiClientCruder, ApiClientSettings>(
+        //    nameof(ApAgentParameters.ApiClients), logger, httpClientFactory, parametersManager));
 
         //FieldEditors.Add(new FileStoragesFieldEditor(logger, nameof(ApAgentParameters.FileStorages),
         //    parametersManager));
@@ -51,7 +51,7 @@ public sealed class ApAgentParametersEditor : ParametersEditor
 
         //FieldEditors.Add(new ExcludeSetsFieldEditor(nameof(ApAgentParameters.ExcludeSets), parametersManager));
         FieldEditors.Add(new DictionaryFieldEditor<ExcludeSetCruder, ExcludeSet>(nameof(ApAgentParameters.ExcludeSets),
-            logger, parametersManager));
+            parametersManager));
 
         //FieldEditors.Add(new ReplacePairsSetFieldEditor(nameof(ApAgentParameters.ReplacePairsSets), parametersManager));
         FieldEditors.Add(new DictionaryFieldEditor<ReplacePairsSetCruder, ReplacePairsSet>(

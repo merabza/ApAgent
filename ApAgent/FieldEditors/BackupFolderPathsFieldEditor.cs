@@ -2,21 +2,17 @@
 //using System.Linq;
 //using ApAgent.Cruders;
 //using ApAgent.MenuCommands;
-//using CliMenu;
-//using CliParameters.FieldEditors;
-//using LibParameters;
+//using AppCliTools.CliMenu;
+//using AppCliTools.CliParameters.FieldEditors;
 
 //namespace ApAgent.FieldEditors;
 
 //public sealed class BackupFolderPathsFieldEditor : FieldEditor<Dictionary<string, string>>
 //{
-//    private readonly IParametersManager _parametersManager;
-
 //    // ReSharper disable once ConvertToPrimaryConstructor
-//    public BackupFolderPathsFieldEditor(string propertyName, IParametersManager parametersManager,
-//        bool enterFieldDataOnCreate = false) : base(propertyName, enterFieldDataOnCreate, null, true)
+//    public BackupFolderPathsFieldEditor(string propertyName, bool enterFieldDataOnCreate = false) : base(propertyName,
+//        enterFieldDataOnCreate, null, true)
 //    {
-//        _parametersManager = parametersManager;
 //    }
 
 //    public void Update(object recordForUpdate, Dictionary<string, string> data)
@@ -41,14 +37,16 @@
 //        var val = GetValue(record);
 
 //        if (val == null || val.Count == 0)
+//        {
 //            return "No Folders";
+//        }
 
 //        if (val.Count != 1)
+//        {
 //            return $"{val.Count} folders";
+//        }
 
 //        var kvp = val.Single();
 //        return $"{kvp.Key} - {kvp.Value}";
 //    }
 //}
-
-

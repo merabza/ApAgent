@@ -73,7 +73,9 @@ try
         return 6;
     }
 
-    var processes = new Processes(processesLogger);
+    // ReSharper disable once DisposableConstructor
+    // ReSharper disable once using
+    using var processes = new Processes(processesLogger);
 
     var apAgent = new ApAgentCliAppLoop(logger, httpClientFactory, new ParametersManager(parametersFileName, par, key),
         processes);

@@ -46,12 +46,7 @@ public sealed class DatabaseBackupStepCruder : StepCruder<DatabaseBackupStep>
 
         FieldEditors.Add(new DatabaseNamesFieldEditor(logger, httpClientFactory,
             nameof(DatabaseBackupStep.DatabaseNames), ParametersManager,
-            nameof(DatabaseBackupStep.DatabaseServerConnectionName), nameof(DatabaseBackupStep.DatabaseSet),
-            nameof(DatabaseBackupStep.DatabaseBackupParameters)));
-
-        //FieldEditors.Add(new DbServerSideBackupPathFieldEditor(nameof(DatabaseBackupStep.DbServerSideBackupPath),
-        //    parametersManager, nameof(DatabaseBackupStep.DatabaseWebAgentName),
-        //    nameof(DatabaseBackupStep.DatabaseBackupParameters)));
+            nameof(DatabaseBackupStep.DatabaseServerConnectionName), nameof(DatabaseBackupStep.DatabaseSet)));
 
         FieldEditors.Add(new SmartSchemaNameFieldEditor(nameof(DatabaseBackupStep.SmartSchemaName), ParametersManager));
         FieldEditors.Add(new FileStorageNameFieldEditor(logger, nameof(DatabaseBackupStep.FileStorageName),
