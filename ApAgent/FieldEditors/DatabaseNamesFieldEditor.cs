@@ -12,7 +12,6 @@ using DatabaseTools.DbTools;
 using DatabaseTools.DbTools.Models;
 using Microsoft.Extensions.Logging;
 using OneOf;
-using ParametersManagement.LibApiClientParameters;
 using ParametersManagement.LibDatabaseParameters;
 using ParametersManagement.LibParameters;
 using SystemTools.SystemToolsShared;
@@ -61,8 +60,8 @@ public sealed class DatabaseNamesFieldEditor : FieldEditor<List<string>>
 
         OneOf<IDatabaseManager, Error[]> createDatabaseManagerResult =
             await DatabaseManagersFactory.CreateDatabaseManager(_logger, true, databaseServerConnectionName,
-                new DatabaseServerConnections(parameters.DatabaseServerConnections),
-                null, _httpClientFactory, null, null, cancellationToken);
+                new DatabaseServerConnections(parameters.DatabaseServerConnections), null, _httpClientFactory, null,
+                null, cancellationToken);
 
         if (createDatabaseManagerResult.IsT1)
         {

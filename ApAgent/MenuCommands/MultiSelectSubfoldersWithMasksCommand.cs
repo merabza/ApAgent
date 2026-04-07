@@ -17,8 +17,8 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
     private readonly Dictionary<string, string> _masksAndFolders;
 
     // ReSharper disable once ConvertToPrimaryConstructor
-    public MultiSelectSubfoldersWithMasksCommand(Dictionary<string, string> masksAndFolders, FileBackupFolderCruder fileBackupFolderCruder) : base(
-        "Multi Select Subfolders", EMenuAction.Reload)
+    public MultiSelectSubfoldersWithMasksCommand(Dictionary<string, string> masksAndFolders,
+        FileBackupFolderCruder fileBackupFolderCruder) : base("Multi Select Subfolders", EMenuAction.Reload)
     {
         _masksAndFolders = masksAndFolders;
         _fileBackupFolderCruder = fileBackupFolderCruder;
@@ -28,29 +28,30 @@ public sealed class MultiSelectSubfoldersWithMasksCommand : CliMenuCommand
     protected override async ValueTask<bool> RunBody(CancellationToken cancellationToken = default)
 
     {
-        var folderName = MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
+        string? folderName =
+            MenuInputer.InputFolderPath("Folder which subfolders you wont to add to backups folders list");
 
         if (string.IsNullOrWhiteSpace(folderName))
         {
             return false;
         }
 
-        var dir = CheckFolder(folderName);
+        DirectoryInfo? dir = CheckFolder(folderName);
         if (dir == null)
         {
             return false;
         }
 
         //დადგინდეს ამ ფოლდერებიდან რომელიმე არის თუ არა დასაბექაპებელ სიაში. და თუ არის მისთვის ჩაირთოს ჭეშმარიტი
-        var foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
+        Dictionary<string, bool> foldersChecks = dir.GetDirectories().OrderBy(o => o.Name)
             .ToDictionary(k => k.Name, v => _masksAndFolders.ContainsValue(v.FullName));
         //გამოვიდეს სიიდან ამრჩევი
         MenuInputer.MultipleInputFromList($"Select subfolders from {folderName}", foldersChecks);
         var dictMaskCounter = new DictMaskCounter(_masksAndFolders);
 
-        foreach (var kvp in foldersChecks)
+        foreach (KeyValuePair<string, bool> kvp in foldersChecks)
         {
-            var path = Path.Combine(folderName, kvp.Key);
+            string path = Path.Combine(folderName, kvp.Key);
             if (kvp.Value)
             {
                 //ჩართული ჩავამატოთ თუ არ არსებობს
